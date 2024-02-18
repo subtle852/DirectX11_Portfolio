@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="SEngine.cpp" />
+    <ClCompile Include="yaPlayScene.cpp">
+      <Filter>Contents\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="yaMainScene.cpp">
+      <Filter>Contents\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="yaSelectScene.cpp">
+      <Filter>Contents\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="yaTownScene.cpp">
+      <Filter>Contents\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="yaBoss01Scene.cpp">
+      <Filter>Contents\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="yaEndingScene.cpp">
+      <Filter>Contents\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="yaShopScene.cpp">
+      <Filter>Contents\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="yaSubspace01Scene.cpp">
+      <Filter>Contents\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="yaSubspace02Scene.cpp">
+      <Filter>Contents\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="yaRamonaScript.cpp">
+      <Filter>Contents\Script\PLAYER</Filter>
+    </ClCompile>
+    <ClCompile Include="yaPlayer.cpp" />
+    <ClCompile Include="yaMiniScript.cpp">
+      <Filter>Contents\Script\PLAYER</Filter>
+    </ClCompile>
+    <ClCompile Include="yaEnemyScript.cpp">
+      <Filter>Contents\Script\ENEMY\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="yaPlayerScript.cpp">
+      <Filter>Contents\Script\PLAYER\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="yaGridScript.cpp">
+      <Filter>Contents\Script\GRID</Filter>
+    </ClCompile>
+    <ClCompile Include="yaCameraScript.cpp">
+      <Filter>Contents\Script\CAMERA</Filter>
+    </ClCompile>
+    <ClCompile Include="yaLukeScript.cpp">
+      <Filter>Contents\Script\ENEMY\STAGE01</Filter>
+    </ClCompile>
+    <ClCompile Include="yaTitle01Scene.cpp">
+      <Filter>Contents\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="yaTitle02Scene.cpp">
+      <Filter>Contents\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="yaBoss01Script.cpp">
+      <Filter>Contents\Script\BOSS\STAGE01</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="yaPlayScene.h">
+      <Filter>Contents\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="yaSelectScene.h">
+      <Filter>Contents\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="yaTownScene.h">
+      <Filter>Contents\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="yaMainScene.h">
+      <Filter>Contents\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="yaBoss01Scene.h">
+      <Filter>Contents\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="yaEndingScene.h">
+      <Filter>Contents\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="yaShopScene.h">
+      <Filter>Contents\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="yaSubspace01Scene.h">
+      <Filter>Contents\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="yaSubspace02Scene.h">
+      <Filter>Contents\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadScenes.h">
+      <Filter>Contents\Load</Filter>
+    </ClInclude>
+    <ClInclude Include="yaRamonaScript.h">
+      <Filter>Contents\Script\PLAYER</Filter>
+    </ClInclude>
+    <ClInclude Include="yaPlayer.h" />
+    <ClInclude Include="yaMiniScript.h">
+      <Filter>Contents\Script\PLAYER</Filter>
+    </ClInclude>
+    <ClInclude Include="yaEnemyScript.h">
+      <Filter>Contents\Script\ENEMY\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="yaPlayerScript.h">
+      <Filter>Contents\Script\PLAYER\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="yaGridScript.h">
+      <Filter>Contents\Script\GRID</Filter>
+    </ClInclude>
+    <ClInclude Include="yaCameraScript.h">
+      <Filter>Contents\Script\CAMERA</Filter>
+    </ClInclude>
+    <ClInclude Include="yaLukeScript.h">
+      <Filter>Contents\Script\ENEMY\STAGE01</Filter>
+    </ClInclude>
+    <ClInclude Include="yaTitle01Scene.h">
+      <Filter>Contents\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="yaTitle02Scene.h">
+      <Filter>Contents\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="yaBoss01Script.h">
+      <Filter>Contents\Script\BOSS\STAGE01</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Contents">
+      <UniqueIdentifier>{ed010504-6671-4ca5-864f-b9f58051cb28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Load">
+      <UniqueIdentifier>{2cfadb9c-f8c6-41fd-9846-5e6bd4b50b79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Scene">
+      <UniqueIdentifier>{d0a60e39-82c2-4819-9931-93e5a2d9e021}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script">
+      <UniqueIdentifier>{02a6d4b6-df18-4b04-b5c4-bf97bbaba9ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\GameObject">
+      <UniqueIdentifier>{ee82c5b2-710f-4a86-ac65-d5cf78fb38fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\GameObject\UI">
+      <UniqueIdentifier>{91f4b725-30fd-48e0-90d7-991cc05d2db8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\GameObject\BG">
+      <UniqueIdentifier>{2b6c9718-140b-4914-8d5a-0c6ec763c855}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\GameObject\PLAYER">
+      <UniqueIdentifier>{b17457bb-4173-43fa-8b52-6ce490d388ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\GameObject\MONSTER">
+      <UniqueIdentifier>{8b14901e-99d7-4869-971c-054756c5ee11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\GameObject\BOSS">
+      <UniqueIdentifier>{d4fe3eef-5278-4701-94d2-556fcad6b6c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\GameObject\INTERACTIVE">
+      <UniqueIdentifier>{aa21681f-2f7f-4b97-bf43-c1ef7a2f1722}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\GameObject\INTERACTIVE\COIN">
+      <UniqueIdentifier>{d3828786-79ad-472c-88f3-84e552c73c18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\GameObject\INTERACTIVE\BRICK">
+      <UniqueIdentifier>{2e5e5c7f-9121-42fa-9eb0-3ce6db2fab0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script\PLAYER">
+      <UniqueIdentifier>{a2681970-7241-4063-96c2-96f0db2c3324}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script\BOSS">
+      <UniqueIdentifier>{6a7f8ee3-184f-4ab3-916d-997fe83d4e54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script\INTERACTIVE">
+      <UniqueIdentifier>{e74b9bad-2cd9-400a-a6be-1ad59940859b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script\ENEMY">
+      <UniqueIdentifier>{c173eac5-7ac9-497e-af74-1956793614e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script\ENEMY\Base">
+      <UniqueIdentifier>{fe969eb5-5228-4644-9ebe-07835c1b350b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script\PLAYER\Base">
+      <UniqueIdentifier>{218cec5d-3a2a-4a20-aad9-ad2d2f1cccfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script\CAMERA">
+      <UniqueIdentifier>{0a71d8b7-46e3-4bf1-9850-19cabdd0ff84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script\GRID">
+      <UniqueIdentifier>{027b1980-51b3-4aaa-9948-79423daada3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script\ENEMY\STAGE01">
+      <UniqueIdentifier>{ea0899f5-542c-4d09-868c-1af60bd39691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script\BOSS\STAGE01">
+      <UniqueIdentifier>{41a8e3d9-a700-4630-9644-ba96a86c9599}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
