@@ -41,7 +41,9 @@ namespace ya
 	}
 	void PlayScene::Initialize()
 	{
+		// CollisionLayer
 		CollisionManager::SetLayer(eLayerType::Player, eLayerType::Enemy, true);
+		//CollisionManager::SetLayer(eLayerType::Player, eLayerType::Camera, true);
 
 		// STAGE 01 - BG 
 		{
@@ -218,13 +220,19 @@ namespace ya
 		{
 			GameObject* camera = new GameObject();
 			camera->SetName(L"MainCamera");
-			AddGameObject(eLayerType::Player, camera);
+			AddGameObject(eLayerType::Enemy, camera);
 			camera->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
 			cameraComp = camera->AddComponent<Camera>();
 			cameraComp->TurnLayerMask(eLayerType::UI, false);
 			camera->AddComponent<CameraScript>();
 			CameraScript* cameraScript = camera->GetComponent<CameraScript>();
-			cameraScript->SetPosSetting(0);
+			cameraScript->SetCameraSetting(eCameraSetting::Static);
+			//cameraScript->SetCameraSetting(eCameraSetting::Tracking, GetPlayerPosition());
+			cameraScript->SetCameraSetting(eCameraSetting::SmoothingTransition, Vector3(2.0f, -1.2f, 40.f), 1.0f);
+			//cameraScript->SetCameraSetting(eCameraSetting::ShakeVertical, 5.0f, 20.0f, 0.1f);
+			//cameraScript->SetCameraSetting(eCameraSetting::ShakeHorizontal, 5.0f, 20.0f, 0.1f);
+			//cameraScript->SetCameraSetting(eCameraSetting::ShakeZoom, 5.0f, 0.1f, 5.0f);
+			//cameraScript->SetCameraSetting(eCameraSetting::ShakeCircle, 5.0f, 15.0f, 0.3f);
 
 			renderer::cameras.push_back(cameraComp);// Main Camera 렌더러에 추가
 			renderer::mainCamera = cameraComp;
@@ -263,6 +271,8 @@ namespace ya
 
 			mRamonaState = mRamona->GetComponent<RamonaScript>()->GetState();
 		}
+
+
 
 		if (Input::GetKeyDown(eKeyCode::ENTER))
 		{

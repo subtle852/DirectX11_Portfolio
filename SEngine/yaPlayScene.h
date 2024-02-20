@@ -52,5 +52,9 @@ namespace ya
 
 		GameObject* mLuke = nullptr;
 		//GameObject* mLuke2 = nullptr;
+
+		// static Vector3 mTargetPos;
+		// 일반적인 상황에서는 플레이어
+		// 특정 상황에서는 변경
 	};
 }

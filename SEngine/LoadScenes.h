@@ -40,7 +40,7 @@ namespace ya
 		SceneManager::CreateScene<Boss01Scene>(L"Boss01Scene");
 		SceneManager::CreateScene<EndingScene>(L"EndingScene");
 
-		SceneManager::SetActiveScene(L"Title01Scene");
-		//SceneManager::SetActiveScene(L"PlayScene");
+		//SceneManager::SetActiveScene(L"Title01Scene");
+		SceneManager::SetActiveScene(L"PlayScene");
 	}
 }

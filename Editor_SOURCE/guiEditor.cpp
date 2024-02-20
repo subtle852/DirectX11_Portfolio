@@ -130,6 +130,6 @@ namespace gui
 		ya::Camera::SetGpuProjectionMatrix(mainCamara->GetProjectionMatrix());
 
 		debugObj->BindConstantBuffer(mesh.activation, mesh.state);
-		//debugObj->Render();
+		debugObj->Render();
 	}
 }

@@ -30,6 +30,17 @@ namespace ya::enums
 		End = 16,
 	};
 
+	enum class eCameraSetting
+	{
+		Static,
+		Tracking,
+		SmoothingTransition,
+		ShakeVertical,
+		ShakeHorizontal,
+		ShakeZoom,
+		ShakeCircle,
+	};
+
 	enum class eResourceType
 	{
 		Texture,
