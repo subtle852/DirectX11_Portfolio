@@ -9,6 +9,8 @@
 #include "yaCollider2D.h"
 #include "yaLukeScript.h"
 #include "yaRigidbody.h"
+#include "yaRenderer.h"
+#include "yaConstantBuffer.h"
 
 namespace ya
 {
@@ -24,6 +26,8 @@ namespace ya
 
 	void RamonaScript::Initialize()
 	{
+		SetEffectFlickering(0.25f, 5.0f);// 특정 상황에서 함수 호출 ex. 충돌
+
 		#pragma region 애니메이션
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 애니메이션
@@ -562,6 +566,38 @@ namespace ya
 
 	void RamonaScript::Update()
 	{
+
+		if (mOnFlickering == true)
+		{
+			mFlickeringCurTime += Time::DeltaTime();
+			mFlickeringMaxTime -= Time::DeltaTime();
+			if (mFlickeringMaxTime <= 0.0f && GetOwner()->mIsEffectFlickering == false)
+			{
+				GetOwner()->mIsEffectFlickering = false;
+				mOnFlickering = false;
+			}
+
+			else 
+			{
+				if (GetOwner()->mIsEffectFlickering == true)
+				{
+					if (mFlickeringCurTime >= mFlickeringTickTime)
+					{
+						mFlickeringCurTime = 0.0f;
+						GetOwner()->mIsEffectFlickering = false;
+					}
+				}
+				if (GetOwner()->mIsEffectFlickering == false)
+				{
+					if (mFlickeringCurTime >= mFlickeringTickTime)
+					{
+						mFlickeringCurTime = 0.0f;
+						GetOwner()->mIsEffectFlickering = true;
+					}
+				}
+			}
+		}
+
 		#pragma region FSM
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 																	// FSM
@@ -2906,5 +2942,13 @@ namespace ya
 	{
 		Animator* at = this->GetOwner()->GetComponent<Animator>();
 		at->PlayAnimation(L"R_GetUp", true);
+	}
+	void RamonaScript::SetEffectFlickering(float tick, float duration)
+	{
+		GetOwner()->mIsEffectFlickering = true;
+		mOnFlickering = true;
+		mFlickeringCurTime = 0.0f;
+		mFlickeringMaxTime = duration;
+		mFlickeringTickTime = tick;
 	}
 }

@@ -226,7 +226,7 @@ namespace ya
 			cameraComp->TurnLayerMask(eLayerType::UI, false);
 			camera->AddComponent<CameraScript>();
 			CameraScript* cameraScript = camera->GetComponent<CameraScript>();
-			cameraScript->SetCameraSetting(eCameraSetting::Static);
+			//cameraScript->SetCameraSetting(eCameraSetting::Static);
 			//cameraScript->SetCameraSetting(eCameraSetting::Tracking, GetPlayerPosition());
 			cameraScript->SetCameraSetting(eCameraSetting::SmoothingTransition, Vector3(2.0f, -1.2f, 40.f), 1.0f);
 			//cameraScript->SetCameraSetting(eCameraSetting::ShakeVertical, 5.0f, 20.0f, 0.1f);

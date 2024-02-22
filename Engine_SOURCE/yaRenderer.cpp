@@ -308,6 +308,10 @@ namespace renderer
 		// Collider Buffer
 		constantBuffer[(UINT)eCBType::Collider] = new ConstantBuffer(eCBType::Collider);
 		constantBuffer[(UINT)eCBType::Collider]->Create(sizeof(ColliderCB));
+
+		// Flickering Buffer
+		constantBuffer[(UINT)eCBType::Flickering] = new ConstantBuffer(eCBType::Flickering);
+		constantBuffer[(UINT)eCBType::Flickering]->Create(sizeof(ColliderCB));
 	}
 
 	void LoadShader()

@@ -2,6 +2,8 @@
 #include "yaEntity.h"
 #include "yaComponent.h"
 #include "yaScript.h"
+#include "yaRenderer.h"
+#include "yaConstantBuffer.h"
 
 namespace ya
 {
@@ -94,9 +96,26 @@ namespace ya
 		void SetState(eState state) { mState = state; }
 		eState GetState() { return mState; }
 
+		void BindConstantBuffer(bool isEffectFlickering)
+		{
+			renderer::FlickeringCB flCB = {};
+			flCB.isFlickering = isEffectFlickering;
+			//flCB.minAlpha = 0.0f;
+			//flCB.maxAlpha = 1.0f;
+			//flCB.amplitude = 0.5f;
+			//flCB.duration = 5.0f;
+
+			ConstantBuffer* cb = renderer::constantBuffer[(UINT)eCBType::Flickering];
+			cb->SetData(&flCB);
+			cb->Bind(eShaderStage::PS);
+		}
+
 	private:
 		eState mState;
 		std::vector<Component*> mComponents;
 		std::vector<Script*> mScripts;
+
+	public:
+		bool mIsEffectFlickering = false;
 	};
 }

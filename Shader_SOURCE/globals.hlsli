@@ -35,6 +35,15 @@ cbuffer Collider : register(b4)
     uint Padding2[2];
 }
 
+cbuffer Flickering : register(b5)
+{
+    uint Isflickering;
+    //float1 MinAlpha;
+    //float1 MaxAlpha;
+    //float1 Amplitude;
+    //float1 Duration;
+}
+
 Texture2D albedoTexture : register(t0);
 Texture2D atlasTexture : register(t12);
 

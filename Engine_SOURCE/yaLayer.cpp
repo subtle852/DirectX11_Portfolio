@@ -48,7 +48,7 @@ namespace ya
 		}
 	}
 
-	void Layer::Render()
+	void Layer::Render()// 이게 돌지않고 Camera에서 Render가 도는 것
 	{
 		for (GameObject* gameObj : mGameObjects)
 		{

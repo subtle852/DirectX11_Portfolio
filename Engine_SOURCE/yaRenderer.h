@@ -47,6 +47,15 @@ namespace renderer
 		UINT colliderState;
 	};
 
+	CBUFFER(FlickeringCB, CBSLOT_FLICKERING)
+	{
+		UINT isFlickering;
+		//float minAlpha;
+		//float maxAlpha;
+		//float amplitude;
+		//float duration;
+	};
+
 	extern ya::graphics::ConstantBuffer* constantBuffer[(UINT)eCBType::End];
 
 	extern Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState[];

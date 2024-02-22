@@ -17,6 +17,7 @@
 #define CBSLOT_GRID				2
 #define CBSLOT_ANIMATION2D		3
 #define CBSLOT_COLLIDER			4
+#define CBSLOT_FLICKERING		5
 
 namespace ya::graphics
 {
@@ -38,6 +39,7 @@ namespace ya::graphics
 		Grid,
 		Animator,
 		Collider,
+		Flickering,
 		End,
 	};
 

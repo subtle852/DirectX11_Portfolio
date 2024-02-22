@@ -27,7 +27,15 @@ namespace ya
 		void SetCameraShakeZoom();
 		void SetCameraShakeCircle();
 
-		bool GetCameraDurationEnd() { return mIsCameraDurationEnd; }
+		bool GetCameraDurationEnd() { return mIsShakeDurationEnd; }
+
+		void SetColliderState (eColliderActivation colliderActivation) 
+		{ 
+			mUpperCd->SetActivation(colliderActivation);
+			mLowerCd->SetActivation(colliderActivation);
+			mLeftCd->SetActivation(colliderActivation);
+			mRightCd->SetActivation(colliderActivation);
+		}
 
 	private:
 		eCameraSetting mCameraSetting = eCameraSetting::Static;
@@ -55,14 +63,13 @@ namespace ya
 		float mZoomAmplitude = 5.0f;
 
 		// ShakeEnd
-		bool mIsCameraDurationEnd = false;
+		bool mIsShakeDurationEnd = false;
 
 		// Collider
-		Collider2D* mCd = nullptr;
-		//Collider2D* mUpperCd = nullptr;
-		//Collider2D* mLowerCd = nullptr;
-		//Collider2D* mLeftCd = nullptr;
-		//Collider2D* mRightCd = nullptr;
+		Collider2D* mUpperCd = nullptr;
+		Collider2D* mLowerCd = nullptr;
+		Collider2D* mLeftCd = nullptr;
+		Collider2D* mRightCd = nullptr;
 	};
 
 }

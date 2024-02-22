@@ -203,7 +203,7 @@ namespace ya
 				!= GameObject::eState::Active)
 				continue;
 
-
+			gameObj->BindConstantBuffer(gameObj->mIsEffectFlickering);
 			gameObj->Render();
 		}
 	}
@@ -218,6 +218,7 @@ namespace ya
 				!= GameObject::eState::Active)
 				continue;
 
+			gameObj->BindConstantBuffer(gameObj->mIsEffectFlickering);
 			gameObj->Render();
 		}
 	}
@@ -231,7 +232,7 @@ namespace ya
 			if (gameObj->GetState()
 				!= GameObject::eState::Active)
 				continue;
-
+			gameObj->BindConstantBuffer(gameObj->mIsEffectFlickering);
 			gameObj->Render();
 		}
 	}

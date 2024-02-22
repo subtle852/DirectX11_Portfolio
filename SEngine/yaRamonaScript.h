@@ -43,6 +43,9 @@ namespace ya
 		void DownedComplete();
 		void GetUpComplete();
 
+		bool GetIsJump() { return mIsJump; }
+		bool GetIsDJump() { return mIsDJump; }
+
 		// 충돌 함수
 		virtual void OnCollisionEnter(Collider2D* other) override;
 		virtual void OnCollisionStay(Collider2D* other) override;
@@ -145,6 +148,9 @@ namespace ya
 		void L_getup();
 		void R_getup();
 
+		// Effect
+		void SetEffectFlickering(float tick, float duration);
+
 	private:
 		// 속성
 		RamonaAttribute mAttribute;
@@ -239,5 +245,10 @@ namespace ya
 
 		// 플레이어 기준 적의 방향(왼쪽, 오른쪽)을 체크
 		int mEnemyPosition = 1;// -1 (왼쪽) 플레이어 +1 (오른쪽)
+
+		bool mOnFlickering = false;
+		float mFlickeringCurTime = 0.0f;
+		float mFlickeringMaxTime = 0.0f;
+		float mFlickeringTickTime = 0.0f;
 	};
 }

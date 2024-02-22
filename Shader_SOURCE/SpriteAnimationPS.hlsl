@@ -61,5 +61,12 @@ float4 main(VSOut In) : SV_TARGET
     
     color *= lightColor;
     
+    if (Isflickering == true)
+    {
+        color.w = 0.0f;
+        return color;
+    }
+    
+    
     return color;
 }
