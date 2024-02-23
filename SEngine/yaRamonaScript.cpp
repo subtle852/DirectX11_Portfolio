@@ -11,6 +11,8 @@
 #include "yaRigidbody.h"
 #include "yaRenderer.h"
 #include "yaConstantBuffer.h"
+#include "yaObject.h"
+#include "yaMeshRenderer.h"
 
 namespace ya
 {
@@ -26,7 +28,23 @@ namespace ya
 
 	void RamonaScript::Initialize()
 	{
-		SetEffectFlickering(0.25f, 5.0f);// 특정 상황에서 함수 호출 ex. 충돌
+		mShadow = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 40.f)
+			, Vector3::One * 3
+			, eLayerType::Player);
+		MeshRenderer* mr = mShadow->AddComponent<MeshRenderer>();
+		mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+		mr->SetMaterial(Resources::Find<Material>(L"SpriteMaterial_Shadow"));
+		std::shared_ptr<Texture> texture
+			= Resources::Load<Texture>(L"SHADOW", L"..\\Resources\\TEXTURE\\RAMONA\\Shadow.png");
+		mShadow->GetComponent<Transform>()->SetScale((Vector3(texture.get()->GetImageRatioOfWidth() * 1.4f,
+			texture.get()->GetImageRatioOfHeight() * 1.0f , 0.0f))
+			* 1.2f);
+
+
+
+		//SetEffectFlickering(0.25f, 5.0f);// 특정 상황에서 함수 호출 ex. 충돌
+		SetEffectFlashing(0.25f, 5.0f, Vector4(0.8f, 0.8f, 0.8f, 1.0f));// White
+		//SetEffectFlashing(0.25f, 5.0f, Vector4(1.2f, 0.0f, 0.0f, 1.0f));// Red
 
 		#pragma region 애니메이션
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,8 +54,8 @@ namespace ya
 		std::shared_ptr<Texture> atlas
 			= Resources::Load<Texture>(L"Idle", L"..\\Resources\\TEXTURE\\RAMONA\\Idle.png");
 		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->Create(L"R_Idle", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(151.0f / 5.0f, 65.0f), 5);
-		at->Create(L"L_Idle", atlas, enums::eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(151.0f / 5.0f, 65.0f), 5);
+		at->Create(L"R_Idle", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(182.0f / 6.0f, 65.0f), 6);
+		at->Create(L"L_Idle", atlas, enums::eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(182.0f / 6.0f, 65.0f), 6);
 
 		atlas
 			= Resources::Load<Texture>(L"Walk", L"..\\Resources\\TEXTURE\\RAMONA\\Walk.png");
@@ -112,8 +130,8 @@ namespace ya
 
 		atlas
 			= Resources::Load<Texture>(L"WeaponNormalAttack", L"..\\Resources\\TEXTURE\\RAMONA\\WeaponNormalAttack.png");
-		at->Create(L"R_WeaponNormalAttack", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(663.0f / 8.0f, 86.0f), 8);
-		at->Create(L"L_WeaponNormalAttack", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(663.0f / 8.0f, 86.0f), 8);
+		at->Create(L"R_WeaponNormalAttack", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(1136.0f / 8.0f, 142.0f), 8);
+		at->Create(L"L_WeaponNormalAttack", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(1136.0f / 8.0f, 142.0f), 8);
 
 		atlas
 			= Resources::Load<Texture>(L"WeaponDownAttack", L"..\\Resources\\TEXTURE\\RAMONA\\WeaponDownAttack.png");
@@ -566,7 +584,9 @@ namespace ya
 
 	void RamonaScript::Update()
 	{
-
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 이펙트
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		if (mOnFlickering == true)
 		{
 			mFlickeringCurTime += Time::DeltaTime();
@@ -596,6 +616,67 @@ namespace ya
 					}
 				}
 			}
+		}
+
+		if (mOnFlashing == true)
+		{
+			mFlashingCurTime += Time::DeltaTime();
+			mFlashingMaxTime -= Time::DeltaTime();
+			if (mFlashingMaxTime <= 0.0f && GetOwner()->mIsEffectFlashing == false)
+			{
+				GetOwner()->mIsEffectFlashing = false;
+				mOnFlashing = false;
+			}
+
+			else
+			{
+				if (GetOwner()->mIsEffectFlashing == true)
+				{
+					if (mFlashingCurTime >= mFlashingTickTime)
+					{
+						mFlashingCurTime = 0.0f;
+						GetOwner()->mIsEffectFlashing = false;
+					}
+				}
+				if (GetOwner()->mIsEffectFlashing == false)
+				{
+					if (mFlashingCurTime >= mFlashingTickTime)
+					{
+						mFlashingCurTime = 0.0f;
+						GetOwner()->mIsEffectFlashing = true;
+					}
+				}
+			}
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 그림자
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		// 애니메이션 모두 정중앙으로 포토샵 수정 해야 자연스러워짐
+		// 
+		// 그림자 수정하는 경우:
+		// 그림자 사이즈가 조절되야 하는 경우 ex. 점프
+		// 그림자를 지워야하는 경우 ex. 궁극기 (그림자가 방해되는 경우)
+
+		if (mIsJump || mIsDJump)
+		{
+			Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			Vector3 playerPos = playerTr->GetPosition();
+
+			Transform* shadowTr = mShadow->GetComponent<Transform>();
+			Vector3 shadowPos = shadowTr->GetPosition();
+			playerPos.y = shadowPos.y;
+			shadowTr->SetPosition(playerPos);
+		}
+		else
+		{
+			Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			Vector3 playerPos = playerTr->GetPosition();
+			playerPos.y -= 0.5f;
+
+			Transform* shadowTr = mShadow->GetComponent<Transform>();
+			shadowTr->SetPosition(playerPos);
 		}
 
 		#pragma region FSM
@@ -979,8 +1060,15 @@ namespace ya
 
 				if (CanMoveCondition())// 상하 움직임 제한하지 않는 스킬인지 확인
 				{
-					pos.y -= mWalkSpeed * Time::DeltaTime();
-					tr->SetPosition(pos);
+					if (mIsJump == true || mIsDJump == true)// 점프 중 상하이동 막기
+					{
+
+					}
+					else
+					{
+						pos.y -= mWalkSpeed * Time::DeltaTime();
+						tr->SetPosition(pos);
+					}
 				}
 			}
 			if (Input::GetKeyDown(eKeyCode::DOWN))
@@ -1032,8 +1120,15 @@ namespace ya
 
 				if (CanMoveCondition())// 상하 움직임 제한하지 않는 스킬인지 확인
 				{
-					pos.y += mWalkSpeed * Time::DeltaTime();
-					tr->SetPosition(pos);
+					if (mIsJump == true || mIsDJump == true)// 점프 중 상하이동 막기
+					{
+
+					}
+					else
+					{
+						pos.y += mWalkSpeed * Time::DeltaTime();
+						tr->SetPosition(pos);
+					}
 				}
 			}
 			if (Input::GetKeyDown(eKeyCode::UP))
@@ -1191,6 +1286,15 @@ namespace ya
 					pos.y += mJumpHeight * Time::DeltaTime();
 					tr->SetPosition(pos);
 
+					// 그림자 사이즈 조절
+					Vector3 shadowCurScale = mShadow->GetComponent<Transform>()->GetScale();
+					shadowCurScale.x -= 1.2f * Time::DeltaTime();
+					shadowCurScale.y -= 1.2f * Time::DeltaTime();
+					shadowCurScale.z -= 1.2f * Time::DeltaTime();
+					mShadow->GetComponent<Transform>()->SetScale(shadowCurScale);
+
+
+
 					if (Input::GetKey(eKeyCode::LSHIFT))// 달리기 키를 누른 상태에서 점프는 더 멀리 가도록 조정 (상승 하는 경우)
 					{
 						//mIsRun = true;
@@ -1286,6 +1390,13 @@ namespace ya
 					Vector3 pos = tr->GetPosition();
 					pos.y -= mJumpHeight * Time::DeltaTime();
 					tr->SetPosition(pos);
+
+					// 그림자 사이즈 조절
+					Vector3 shadowCurScale = mShadow->GetComponent<Transform>()->GetScale();
+					shadowCurScale.x += 1.2f * Time::DeltaTime();
+					shadowCurScale.y += 1.2f * Time::DeltaTime();
+					shadowCurScale.z += 1.2f * Time::DeltaTime();
+					mShadow->GetComponent<Transform>()->SetScale(shadowCurScale);
 
 					if (pos.y <= mJumpStartPosY)// 좌표 하락하다가 점프 시작한 y좌표 위치에 도달(점프를, 좌표를 멈춰야 함)
 					{
@@ -2950,5 +3061,15 @@ namespace ya
 		mFlickeringCurTime = 0.0f;
 		mFlickeringMaxTime = duration;
 		mFlickeringTickTime = tick;
+	}
+	void RamonaScript::SetEffectFlashing(float tick, float duration, Vector4 color)
+	{
+		GetOwner()->mIsEffectFlashing = true;
+		GetOwner()->mEffectColor = color;
+
+		mOnFlashing = true;
+		mFlashingCurTime = 0.0f;
+		mFlashingMaxTime = duration;
+		mFlashingTickTime = tick;
 	}
 }

@@ -309,9 +309,9 @@ namespace renderer
 		constantBuffer[(UINT)eCBType::Collider] = new ConstantBuffer(eCBType::Collider);
 		constantBuffer[(UINT)eCBType::Collider]->Create(sizeof(ColliderCB));
 
-		// Flickering Buffer
-		constantBuffer[(UINT)eCBType::Flickering] = new ConstantBuffer(eCBType::Flickering);
-		constantBuffer[(UINT)eCBType::Flickering]->Create(sizeof(ColliderCB));
+		// Effect Buffer
+		constantBuffer[(UINT)eCBType::Effect] = new ConstantBuffer(eCBType::Effect);
+		constantBuffer[(UINT)eCBType::Effect]->Create(sizeof(EffectCB));
 	}
 
 	void LoadShader()
@@ -543,6 +543,16 @@ namespace renderer
 			spriteMaterial->SetShader(spriteShader);
 			spriteMaterial->SetTexture(texture);
 			Resources::Insert(L"SpriteMaterial_BG_ENDING", spriteMaterial);
+		}
+
+		//////////////////////////////////////////////////////////// ±×¸²ÀÚ
+		{
+			std::shared_ptr<Texture> texture
+				= Resources::Load<Texture>(L"SHADOW", L"..\\Resources\\TEXTURE\\RAMONA\\Shadow.png");
+			std::shared_ptr<Material> spriteMaterial = std::make_shared<Material>();
+			spriteMaterial->SetShader(spriteShader);
+			spriteMaterial->SetTexture(texture);
+			Resources::Insert(L"SpriteMaterial_Shadow", spriteMaterial);
 		}
 
 

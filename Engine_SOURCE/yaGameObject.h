@@ -96,17 +96,19 @@ namespace ya
 		void SetState(eState state) { mState = state; }
 		eState GetState() { return mState; }
 
-		void BindConstantBuffer(bool isEffectFlickering)
+		void BindConstantBuffer()
 		{
-			renderer::FlickeringCB flCB = {};
-			flCB.isFlickering = isEffectFlickering;
+			renderer::EffectCB efCB = {};
+			efCB.effectLightColor = mEffectColor;
+			efCB.isFlickering = mIsEffectFlickering;
+			efCB.isFlashing = mIsEffectFlashing;
 			//flCB.minAlpha = 0.0f;
 			//flCB.maxAlpha = 1.0f;
 			//flCB.amplitude = 0.5f;
 			//flCB.duration = 5.0f;
 
-			ConstantBuffer* cb = renderer::constantBuffer[(UINT)eCBType::Flickering];
-			cb->SetData(&flCB);
+			ConstantBuffer* cb = renderer::constantBuffer[(UINT)eCBType::Effect];
+			cb->SetData(&efCB);
 			cb->Bind(eShaderStage::PS);
 		}
 
@@ -117,5 +119,8 @@ namespace ya
 
 	public:
 		bool mIsEffectFlickering = false;
+		bool mIsEffectFlashing = false;
+		Vector4 mEffectColor = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
+
 	};
 }

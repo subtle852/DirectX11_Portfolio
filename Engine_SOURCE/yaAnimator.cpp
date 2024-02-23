@@ -65,6 +65,12 @@ namespace ya
 		, Vector2 offset
 		, float duration)
 	{
+		// size 입력 안해줘도 알아서 측정
+		Vector2 autoSize;
+		autoSize.x = atlas->GetWidth();
+		autoSize.x = atlas->GetWidth() / columnLength;
+		autoSize.y = atlas->GetHeight();
+
 		Animation* animation = FindAnimation(name);
 		if (nullptr != animation)
 			return;
@@ -76,7 +82,7 @@ namespace ya
 			, atlas
 			, type
 			, leftTop
-			, size
+			, autoSize
 			, columnLength
 			, offset
 			, duration);

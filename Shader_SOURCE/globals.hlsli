@@ -35,9 +35,11 @@ cbuffer Collider : register(b4)
     uint Padding2[2];
 }
 
-cbuffer Flickering : register(b5)
+cbuffer Effect : register(b5)
 {
-    uint Isflickering;
+    float4 EffectColor;
+    uint IsFlickering;
+    uint IsFlashing;
     //float1 MinAlpha;
     //float1 MaxAlpha;
     //float1 Amplitude;

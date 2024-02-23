@@ -48,8 +48,13 @@ float4 main(VSOut In) : SV_TARGET
     
     color *= lightsAttribute[0].color;
     
-    //float4 lightColor = float4(0.2f, 0.2f, 0.2f, 1.0f);
-    float4 lightColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    
+    float4 lightColor = float4(0.0f, 0.0f, 0.0f, 1.0f);// 일반 라이트컬러
+    if (IsFlashing == true)
+    {
+        //lightColor = float4(0.8f, 0.8f, 0.8f, 1.0f);// 특정 라이트컬러
+        lightColor = EffectColor;
+    }
     
     // i가 1일때, Back 애니메이션의 경우 빛의 밝기가 적용되지 않았던 문제가 일단 발생하지 않음
     // 재발생한다면 animationType에 따른 다른 처리가 필요
@@ -61,7 +66,7 @@ float4 main(VSOut In) : SV_TARGET
     
     color *= lightColor;
     
-    if (Isflickering == true)
+    if (IsFlickering == true)
     {
         color.w = 0.0f;
         return color;

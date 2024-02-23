@@ -150,6 +150,7 @@ namespace ya
 
 		// Effect
 		void SetEffectFlickering(float tick, float duration);
+		void SetEffectFlashing(float tick, float duration, Vector4 color);
 
 	private:
 		// 속성
@@ -246,9 +247,21 @@ namespace ya
 		// 플레이어 기준 적의 방향(왼쪽, 오른쪽)을 체크
 		int mEnemyPosition = 1;// -1 (왼쪽) 플레이어 +1 (오른쪽)
 
+		// Effect
+		// Flickering
 		bool mOnFlickering = false;
 		float mFlickeringCurTime = 0.0f;
 		float mFlickeringMaxTime = 0.0f;
 		float mFlickeringTickTime = 0.0f;
+
+		// Flashing
+		bool mOnFlashing = false;
+		float mFlashingCurTime = 0.0f;
+		float mFlashingMaxTime = 0.0f;
+		float mFlashingTickTime = 0.0f;
+
+		// Shadow
+		GameObject* mShadow = nullptr;
+
 	};
 }

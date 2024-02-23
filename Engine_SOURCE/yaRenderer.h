@@ -47,9 +47,11 @@ namespace renderer
 		UINT colliderState;
 	};
 
-	CBUFFER(FlickeringCB, CBSLOT_FLICKERING)
+	CBUFFER(EffectCB, CBSLOT_EFFECT)
 	{
+		Vector4 effectLightColor;
 		UINT isFlickering;
+		UINT isFlashing;
 		//float minAlpha;
 		//float maxAlpha;
 		//float amplitude;
