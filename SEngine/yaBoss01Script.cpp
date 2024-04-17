@@ -162,9 +162,9 @@
 //															// FSM
 //		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//		if (mPreviousState != mState)
+//		if (mPrevState != mCurState)
 //		{
-//			switch (mState)
+//			switch (mCurState)
 //			{
 //			case Boss01Script::L_Idle:
 //				L_idle();
@@ -346,7 +346,7 @@
 //			}
 //		}
 //
-//		mPreviousState = mState;
+//		mPrevState = mCurState;
 //
 //		// 본인 위치 업데이트
 //		Transform* tr = this->GetOwner()->GetComponent<Transform>();
@@ -419,7 +419,7 @@
 //					if (mIsAttacked1 == false && mIsAttacked2 == false && mIsAttacked3 == false && mIsAttacked4 == false && mIsDowned == false && mIsGetUp == false && mIsGuard == false)// Combat 조건
 //					{
 //						// 처음 감지했을 때만 들어오는 조건문
-//						if (mCombated == false)
+//						if (mIsCombat == false)
 //						{
 //							if (mPlayerPos.x < mPos.x)
 //							{
@@ -444,7 +444,7 @@
 //				else
 //				{
 //					mDetected = true;// 플레이어 쪽 방향으로 설정 해주기 위해 처음 Detect 되는 상태로 전환
-//					mCombated = false;
+//					mIsCombat = false;
 //
 //					//mCombatTimer = 0.0f;
 //
@@ -465,7 +465,7 @@
 //						}
 //						else
 //						{
-//							if (mPlayerPos.x < mPos.x && (mState == eLukeState::L_Idle || mState == eLukeState::R_Idle || mState == eLukeState::L_Run || mState == eLukeState::R_Run))
+//							if (mPlayerPos.x < mPos.x && (mCurState == eLukeState::L_Idle || mCurState == eLukeState::R_Idle || mCurState == eLukeState::L_Run || mCurState == eLukeState::R_Run))
 //							{
 //								mDirection = eDirection::L;
 //								ChangeState(eLukeState::L_Run);
@@ -476,7 +476,7 @@
 //								pos.x += mDirectionInt * mRunSpeed * Time::DeltaTime();
 //								tr->SetPosition(pos);
 //							}
-//							else if (mPos.x < mPlayerPos.x && (mState == eLukeState::L_Idle || mState == eLukeState::R_Idle || mState == eLukeState::L_Run || mState == eLukeState::R_Run))
+//							else if (mPos.x < mPlayerPos.x && (mCurState == eLukeState::L_Idle || mCurState == eLukeState::R_Idle || mCurState == eLukeState::L_Run || mCurState == eLukeState::R_Run))
 //							{
 //								mDirection = eDirection::R;
 //								ChangeState(eLukeState::R_Run);
@@ -494,11 +494,11 @@
 //					// 대기하는 경우
 //					else// (mRandWaitOrRun == 1)
 //					{
-//						if (mPlayerPos.x < mPos.x && (mState == eLukeState::L_Idle || mState == eLukeState::R_Idle || mState == eLukeState::L_Run || mState == eLukeState::R_Run))
+//						if (mPlayerPos.x < mPos.x && (mCurState == eLukeState::L_Idle || mCurState == eLukeState::R_Idle || mCurState == eLukeState::L_Run || mCurState == eLukeState::R_Run))
 //						{
 //							ChangeState(eLukeState::L_Idle);
 //						}
-//						else if (mPos.x < mPlayerPos.x && (mState == eLukeState::L_Idle || mState == eLukeState::R_Idle || mState == eLukeState::L_Run || mState == eLukeState::R_Run))
+//						else if (mPos.x < mPlayerPos.x && (mCurState == eLukeState::L_Idle || mCurState == eLukeState::R_Idle || mCurState == eLukeState::L_Run || mCurState == eLukeState::R_Run))
 //						{
 //							ChangeState(eLukeState::R_Idle);
 //						}
@@ -641,7 +641,7 @@
 //		}
 //
 //		// mBodyCd 활성화 비활성화 조건
-//		if (mState == eLukeState::L_Guard || mState == eLukeState::R_Guard
+//		if (mCurState == eLukeState::L_Guard || mCurState == eLukeState::R_Guard
 //			|| mIsArm || mIsKick || mIsSideKick || mIsUpper
 //			|| mIsAttacked1 || mIsAttacked2 || mIsAttacked3 || mIsAttacked4)
 //			// 가드가 붙은 스킬아냐 아니냐로 구분을 해서 적용을 할지 고민중
@@ -675,7 +675,7 @@
 //		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //		// 가드 상태 변수 동기화
-//		if (mState == eLukeState::L_Guard || mState == eLukeState::R_Guard)
+//		if (mCurState == eLukeState::L_Guard || mCurState == eLukeState::R_Guard)
 //		{
 //			mIsGuard = true;
 //		}
@@ -685,7 +685,7 @@
 //		}
 //
 //		// Attacked 상태 변수 동기화
-//		if (mState == eLukeState::L_Attacked1 || mState == eLukeState::R_Attacked1)
+//		if (mCurState == eLukeState::L_Attacked1 || mCurState == eLukeState::R_Attacked1)
 //		{
 //			mIsAttacked1 = true;
 //		}
@@ -693,7 +693,7 @@
 //		{
 //			mIsAttacked1 = false;
 //		}
-//		if (mState == eLukeState::L_Attacked2 || mState == eLukeState::R_Attacked2)
+//		if (mCurState == eLukeState::L_Attacked2 || mCurState == eLukeState::R_Attacked2)
 //		{
 //			mIsAttacked2 = true;
 //		}
@@ -701,7 +701,7 @@
 //		{
 //			mIsAttacked2 = false;
 //		}
-//		if (mState == eLukeState::L_Attacked3 || mState == eLukeState::R_Attacked3)
+//		if (mCurState == eLukeState::L_Attacked3 || mCurState == eLukeState::R_Attacked3)
 //		{
 //			mIsAttacked3 = true;
 //		}
@@ -709,7 +709,7 @@
 //		{
 //			mIsAttacked3 = false;
 //		}
-//		if (mState == eLukeState::L_Attacked4 || mState == eLukeState::R_Attacked4)
+//		if (mCurState == eLukeState::L_Attacked4 || mCurState == eLukeState::R_Attacked4)
 //		{
 //			mIsAttacked4 = true;
 //		}
@@ -718,7 +718,7 @@
 //			mIsAttacked4 = false;
 //		}
 //
-//		if (mState == eLukeState::L_Downed || mState == eLukeState::R_Downed)
+//		if (mCurState == eLukeState::L_Downed || mCurState == eLukeState::R_Downed)
 //		{
 //			mIsDowned = true;
 //		}
@@ -728,7 +728,7 @@
 //		}
 //
 //		// GetUp 상태 변수 동기화
-//		if (mState == eLukeState::L_GetUp || mState == eLukeState::R_GetUp)
+//		if (mCurState == eLukeState::L_GetUp || mCurState == eLukeState::R_GetUp)
 //		{
 //			mIsGetUp = true;
 //		}
@@ -738,7 +738,7 @@
 //		}
 //
 //		// 공격 상태 변수 동기화
-//		if (mState == eLukeState::L_ArmAttack || mState == eLukeState::R_ArmAttack)
+//		if (mCurState == eLukeState::L_ArmAttack || mCurState == eLukeState::R_ArmAttack)
 //		{
 //			mIsArm = true;
 //		}
@@ -746,7 +746,7 @@
 //		{
 //			mIsArm = false;
 //		}
-//		if (mState == eLukeState::L_KickAttack || mState == eLukeState::R_KickAttack)
+//		if (mCurState == eLukeState::L_KickAttack || mCurState == eLukeState::R_KickAttack)
 //		{
 //			mIsKick = true;
 //		}
@@ -754,7 +754,7 @@
 //		{
 //			mIsKick = false;
 //		}
-//		if (mState == eLukeState::L_SideKickAttack || mState == eLukeState::R_SideKickAttack)
+//		if (mCurState == eLukeState::L_SideKickAttack || mCurState == eLukeState::R_SideKickAttack)
 //		{
 //			mIsSideKick = true;
 //		}
@@ -762,7 +762,7 @@
 //		{
 //			mIsSideKick = false;
 //		}
-//		if (mState == eLukeState::L_UpperAttack || mState == eLukeState::R_UpperAttack)
+//		if (mCurState == eLukeState::L_UpperAttack || mCurState == eLukeState::R_UpperAttack)
 //		{
 //			mIsUpper = true;
 //		}
@@ -923,7 +923,7 @@
 //
 //	void LukeScript::Combat()
 //	{
-//		mCombated = true;
+//		mIsCombat = true;
 //
 //		mCombatTimer -= Time::DeltaTime();
 //

@@ -18,7 +18,7 @@ namespace ya
 {
 	RamonaScript::RamonaScript()
 	{
-
+		mAttackState.resize(20, false);
 	}
 
 	RamonaScript::~RamonaScript()
@@ -28,6 +28,17 @@ namespace ya
 
 	void RamonaScript::Initialize()
 	{
+		// 이펙트 확인 디버깅용
+		//SetEffectFlickering(0.25f, 5.0f);// 특정 상황에서 함수 호출 ex. 충돌
+		SetEffectFlashing(0.25f, 5.0f, Vector4(0.5f, 0.5f, 0.5f, 1.0f));// White
+		//SetEffectFlashing(0.25f, 5.0f, Vector4(1.2f, 0.0f, 0.0f, 1.0f));// Red
+
+		
+
+		#pragma region 그림자
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 그림자
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		mShadow = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 40.f)
 			, Vector3::One * 3
 			, eLayerType::Player);
@@ -36,15 +47,10 @@ namespace ya
 		mr->SetMaterial(Resources::Find<Material>(L"SpriteMaterial_Shadow"));
 		std::shared_ptr<Texture> texture
 			= Resources::Load<Texture>(L"SHADOW", L"..\\Resources\\TEXTURE\\RAMONA\\Shadow.png");
-		mShadow->GetComponent<Transform>()->SetScale((Vector3(texture.get()->GetImageRatioOfWidth() * 1.4f,
-			texture.get()->GetImageRatioOfHeight() * 1.0f , 0.0f))
-			* 1.2f);
-
-
-
-		//SetEffectFlickering(0.25f, 5.0f);// 특정 상황에서 함수 호출 ex. 충돌
-		SetEffectFlashing(0.25f, 5.0f, Vector4(0.8f, 0.8f, 0.8f, 1.0f));// White
-		//SetEffectFlashing(0.25f, 5.0f, Vector4(1.2f, 0.0f, 0.0f, 1.0f));// Red
+		mShadow->GetComponent<Transform>()->SetScale((Vector3(texture.get()->GetImageRatioOfWidth() * 2.0f,
+			texture.get()->GetImageRatioOfHeight() * 2.0f, 0.0f))
+			* 1.0f);
+		#pragma endregion
 
 		#pragma region 애니메이션
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -539,7 +545,10 @@ namespace ya
 															// 속성
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		mAttribute.mHp = 100.f;
+		mAttribute.mHeart = 3;
+		mAttribute.mHp = 100;
+		mAttribute.mGP = 0;
+		mAttribute.mCoin = 0;
 
         #pragma endregion
 
@@ -684,11 +693,11 @@ namespace ya
 																	// FSM
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		if (mPreviousState != mState)
+		if (mPrevState != mCurState)
 		{
 			Animator* at = this->GetOwner()->GetComponent<Animator>();
 
-			switch (mState)
+			switch (mCurState)
 			{
 			case ePlayerState::L_Idle:
 				L_idle();
@@ -881,7 +890,7 @@ namespace ya
 			}
 		}
 
-		mPreviousState = mState;
+		mPrevState = mCurState;
 		// 이전 상태 설정
 		// 여기 아래에서부터 상태 변화가 진행되어야
 		// 다음번 Update 부분으로 들어올 때, mState의 switch문 조건인
@@ -974,7 +983,7 @@ namespace ya
 
 				if (NoneAnimationCondition())
 				{
-					mState = ePlayerState::L_Walk;
+					mCurState = ePlayerState::L_Walk;
 				}
 
 				if (CanMoveCondition())// 좌우 움직임 제한하지 않는 스킬인지 확인
@@ -989,7 +998,7 @@ namespace ya
 				mDirection = eDirection::L;
 
 				if (NoneAnimationCondition())
-					mState = ePlayerState::L_Walk;
+					mCurState = ePlayerState::L_Walk;
 			}
 
 			if (Input::GetKeyUp(eKeyCode::LEFT))// 키 입력이 끝나고 이동하지 않을 때, Idle 상태로 전환
@@ -997,7 +1006,7 @@ namespace ya
 				mDirection = eDirection::L;
 
 				if (NoneAnimationCondition())
-					mState = ePlayerState::L_Idle;
+					mCurState = ePlayerState::L_Idle;
 			}
 
 			// 우
@@ -1006,7 +1015,7 @@ namespace ya
 				mDirection = eDirection::R;
 
 				if (NoneAnimationCondition())
-					mState = ePlayerState::R_Walk;
+					mCurState = ePlayerState::R_Walk;
 
 				if (CanMoveCondition())// 좌우 움직임 제한하지 않는 스킬인지 확인
 				{
@@ -1028,7 +1037,7 @@ namespace ya
 				mDirection = eDirection::R;
 
 				if (NoneAnimationCondition())
-					mState = ePlayerState::R_Walk;
+					mCurState = ePlayerState::R_Walk;
 			}
 
 			if (Input::GetKeyUp(eKeyCode::RIGHT))// 키 입력이 끝나고 이동하지 않을 때, Idle 상태로 전환
@@ -1036,7 +1045,7 @@ namespace ya
 				mDirection = eDirection::R;
 
 				if (NoneAnimationCondition())
-					mState = ePlayerState::R_Idle;
+					mCurState = ePlayerState::R_Idle;
 			}
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1050,11 +1059,11 @@ namespace ya
 				{
 					if (mDirection == eDirection::L)
 					{
-						mState = ePlayerState::L_Walk;
+						mCurState = ePlayerState::L_Walk;
 					}
 					else
 					{
-						mState = ePlayerState::R_Walk;
+						mCurState = ePlayerState::R_Walk;
 					}
 				}
 
@@ -1077,11 +1086,11 @@ namespace ya
 				{
 					if (mDirection == eDirection::L)
 					{
-						mState = ePlayerState::L_Walk;
+						mCurState = ePlayerState::L_Walk;
 					}
 					else
 					{
-						mState = ePlayerState::R_Walk;
+						mCurState = ePlayerState::R_Walk;
 					}
 				}
 			}
@@ -1093,11 +1102,11 @@ namespace ya
 					{
 						if (mDirection == eDirection::L)
 						{
-							mState = ePlayerState::L_Idle;
+							mCurState = ePlayerState::L_Idle;
 						}
 						else
 						{
-							mState = ePlayerState::R_Idle;
+							mCurState = ePlayerState::R_Idle;
 						}
 					}
 				}
@@ -1110,11 +1119,11 @@ namespace ya
 				{
 					if (mDirection == eDirection::L)
 					{
-						mState = ePlayerState::L_Walk;
+						mCurState = ePlayerState::L_Walk;
 					}
 					else
 					{
-						mState = ePlayerState::R_Walk;
+						mCurState = ePlayerState::R_Walk;
 					}
 				}
 
@@ -1137,11 +1146,11 @@ namespace ya
 				{
 					if (mDirection == eDirection::L)
 					{
-						mState = ePlayerState::L_Walk;
+						mCurState = ePlayerState::L_Walk;
 					}
 					else
 					{
-						mState = ePlayerState::R_Walk;
+						mCurState = ePlayerState::R_Walk;
 					}
 				}
 			}
@@ -1153,11 +1162,11 @@ namespace ya
 					{
 						if (mDirection == eDirection::L)
 						{
-							mState = ePlayerState::L_Idle;
+							mCurState = ePlayerState::L_Idle;
 						}
 						else
 						{
-							mState = ePlayerState::R_Idle;
+							mCurState = ePlayerState::R_Idle;
 						}
 					}
 				}
@@ -1169,7 +1178,7 @@ namespace ya
 
 			if (Input::GetKey(eKeyCode::LSHIFT))
 			{
-				if (mState == ePlayerState::L_Walk || mState == ePlayerState::R_Walk)
+				if (mCurState == ePlayerState::L_Walk || mCurState == ePlayerState::R_Walk)
 				{
 					mIsRun = true;
 
@@ -1191,7 +1200,7 @@ namespace ya
 							tr->SetPosition(pos);
 						}
 
-						mState = ePlayerState::L_Run;
+						mCurState = ePlayerState::L_Run;
 					}
 					else
 					{
@@ -1211,7 +1220,7 @@ namespace ya
 							tr->SetPosition(pos);
 						}
 
-						mState = ePlayerState::R_Run;
+						mCurState = ePlayerState::R_Run;
 					}
 				}
 			}
@@ -1220,15 +1229,15 @@ namespace ya
 			{
 				mIsRun = false;
 
-				if (mState == ePlayerState::L_Run || mState == ePlayerState::R_Run)
+				if (mCurState == ePlayerState::L_Run || mCurState == ePlayerState::R_Run)
 				{
 					if (mDirection == eDirection::L)
 					{
-						mState = ePlayerState::L_Walk;
+						mCurState = ePlayerState::L_Walk;
 					}
 					else
 					{
-						mState = ePlayerState::R_Walk;
+						mCurState = ePlayerState::R_Walk;
 					}
 				}
 			}
@@ -1243,11 +1252,11 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_Jump;
+					mCurState = ePlayerState::L_Jump;
 				}
 				else
 				{
-					mState = ePlayerState::R_Jump;
+					mCurState = ePlayerState::R_Jump;
 				}
 			}
 
@@ -1344,11 +1353,11 @@ namespace ya
 
 						if (mDirection == eDirection::L)
 						{
-							mState = ePlayerState::L_JumpDownAttack;
+							mCurState = ePlayerState::L_JumpDownAttack;
 						}
 						else
 						{
-							mState = ePlayerState::R_JumpDownAttack;
+							mCurState = ePlayerState::R_JumpDownAttack;
 						}
 					}
 					// JumpSlideAttack: 점프 중 + E
@@ -1358,11 +1367,11 @@ namespace ya
 
 						if (mDirection == eDirection::L)
 						{
-							mState = ePlayerState::L_JumpSlideAttack;
+							mCurState = ePlayerState::L_JumpSlideAttack;
 						}
 						else
 						{
-							mState = ePlayerState::R_JumpSlideAttack;
+							mCurState = ePlayerState::R_JumpSlideAttack;
 						}
 					}
 					// JumpSlideAttack: 점프 중 + D
@@ -1372,11 +1381,11 @@ namespace ya
 
 						if (mDirection == eDirection::L)
 						{
-							mState = ePlayerState::L_RunJumpAttack;
+							mCurState = ePlayerState::L_RunJumpAttack;
 						}
 						else
 						{
-							mState = ePlayerState::R_RunJumpAttack;
+							mCurState = ePlayerState::R_RunJumpAttack;
 						}
 					}
 				}
@@ -1423,11 +1432,11 @@ namespace ya
 						{
 							if (mDirection == eDirection::L)
 							{
-								mState = ePlayerState::L_Idle;
+								mCurState = ePlayerState::L_Idle;
 							}
 							else
 							{
-								mState = ePlayerState::R_Idle;
+								mCurState = ePlayerState::R_Idle;
 							}
 						}
 					}
@@ -1481,11 +1490,11 @@ namespace ya
 
 						if (mDirection == eDirection::L)
 						{
-							mState = ePlayerState::L_JumpDownAttack;
+							mCurState = ePlayerState::L_JumpDownAttack;
 						}
 						else
 						{
-							mState = ePlayerState::R_JumpDownAttack;
+							mCurState = ePlayerState::R_JumpDownAttack;
 						}
 					}
 					// JumpSlideAttack: 점프 중 + E
@@ -1495,11 +1504,11 @@ namespace ya
 
 						if (mDirection == eDirection::L)
 						{
-							mState = ePlayerState::L_JumpSlideAttack;
+							mCurState = ePlayerState::L_JumpSlideAttack;
 						}
 						else
 						{
-							mState = ePlayerState::R_JumpSlideAttack;
+							mCurState = ePlayerState::R_JumpSlideAttack;
 						}
 					}
 					// RunJumpAttack: 점프 중 + D
@@ -1509,11 +1518,11 @@ namespace ya
 
 						if (mDirection == eDirection::L)
 						{
-							mState = ePlayerState::L_RunJumpAttack;
+							mCurState = ePlayerState::L_RunJumpAttack;
 						}
 						else
 						{
-							mState = ePlayerState::R_RunJumpAttack;
+							mCurState = ePlayerState::R_RunJumpAttack;
 						}
 					}
 				}
@@ -1531,11 +1540,11 @@ namespace ya
 
 						if (mDirection == eDirection::L)
 						{
-							mState = ePlayerState::L_DJump;
+							mCurState = ePlayerState::L_DJump;
 						}
 						else
 						{
-							mState = ePlayerState::R_DJump;
+							mCurState = ePlayerState::R_DJump;
 						}
 					}
 				}
@@ -1547,18 +1556,18 @@ namespace ya
 
 			if (Input::GetKey(eKeyCode::Q))
 			{
-				if (mState == ePlayerState::L_Idle || mState == ePlayerState::R_Idle || mState == ePlayerState::L_Walk || mState == ePlayerState::R_Walk)
+				if (mCurState == ePlayerState::L_Idle || mCurState == ePlayerState::R_Idle || mCurState == ePlayerState::L_Walk || mCurState == ePlayerState::R_Walk)
 				{
 					mIsGuard = true;
 					//mBodyCd->SetActivation(eColliderActivation::InActive);
 
 					if (mDirection == eDirection::L)
 					{
-						mState = ePlayerState::L_Guard;
+						mCurState = ePlayerState::L_Guard;
 					}
 					else
 					{
-						mState = ePlayerState::R_Guard;
+						mCurState = ePlayerState::R_Guard;
 					}
 				}
 			}
@@ -1569,11 +1578,11 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_Idle;
+					mCurState = ePlayerState::L_Idle;
 				}
 				else
 				{
-					mState = ePlayerState::R_Idle;
+					mCurState = ePlayerState::R_Idle;
 				}
 			}
 
@@ -1589,11 +1598,11 @@ namespace ya
 
 					if (mDirection == eDirection::L)
 					{
-						mState = ePlayerState::L_Evade;
+						mCurState = ePlayerState::L_Evade;
 					}
 					else
 					{
-						mState = ePlayerState::R_Evade;
+						mCurState = ePlayerState::R_Evade;
 					}
 				}
 			}
@@ -1617,11 +1626,11 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_NormalAttack1;
+					mCurState = ePlayerState::L_NormalAttack1;
 				}
 				else
 				{
-					mState = ePlayerState::R_NormalAttack1;
+					mCurState = ePlayerState::R_NormalAttack1;
 				}
 			}
 
@@ -1639,9 +1648,9 @@ namespace ya
 
 			// 오류 방지 2
 			// 공격 하지 않을 때는 공격 관련 변수 모두 초기화
-			if (!(mState == ePlayerState::L_NormalAttack1 || mState == ePlayerState::R_NormalAttack1
-				|| mState == ePlayerState::L_NormalAttack2 || mState == ePlayerState::R_NormalAttack2
-				|| mState == ePlayerState::L_NormalAttack3 || mState == ePlayerState::R_NormalAttack3))
+			if (!(mCurState == ePlayerState::L_NormalAttack1 || mCurState == ePlayerState::R_NormalAttack1
+				|| mCurState == ePlayerState::L_NormalAttack2 || mCurState == ePlayerState::R_NormalAttack2
+				|| mCurState == ePlayerState::L_NormalAttack3 || mCurState == ePlayerState::R_NormalAttack3))
 			{
 				mIsNormalAttack1 = false;
 				mIsNormalAttack2 = false;
@@ -1669,11 +1678,11 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_NormalAttack2;
+					mCurState = ePlayerState::L_NormalAttack2;
 				}
 				else
 				{
-					mState = ePlayerState::R_NormalAttack2;
+					mCurState = ePlayerState::R_NormalAttack2;
 				}
 
 			}
@@ -1706,11 +1715,11 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_NormalAttack3;
+					mCurState = ePlayerState::L_NormalAttack3;
 				}
 				else
 				{
-					mState = ePlayerState::R_NormalAttack3;
+					mCurState = ePlayerState::R_NormalAttack3;
 				}
 
 			}
@@ -1726,15 +1735,15 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_Kick;
+					mCurState = ePlayerState::L_Kick;
 				}
 				else
 				{
-					mState = ePlayerState::R_Kick;
+					mCurState = ePlayerState::R_Kick;
 				}
 			}
 			// Kick 오류 방지
-			if (!(mState == ePlayerState::L_Kick || mState == ePlayerState::R_Kick))
+			if (!(mCurState == ePlayerState::L_Kick || mCurState == ePlayerState::R_Kick))
 			{
 				mIsKickAttack = false;
 			}
@@ -1747,15 +1756,15 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_RoundKick;
+					mCurState = ePlayerState::L_RoundKick;
 				}
 				else
 				{
-					mState = ePlayerState::R_RoundKick;
+					mCurState = ePlayerState::R_RoundKick;
 				}
 			}
 			// Round Kick 오류 방지
-			if (!(mState == ePlayerState::L_RoundKick || mState == ePlayerState::R_RoundKick))
+			if (!(mCurState == ePlayerState::L_RoundKick || mCurState == ePlayerState::R_RoundKick))
 			{
 				mIsRoundKickAttack = false;
 			}
@@ -1768,15 +1777,15 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_BehindKick;
+					mCurState = ePlayerState::L_BehindKick;
 				}
 				else
 				{
-					mState = ePlayerState::R_BehindKick;
+					mCurState = ePlayerState::R_BehindKick;
 				}
 			}
 			// Behind Kick 오류 방지
-			if (!(mState == ePlayerState::L_BehindKick || mState == ePlayerState::R_BehindKick))
+			if (!(mCurState == ePlayerState::L_BehindKick || mCurState == ePlayerState::R_BehindKick))
 			{
 				mIsBehindKickAttack = false;
 			}
@@ -1792,15 +1801,15 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_WeaponNormalAttack;
+					mCurState = ePlayerState::L_WeaponNormalAttack;
 				}
 				else
 				{
-					mState = ePlayerState::R_WeaponNormalAttack;
+					mCurState = ePlayerState::R_WeaponNormalAttack;
 				}
 			}
 			// WeaponNormalAttack 오류 방지
-			if (!(mState == ePlayerState::L_WeaponNormalAttack || mState == ePlayerState::R_WeaponNormalAttack))
+			if (!(mCurState == ePlayerState::L_WeaponNormalAttack || mCurState == ePlayerState::R_WeaponNormalAttack))
 			{
 				mIsWeaponNormalAttack = false;
 			}
@@ -1813,15 +1822,15 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_WeaponDownAttack;
+					mCurState = ePlayerState::L_WeaponDownAttack;
 				}
 				else
 				{
-					mState = ePlayerState::R_WeaponDownAttack;
+					mCurState = ePlayerState::R_WeaponDownAttack;
 				}
 			}
 			// WeaponDownAttack오류 방지
-			if (!(mState == ePlayerState::L_WeaponDownAttack || mState == ePlayerState::R_WeaponDownAttack))
+			if (!(mCurState == ePlayerState::L_WeaponDownAttack || mCurState == ePlayerState::R_WeaponDownAttack))
 			{
 				mIsWeaponDownAttack = false;
 			}
@@ -1834,15 +1843,15 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_WeaponSideAttack;
+					mCurState = ePlayerState::L_WeaponSideAttack;
 				}
 				else
 				{
-					mState = ePlayerState::R_WeaponSideAttack;
+					mCurState = ePlayerState::R_WeaponSideAttack;
 				}
 			}
 			// WeaponSideAttack 오류 방지
-			if (!(mState == ePlayerState::L_WeaponSideAttack || mState == ePlayerState::R_WeaponSideAttack))
+			if (!(mCurState == ePlayerState::L_WeaponSideAttack || mCurState == ePlayerState::R_WeaponSideAttack))
 			{
 				mIsWeaponSideAttack = false;
 			}
@@ -1855,15 +1864,15 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_WeaponStabAttack;
+					mCurState = ePlayerState::L_WeaponStabAttack;
 				}
 				else
 				{
-					mState = ePlayerState::R_WeaponStabAttack;
+					mCurState = ePlayerState::R_WeaponStabAttack;
 				}
 			}
 			// WeaponStabAttack 오류 방지
-			if (!(mState == ePlayerState::L_WeaponStabAttack || mState == ePlayerState::R_WeaponStabAttack))
+			if (!(mCurState == ePlayerState::L_WeaponStabAttack || mCurState == ePlayerState::R_WeaponStabAttack))
 			{
 				mIsWeaponStabAttack = false;
 			}
@@ -1897,11 +1906,11 @@ namespace ya
 
 					if (mDirection == eDirection::L)
 					{
-						mState = ePlayerState::L_RunWeaponAttack;
+						mCurState = ePlayerState::L_RunWeaponAttack;
 					}
 					else
 					{
-						mState = ePlayerState::R_RunWeaponAttack;
+						mCurState = ePlayerState::R_RunWeaponAttack;
 					}
 				}
 			}
@@ -1915,11 +1924,11 @@ namespace ya
 
 					if (mDirection == eDirection::L)
 					{
-						mState = ePlayerState::L_RunSlideAttack;
+						mCurState = ePlayerState::L_RunSlideAttack;
 					}
 					else
 					{
-						mState = ePlayerState::R_RunSlideAttack;
+						mCurState = ePlayerState::R_RunSlideAttack;
 					}
 				}
 			}
@@ -1940,11 +1949,11 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_FireBall;
+					mCurState = ePlayerState::L_FireBall;
 				}
 				else
 				{
-					mState = ePlayerState::R_FireBall;
+					mCurState = ePlayerState::R_FireBall;
 				}
 			}
 
@@ -1967,11 +1976,11 @@ namespace ya
 
 				if (mDirection == eDirection::L)
 				{
-					mState = ePlayerState::L_Super;
+					mCurState = ePlayerState::L_Super;
 				}
 				else
 				{
-					mState = ePlayerState::R_Super;
+					mCurState = ePlayerState::R_Super;
 				}
 			}
 
@@ -1999,7 +2008,7 @@ namespace ya
 		//	mIsFireBall B || mIsSuper A
 
 		//// mBodyCd 활성화 비활성화 조건
-		//if (//mState == ePlayerState::L_Guard || mState == ePlayerState::R_Guard
+		//if (//mCurState == ePlayerState::L_Guard || mCurState == ePlayerState::R_Guard
 		//	 mIsEvade || mIsNormalAttack1 || mIsNormalAttack2 || mIsNormalAttack3 || mIsKickAttack || mIsRoundKickAttack || mIsBehindKickAttack
 		//	|| mIsWeaponNormalAttack || mIsWeaponDownAttack || mIsWeaponSideAttack || mIsWeaponStabAttack || mIsJumpDownAttack || mIsJumpSlideAttack || mIsRunJumpAttack 
 		//	|| mIsRunWeaponAttack || mIsRunSlideAttack
@@ -2011,7 +2020,7 @@ namespace ya
 		//{
 		//	mBodyCd->SetActivation(eColliderActivation::InActive);
 		//}
-		//else if//mState == ePlayerState::L_Guard || mState == ePlayerState::R_Guard
+		//else if//mCurState == ePlayerState::L_Guard || mCurState == ePlayerState::R_Guard
 		//	(! (mIsEvade || mIsNormalAttack1 || mIsNormalAttack2 || mIsNormalAttack3 || mIsKickAttack || mIsRoundKickAttack || mIsBehindKickAttack
 		//	|| mIsWeaponNormalAttack || mIsWeaponDownAttack || mIsWeaponSideAttack || mIsWeaponStabAttack || mIsJumpDownAttack || mIsJumpSlideAttack || mIsRunJumpAttack
 		//	|| mIsRunWeaponAttack || mIsRunSlideAttack
@@ -2023,7 +2032,7 @@ namespace ya
 		//}
 
 		
-		if(! (mState == ePlayerState::L_Guard || mState == ePlayerState::R_Guard))// 가드를 사용하지 않는 상태는 false로 초기화
+		if(! (mCurState == ePlayerState::L_Guard || mCurState == ePlayerState::R_Guard))// 가드를 사용하지 않는 상태는 false로 초기화
 		{
 			mBodyCd->SetCanGuard(false);
 		}
@@ -2086,7 +2095,7 @@ namespace ya
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		
-		if (mState == ePlayerState::L_Idle || mState == ePlayerState::R_Idle || mState == ePlayerState::L_Run || mState == ePlayerState::R_Run)
+		if (mCurState == ePlayerState::L_Idle || mCurState == ePlayerState::R_Idle || mCurState == ePlayerState::L_Run || mCurState == ePlayerState::R_Run)
 		{
 			mIsCollidingFirst = 0;
 		}
@@ -2105,7 +2114,7 @@ namespace ya
 		}
 
 		// 공격 당하는 관련 변수들
-		if (mState == ePlayerState::L_Stun || mState == ePlayerState::R_Stun)
+		if (mCurState == ePlayerState::L_Stun || mCurState == ePlayerState::R_Stun)
 		{
 			if (mEnemyPosition == -1)
 			{
@@ -2128,7 +2137,7 @@ namespace ya
 			mIsStun = false;
 		}
 
-		if (mState == ePlayerState::L_KnockDown || mState == ePlayerState::R_KnockDown)
+		if (mCurState == ePlayerState::L_KnockDown || mCurState == ePlayerState::R_KnockDown)
 		{
 			if (mEnemyPosition == -1)
 			{
@@ -2151,7 +2160,7 @@ namespace ya
 			mIsKnockDown = false;
 		}
 
-		if (mState == ePlayerState::L_Downed || mState == ePlayerState::R_Downed)
+		if (mCurState == ePlayerState::L_Downed || mCurState == ePlayerState::R_Downed)
 		{
 			mIsDowned = true;
 		}
@@ -2160,7 +2169,7 @@ namespace ya
 			mIsDowned = false;
 		}
 
-		if (mState == ePlayerState::L_GetUp || mState == ePlayerState::R_GetUp)
+		if (mCurState == ePlayerState::L_GetUp || mCurState == ePlayerState::R_GetUp)
 		{
 			mIsGetUp = true;
 		}
@@ -2169,7 +2178,7 @@ namespace ya
 			mIsGetUp = false;
 		}
 
-		if (mState == ePlayerState::L_BackStun || mState == ePlayerState::R_BackStun)
+		if (mCurState == ePlayerState::L_BackStun || mCurState == ePlayerState::R_BackStun)
 		{
 			if (mEnemyPosition == -1)
 			{
@@ -2194,7 +2203,7 @@ namespace ya
 
 		// 공격 변수들
 		//...
-		if (mState == ePlayerState::L_RunSlideAttack || mState == ePlayerState::R_RunSlideAttack)
+		if (mCurState == ePlayerState::L_RunSlideAttack || mCurState == ePlayerState::R_RunSlideAttack)
 		{
 			mIsRunSlideAttack = true;
 		}
@@ -2203,7 +2212,7 @@ namespace ya
 			mIsRunSlideAttack = false;
 		}
 
-		if (mState == ePlayerState::L_NormalAttack1 || mState == ePlayerState::R_NormalAttack1)
+		if (mCurState == ePlayerState::L_NormalAttack1 || mCurState == ePlayerState::R_NormalAttack1)
 		{
 			mIsNormalAttack1 = true;
 		}
@@ -2211,7 +2220,7 @@ namespace ya
 		{
 			mIsNormalAttack1 = false;
 		}
-		if (mState == ePlayerState::L_NormalAttack2 || mState == ePlayerState::R_NormalAttack2)
+		if (mCurState == ePlayerState::L_NormalAttack2 || mCurState == ePlayerState::R_NormalAttack2)
 		{
 			mIsNormalAttack2 = true;
 		}
@@ -2219,7 +2228,7 @@ namespace ya
 		{
 			mIsNormalAttack2 = false;
 		}
-		if (mState == ePlayerState::L_NormalAttack3 || mState == ePlayerState::R_NormalAttack3)
+		if (mCurState == ePlayerState::L_NormalAttack3 || mCurState == ePlayerState::R_NormalAttack3)
 		{
 			mIsNormalAttack3 = true;
 		}
@@ -2229,7 +2238,7 @@ namespace ya
 		}
 
 		// 공격 변수들 강제 초기화
-		if (mState == ePlayerState::L_Idle || mState == ePlayerState::R_Idle || mState == ePlayerState::L_Run|| mState == ePlayerState::R_Run)
+		if (mCurState == ePlayerState::L_Idle || mCurState == ePlayerState::R_Idle || mCurState == ePlayerState::L_Run|| mCurState == ePlayerState::R_Run)
 		{
 			mIsNormalAttack1 = false;
 			mIsNormalAttack2 = false;
@@ -2283,11 +2292,11 @@ namespace ya
 
 		if (mDirection == eDirection::L)
 		{
-			mState = ePlayerState::L_Idle;
+			mCurState = ePlayerState::L_Idle;
 		}
 		else
 		{
-			mState = ePlayerState::R_Idle;
+			mCurState = ePlayerState::R_Idle;
 		}
 	}
 
@@ -2320,11 +2329,11 @@ namespace ya
 
 		if (mDirection == eDirection::L)
 		{
-			mState = ePlayerState::L_Idle;
+			mCurState = ePlayerState::L_Idle;
 		}
 		else
 		{
-			mState = ePlayerState::R_Idle;
+			mCurState = ePlayerState::R_Idle;
 		}
 	}
 
@@ -2336,11 +2345,11 @@ namespace ya
 
 		if (mDirection == eDirection::L)
 		{
-			mState = ePlayerState::L_Idle;
+			mCurState = ePlayerState::L_Idle;
 		}
 		else
 		{
-			mState = ePlayerState::R_Idle;
+			mCurState = ePlayerState::R_Idle;
 		}
 	}
 
@@ -2353,11 +2362,11 @@ namespace ya
 
 		if (mDirection == eDirection::L)
 		{
-			mState = ePlayerState::L_Idle;
+			mCurState = ePlayerState::L_Idle;
 		}
 		else
 		{
-			mState = ePlayerState::R_Idle;
+			mCurState = ePlayerState::R_Idle;
 		}
 	}
 
@@ -2369,11 +2378,11 @@ namespace ya
 
 		if (mDirection == eDirection::L)
 		{
-			mState = ePlayerState::L_Idle;
+			mCurState = ePlayerState::L_Idle;
 		}
 		else
 		{
-			mState = ePlayerState::R_Idle;
+			mCurState = ePlayerState::R_Idle;
 		}
 	}
 
@@ -2384,11 +2393,11 @@ namespace ya
 
 		if (mDirection == eDirection::L)
 		{
-			mState = ePlayerState::L_Idle;
+			mCurState = ePlayerState::L_Idle;
 		}
 		else
 		{
-			mState = ePlayerState::R_Idle;
+			mCurState = ePlayerState::R_Idle;
 		}
 	}
 
@@ -2398,11 +2407,11 @@ namespace ya
 
 		if (mDirection == eDirection::L)
 		{
-			mState = ePlayerState::L_Idle;
+			mCurState = ePlayerState::L_Idle;
 		}
 		else
 		{
-			mState = ePlayerState::R_Idle;
+			mCurState = ePlayerState::R_Idle;
 		}
 	}
 
@@ -2412,11 +2421,11 @@ namespace ya
 
 		if (mDirection == eDirection::L)
 		{
-			mState = ePlayerState::L_Idle;
+			mCurState = ePlayerState::L_Idle;
 		}
 		else
 		{
-			mState = ePlayerState::R_Idle;
+			mCurState = ePlayerState::R_Idle;
 		}
 	}
 
@@ -2426,11 +2435,11 @@ namespace ya
 
 		if (mDirection == eDirection::L)
 		{
-			mState = ePlayerState::L_Idle;
+			mCurState = ePlayerState::L_Idle;
 		}
 		else
 		{
-			mState = ePlayerState::R_Idle;
+			mCurState = ePlayerState::R_Idle;
 		}
 	}
 
@@ -2440,11 +2449,11 @@ namespace ya
 
 		if (mDirection == eDirection::L)
 		{
-			mState = ePlayerState::L_Downed;
+			mCurState = ePlayerState::L_Downed;
 		}
 		else
 		{
-			mState = ePlayerState::R_Downed;
+			mCurState = ePlayerState::R_Downed;
 		}
 	}
 
@@ -2454,11 +2463,11 @@ namespace ya
 
 		if (mDirection == eDirection::L)
 		{
-			mState = ePlayerState::L_GetUp;
+			mCurState = ePlayerState::L_GetUp;
 		}
 		else
 		{
-			mState = ePlayerState::R_GetUp;
+			mCurState = ePlayerState::R_GetUp;
 		}
 	}
 
@@ -2468,11 +2477,11 @@ namespace ya
 
 		if (mDirection == eDirection::L)
 		{
-			mState = ePlayerState::L_Idle;
+			mCurState = ePlayerState::L_Idle;
 		}
 		else
 		{
-			mState = ePlayerState::R_Idle;
+			mCurState = ePlayerState::R_Idle;
 		}
 	}
 
@@ -2482,17 +2491,18 @@ namespace ya
 
 	void RamonaScript::OnCollisionEnter(Collider2D* other)// Enter가 정상 작동하는지 재확인 요망
 	{
-		if (other->GetOwner()->GetName() == L"Luke" || other->GetOwner()->GetName() == L"Luke2" || other->GetOwner()->GetName() == L"Luke3")
-		{
-			for (int i = 0; i < 4; i++)
-			{
-				mEnemyAttackState[i] = (other->GetOwner()->GetComponent<LukeScript>()->GetAttackState())[i];
-			}
-		}
+		//if (other->GetOwner()->GetName() == L"Luke" || other->GetOwner()->GetName() == L"Luke2" || other->GetOwner()->GetName() == L"Luke3")
+		//{
+		//	for (int i = 0; i < 4; i++)
+		//	{
+		//		mEnemyAttackState[i] = (other->GetOwner()->GetComponent<LukeScript>()->GetAttackState())[i];
+		//	}
+		//}
 	}
 	void RamonaScript::OnCollisionStay(Collider2D* other)
 	{
-		if (other->GetOwner()->GetName() == L"Luke" || other->GetOwner()->GetName() == L"Luke2" || other->GetOwner()->GetName() == L"Luke3")// 이 부분은 GameObject 상속받은 Enemy 만의 고유 이름이나 고유 상태를 확인 하거나 형변환으로 확인할 예정
+		if (other->GetOwner()->GetName() == L"Luke" || other->GetOwner()->GetName() == L"Luke2" || other->GetOwner()->GetName() == L"Luke3")
+			// 이 부분은 GameObject 상속받은 Enemy 만의 고유 이름이나 고유 상태를 확인 하거나 형변환으로 확인할 예정
 		{
 			if (mBodyCd->GetState() == eColliderState::IsColliding)
 			{
@@ -2503,7 +2513,7 @@ namespace ya
 				}
 
 				// 가드 상태
-				if (mState == ePlayerState::L_Guard || mState == ePlayerState::R_Guard)
+				if (mCurState == ePlayerState::L_Guard || mCurState == ePlayerState::R_Guard)
 				{
 					// Guard 상태일 때, InActive로 바꾸는 것이 아니라
 					// Guard 상태도 상시 Active 상태로 바꾸고
@@ -2556,7 +2566,13 @@ namespace ya
 						// mAttackState[2] = mIsSideKick;
 						// mAttackState[3] = mIsUpper;
 
-						if (mBodyCd->GetPosition().x < mBodyCd->GetOtherPos().x)
+
+						//if (mBodyCd->GetPosition().x < mBodyCd->GetOtherPos().x)
+						//	mEnemyPosition = 1;
+						//else
+						//	mEnemyPosition = -1;
+						
+						if (mBodyCd->GetPosition().x < other->GetPosition().x)
 							mEnemyPosition = 1;
 						else
 							mEnemyPosition = -1;
@@ -2568,11 +2584,11 @@ namespace ya
 
 							if (mDirection == eDirection::L)
 							{
-								mState = ePlayerState::L_KnockDown;
+								mCurState = ePlayerState::L_KnockDown;
 							}
 							else
 							{
-								mState = ePlayerState::R_KnockDown;
+								mCurState = ePlayerState::R_KnockDown;
 							}
 						}
 						else
@@ -2581,11 +2597,11 @@ namespace ya
 
 							if (mDirection == eDirection::L)
 							{
-								mState = ePlayerState::L_Stun;
+								mCurState = ePlayerState::L_Stun;
 							}
 							else
 							{
-								mState = ePlayerState::R_Stun;
+								mCurState = ePlayerState::R_Stun;
 							}
 						}
 

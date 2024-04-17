@@ -23,6 +23,7 @@ namespace ya::enums
 	{
 		Grid,
 		BG,
+		Camera,
 		Enemy,
 		Player,
 		Light,

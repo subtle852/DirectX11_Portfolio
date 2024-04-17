@@ -7,6 +7,7 @@
 #include "yaCamera.h"
 #include "yaPlayScene.h"
 #include "yaRamonaScript.h"
+#include "yaLukeScript.h"
 
 namespace ya
 {
@@ -16,25 +17,25 @@ namespace ya
 		mUpperCd->SetSize(Vector2(6.2f, 0.2f));
 		mUpperCd->SetCenter(Vector2(0.0f, 0.8f));
 		mUpperCd->SetActivation(eColliderActivation::Active);
-		mUpperCd->SetIsBody(true);
+		//mUpperCd->SetIsBody(true);
 
 		mLowerCd = this->GetOwner()->AddComponent<Collider2D>();
 		mLowerCd->SetSize(Vector2(6.2f, 0.2f));
 		mLowerCd->SetCenter(Vector2(0.0f, -1.8f));
 		mLowerCd->SetActivation(eColliderActivation::Active);
-		mLowerCd->SetIsBody(true);
+		//mLowerCd->SetIsBody(true);
 
 		mLeftCd = this->GetOwner()->AddComponent<Collider2D>();
 		mLeftCd->SetSize(Vector2(0.2f, 2.8f));
 		mLeftCd->SetCenter(Vector2(-3.1f, -0.4f));
 		mLeftCd->SetActivation(eColliderActivation::Active);
-		mLeftCd->SetIsBody(true);
+		//mLeftCd->SetIsBody(true);
 
 		mRightCd = this->GetOwner()->AddComponent<Collider2D>();
 		mRightCd->SetSize(Vector2(0.2f, 2.8f));
 		mRightCd->SetCenter(Vector2(3.1f, -0.4f));
 		mRightCd->SetActivation(eColliderActivation::Active);
-		mRightCd->SetIsBody(true);
+		//mRightCd->SetIsBody(true);
 	}
 
 	void CameraScript::Update()
@@ -101,42 +102,71 @@ namespace ya
 		Transform* obTr = ob->GetComponent<Transform>();
 		Vector3 obPos = obTr->GetPosition();
 
-		if (mUpperCd->GetState() == eColliderState::IsColliding)
+		if (ob->GetName() == L"Ramona")
 		{
-			// ob가 점프중에는 예외 
-			// 문제 1) 점프 기술도 막아야하나?
-			// 문제 2) 여기서 구현하는 것이 아닌 라모나스크립트에서 카메라와 충돌 중일때, 특정 이동 및 특정 상태를 막거나 가능하게 구현하는 방식?
-			// 문제 3) 충돌 중, 다른 방향으로 이동시 속도 감소
-			// 문제 4) 라모나 스크립트 아래방향 점프시 문제 발생 (현 상황과는 무관)
-			// 문제 5) 충돌체를 꺼야하는 상황들이 존재 (ex. 몬스터의 경우는 충돌 O/X 경우 존재, Transition 중,...)
-			RamonaScript* Rs = ob->GetComponent<RamonaScript>();
-			if (Rs == nullptr)
-				return;
+			if (mUpperCd->GetState() == eColliderState::IsColliding)
+			{
+				// ob가 점프중에는 예외 
+				// 문제 1) 점프 기술도 막아야하나?
+				// 문제 2) 여기서 구현하는 것이 아닌 라모나스크립트에서 카메라와 충돌 중일때, 특정 이동 및 특정 상태를 막거나 가능하게 구현하는 방식?
+				// 문제 3) 충돌 중, 다른 방향으로 이동시 속도 감소
+				// 문제 4) 라모나 스크립트 아래방향 점프시 문제 발생 (현 상황과는 무관)
+				// 문제 5) 충돌체를 꺼야하는 상황들이 존재 (ex. 몬스터의 경우는 충돌 O/X 경우 존재, Transition 중,...)
+				RamonaScript* Rs = ob->GetComponent<RamonaScript>();
+				if (Rs == nullptr)
+					return;
 
-			if (Rs->GetIsJump() == true)
-				return;
-			if (Rs->GetIsDJump() == true)
-				return;
+				if (Rs->GetIsJump() == true)
+					return;
+				if (Rs->GetIsDJump() == true)
+					return;
 
-			obPos.y -= 0.005f;
-			obTr->SetPosition(obPos);
+				obPos.y -= 0.005f;
+				obTr->SetPosition(obPos);
+			}
+			else if (mLowerCd->GetState() == eColliderState::IsColliding)
+			{
+				obPos.y += 0.005f;
+				obTr->SetPosition(obPos);
+			}
+			else if (mLeftCd->GetState() == eColliderState::IsColliding)
+			{
+				obPos.x += 0.005f;
+				obTr->SetPosition(obPos);
+			}
+			else if (mRightCd->GetState() == eColliderState::IsColliding)
+			{
+				obPos.x -= 0.005f;
+				obTr->SetPosition(obPos);
+			}
 		}
-		else if (mLowerCd->GetState() == eColliderState::IsColliding)
+		else
 		{
-			obPos.y += 0.005f;
-			obTr->SetPosition(obPos);
+			if (mUpperCd->GetState() == eColliderState::IsColliding)
+			{
+				obPos.y -= 0.005f;
+				obTr->SetPosition(obPos);
+			}
+			else if (mLowerCd->GetState() == eColliderState::IsColliding)
+			{
+				obPos.y += 0.005f;
+				obTr->SetPosition(obPos);
+			}
+			else if (mLeftCd->GetState() == eColliderState::IsColliding)
+			{
+				ob->GetComponent<LukeScript>()->ChangeWalkDirectionNState(eDirection::R);
+
+				obPos.x += 0.005f;
+				obTr->SetPosition(obPos);
+			}
+			else if (mRightCd->GetState() == eColliderState::IsColliding)
+			{
+				ob->GetComponent<LukeScript>()->ChangeWalkDirectionNState(eDirection::L);
+
+				obPos.x -= 0.005f;
+				obTr->SetPosition(obPos);
+			}
 		}
-		else if (mLeftCd->GetState() == eColliderState::IsColliding)
-		{
-			obPos.x += 0.005f;
-			obTr->SetPosition(obPos);
-		}
-		else if (mRightCd->GetState() == eColliderState::IsColliding)
-		{
-			obPos.x -= 0.005f;
-			obTr->SetPosition(obPos);
-		}
-		
 	}
 
 	void CameraScript::OnCollisionExit(Collider2D* other)

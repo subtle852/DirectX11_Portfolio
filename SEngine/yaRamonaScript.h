@@ -8,10 +8,10 @@ namespace ya
 	{
 		struct RamonaAttribute
 		{
-			float mHp = 100.0f;
 			int mHeart = 3;
-			float mGP = 0;
-			float mCoin = 0.0f;
+			int mHp = 100;
+			int mGP = 0;
+			int mCoin = 0;
 		};
 
 	public:
@@ -23,7 +23,7 @@ namespace ya
 
 		// private 변수관련 함수
 		eDirection GetDirection() { return mDirection; }
-		ePlayerState GetState() { return mState; }
+		ePlayerState GetState() { return mCurState; }
 
 		// 이벤트 함수
 		void EvadeComplete();
@@ -72,6 +72,7 @@ namespace ya
 
 		// State가 바뀌면 안되는 상태 ex. Stun, KnockDown,... 이런 상태 진행중에 다른 상태로 전환되면 안됨
 		bool CanChangeState();
+
 
 		//// State 함수
 		void L_idle();
@@ -157,29 +158,29 @@ namespace ya
 		RamonaAttribute mAttribute;
 
 		// 주요 상태
-		ePlayerState mState = ePlayerState::R_Idle;
-		ePlayerState mPreviousState = ePlayerState::R_Idle;
+		ePlayerState mCurState = ePlayerState::R_Idle;
+		ePlayerState mPrevState = ePlayerState::R_Idle;
 
 		eDirection mDirection = eDirection::R;
 
 		//// State 변수
 		
 		// Walk
-		float mWalkSpeed = 0.7f;
+		const float mWalkSpeed = 0.7f;
 
 		// Run
 		bool mIsRun = false;
-		float mRunSpeed1 = 0.4f;// 좌우 이동
-		float mRunSpeed2 = 0.3f;// 상하 이동
+		const float mRunSpeed1 = 0.4f;// 좌우 이동
+		const float mRunSpeed2 = 0.3f;// 상하 이동
 
 		// Jump
 		bool mIsJump = false;
 		float mJumpTime = 0.0f;// 점프 체공 시간 측정
 		float mJumpStartPosY = -100.0f;// 점프 시작 위치 (불가능한 -100.0f로 초기화)
 		bool mIsDJump = false;
-		float mJumpHalfTime = 0.3f;// 점프 체공시간의 절반
+		const float mJumpHalfTime = 0.3f;// 점프 체공시간의 절반
 		float mJumpHeight = 1.8f;// 점프 높이
-		float mDJumpHeight = 2.3f;// 더블점프 높이
+		const float mDJumpHeight = 2.3f;// 더블점프 높이
 
 		// Guard, Evade
 		bool mIsGuard = false;
@@ -228,14 +229,16 @@ namespace ya
 		Collider2D* mBackCd = nullptr;
 		Collider2D* mAllCd = nullptr;
 
-		GameObject* mgb = nullptr;
-
 		// 어떤 공격 스킬을 사용중인지 담고 있는 bool 배열
-		bool mAttackState[20] = { false, };
+		//bool mAttackState[20] = { false, };
+		
+		std::vector<bool> mAttackState;
+		
 
 		// mAttackState 배열 시작 주소를 보내주는 함수
 	public:
-		const bool* GetAttackState() { return &mAttackState[0]; }
+		//const bool* GetAttackState() { return &mAttackState[0]; }
+		const std::vector<bool>& GetAttackState() const { return mAttackState; }
 
 	private:
 		// 적 공격 스킬 상태를 담고 있는 bool 배열

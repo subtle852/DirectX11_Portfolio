@@ -43,7 +43,8 @@ namespace ya
 	{
 		// CollisionLayer
 		CollisionManager::SetLayer(eLayerType::Player, eLayerType::Enemy, true);
-		//CollisionManager::SetLayer(eLayerType::Player, eLayerType::Camera, true);
+		CollisionManager::SetLayer(eLayerType::Player, eLayerType::Camera, true);
+		CollisionManager::SetLayer(eLayerType::Enemy, eLayerType::Camera, true);
 
 		// STAGE 01 - BG 
 		{
@@ -131,28 +132,28 @@ namespace ya
 			//at->CompleteEvent(L"Idle") = std::bind();
 			mRamona->AddComponent<RamonaScript>();
 		}
-		//{
-		//	mLuke
-		//		= object::Instantiate<GameObject>(Vector3(2.0f, -1.2f, 40.f)
-		//			, Vector3::One * 3
-		//			, eLayerType::Enemy);
-		//	mLuke->SetName(L"Luke");
+		{
+			mLuke
+				= object::Instantiate<GameObject>(Vector3(2.0f, -1.2f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mLuke->SetName(L"Luke");
 
-		//	//Collider2D* cd2 = mLuke->AddComponent<Collider2D>();
-		//	//cd2->SetSize(Vector2(0.15f, 0.15f));
+			//Collider2D* cd2 = mLuke->AddComponent<Collider2D>();
+			//cd2->SetSize(Vector2(0.15f, 0.15f));
 
-		//	MeshRenderer* mr = mLuke->AddComponent<MeshRenderer>();
-		//	mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-		//	mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+			MeshRenderer* mr = mLuke->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
 
-		//	std::shared_ptr<Texture> atlas
-		//		= Resources::Load<Texture>(L"Basic_Luke_Idle", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-		//	Animator* at = mLuke->AddComponent<Animator>();
-		//	at->Create(L"Luke_temp", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-		//	at->PlayAnimation(L"Luke_temp", true);
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke->AddComponent<Animator>();
+			at->Create(L"Luke_temp", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp", true);
 
-		//	mLuke->AddComponent<LukeScript>();
-		//}
+			mLuke->AddComponent<LukeScript>();
+		}
 
 		//{
 		//	GameObject* mLuke2
@@ -220,7 +221,7 @@ namespace ya
 		{
 			GameObject* camera = new GameObject();
 			camera->SetName(L"MainCamera");
-			AddGameObject(eLayerType::Enemy, camera);
+			AddGameObject(eLayerType::Camera, camera);
 			camera->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
 			cameraComp = camera->AddComponent<Camera>();
 			cameraComp->TurnLayerMask(eLayerType::UI, false);

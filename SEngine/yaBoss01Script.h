@@ -100,8 +100,8 @@
 //		//bool NoneAnimationCondition();
 //		eDirection GetDirection() { return mDirection; }
 //		void SetDirection(eDirection dir) { mDirection = dir; }
-//		eBoss01State GetState() { return mState; }
-//		void ChangeState(eBoss01State newState) { mState = newState; }
+//		eBoss01State GetState() { return mCurState; }
+//		void ChangeState(eBoss01State newState) { mCurState = newState; }
 //
 //		// 플레이어 감지 함수
 //		bool IsPlayerInDetectionRange()// 플레이어 인식 감지 함수: 대기 상태로 돌입 조건
@@ -198,8 +198,8 @@
 //		float mHp = 100.0f;
 //
 //		// 주요 상태
-//		eBoss01State mState = eBoss01State::L_Idle;
-//		eBoss01State mPreviousState = eBoss01State::L_Idle;
+//		eBoss01State mCurState = eBoss01State::L_Idle;
+//		eBoss01State mPrevState = eBoss01State::L_Idle;
 //
 //		eDirection mDirection = eDirection::R;
 //		int mDirectionInt = 0;// Direction L은 -1 R은 +1
@@ -218,7 +218,7 @@
 //
 //		// 플레이어 전투 감지 (공격, 방어...)
 //		const float mCombatRange = 0.7f;
-//		bool mCombated = false;
+//		bool mIsCombat = false;
 //
 //		// AI 기본 이동 거리와 이동 범위 제한 값
 //		float baseMoveDistance = 0.1f;

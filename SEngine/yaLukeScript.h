@@ -60,7 +60,7 @@ namespace ya
 			SideKickAttack,
 			UpperAttack,
 
-			//Guard,
+			Guard,
 
 			End,
 		};
@@ -78,6 +78,7 @@ namespace ya
 		void CombatComplete();
 		void GuardComplete();
 		void Attacked3Complete();
+		void Attacked4Complete();
 		void DownedComplete();
 		void GetUpComplete();
 
@@ -86,12 +87,28 @@ namespace ya
 		virtual void OnCollisionStay(Collider2D* other) override;
 		virtual void OnCollisionExit(Collider2D* other) override;
 
-	private:
-		//bool NoneAnimationCondition();
 		eDirection GetDirection() { return mDirection; }
 		void SetDirection(eDirection dir) { mDirection = dir; }
-		eLukeState GetState() { return mState; }
-		void ChangeState(eLukeState newState) { mState = newState; }
+		eLukeState GetState() { return mCurState; }
+		void ChangeState(eLukeState newState) { mCurState = newState; }
+		void ChangeWalkDirectionNState(eDirection dir)
+		{
+			if (dir == eDirection::L)
+			{
+				mDirectionInt = -1;
+				mDirection = dir;
+				mCurState = eLukeState::L_Walk;
+			}
+			else
+			{
+				mDirectionInt = 1;
+				mDirection = dir;
+				mCurState = eLukeState::R_Walk;
+			}
+		}
+
+	private:
+		//bool NoneAnimationCondition();
 
 		// 플레이어 감지 함수
 		bool IsPlayerInDetectionRange()// 플레이어 인식 감지 함수: 대기 상태로 돌입 조건
@@ -99,11 +116,10 @@ namespace ya
 			// 적과 플레이어 사이의 거리 계산
 			float distanceX = mPlayerPos.x - mPos.x;
 			float distanceY = mPlayerPos.y - mPos.y;
-			float distanceSquared = distanceX * distanceX + distanceY * distanceY;
-			float detectionRangeSquared = mDetectionRange * mDetectionRange;
+			float distance = std::sqrt(distanceX * distanceX + distanceY * distanceY);
 
 			// 플레이어가 감지 범위 내에 있는지 확인
-			return distanceSquared <= detectionRangeSquared;
+			return distance <= mDetectionRange;
 		}
 
 		bool IsPlayerInCombatRange()// 플레이어 전투 감지 함수: 전투 상태로 돌입 조건
@@ -111,11 +127,10 @@ namespace ya
 			// 적과 플레이어 사이의 거리 계산
 			float distanceX = mPlayerPos.x - mPos.x;
 			float distanceY = mPlayerPos.y - mPos.y;
-			float distanceSquared = distanceX * distanceX + distanceY * distanceY;
-			float detectionRangeSquared = mCombatRange * mCombatRange;
+			float distance = std::sqrt(distanceX * distanceX + distanceY * distanceY);
 
 			// 플레이어가 감지 범위 내에 있는지 확인
-			return distanceSquared <= detectionRangeSquared;
+			return distance <= mCombatRange;
 		}
 
 		// 랜덤 거리 추출 함수
@@ -183,8 +198,8 @@ namespace ya
 		float mHp = 100.0f;
 
 		// 주요 상태
-		eLukeState mState = eLukeState::R_Idle;
-		eLukeState mPreviousState = eLukeState::R_Idle;
+		eLukeState mCurState = eLukeState::R_Idle;
+		eLukeState mPrevState = eLukeState::R_Idle;
 
 		eDirection mDirection = eDirection::R;
 		int mDirectionInt = 0;// Direction L은 -1 R은 +1
@@ -203,7 +218,7 @@ namespace ya
 
 		// 플레이어 전투 감지 (공격, 방어...)
 		const float mCombatRange = 0.7f;
-		bool mCombated = false;
+		bool mIsCombat = false;
 
 		// AI 기본 이동 거리와 이동 범위 제한 값
 		float baseMoveDistance = 0.1f;
@@ -215,7 +230,7 @@ namespace ya
 
 		// AI 전투 변경을 위한 타이머 변수
 		float mCombatTimer = 2.0f;
-		float mCombatInterval = 4.0f;
+		float mCombatInterval = 1.0f;
 		
 		// AI 탐지 거리내에 플레이어 발견 시, 대기 or 달리기 관련 변수
 		int mRandWaitOrRun = -100;
@@ -269,6 +284,6 @@ namespace ya
 
 	private:
 		// 플레이어 공격 스킬 상태를 담고 있는 bool 배열
-		bool mPlayerAttackState[20] = { false, };
+		std::vector<bool> mPlayerAttackState;
 	};
 }
