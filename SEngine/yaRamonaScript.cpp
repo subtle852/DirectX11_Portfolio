@@ -13,6 +13,7 @@
 #include "yaConstantBuffer.h"
 #include "yaObject.h"
 #include "yaMeshRenderer.h"
+#include "..\\Editor_Window\\yaDebugLog.h"
 
 namespace ya
 {
@@ -2106,10 +2107,12 @@ namespace ya
 
 		if (Input::GetKey(eKeyCode::LSHIFT))
 		{
+			ya::DebugLog::PrintDebugLog(L"RUN");
 			mIsRun = true;
 		}
 		else
 		{
+			ya::DebugLog::PrintDebugLog(L"NO RUN");
 			mIsRun = false;
 		}
 

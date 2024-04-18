@@ -12,6 +12,8 @@
 
 #include "guiEditor.h"
 
+#include "yaDebugLog.h"
+
 #ifdef _DEBUG
 #pragma comment(lib, "..\\x64\\Debug\\SEngine.lib")
 #else
@@ -23,7 +25,13 @@ ya::Application application;
 #define WINDOW_SIZE_W 1280
 #define WINDOW_SIZE_H 720
 
+#define DEBUGLOG_WINDOW_SIZE_W 500
+#define DEBUGLOG_WINDOW_SIZE_H 250
+
 #define MAX_LOADSTRING 100
+
+// 디버그 로그 출력 함수 전방 선언
+void PrintDebugLog();
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
@@ -31,9 +39,10 @@ WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
-ATOM                MyRegisterClass(HINSTANCE hInstance);
+ATOM                MyRegisterClass(HINSTANCE hInstance, LPCWSTR name, WNDPROC proc);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK    DebugLogWndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -50,7 +59,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_EDITORWINDOW, szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
+    MyRegisterClass(hInstance, szWindowClass, WndProc);
+    MyRegisterClass(hInstance, L"DebugLogWindow", DebugLogWndProc);
 
     // 애플리케이션 초기화를 수행합니다:
     if (!InitInstance (hInstance, nCmdShow))
@@ -80,6 +90,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             application.Run();
             gui::Editor::Run();
             application.Present();
+
+            // DebugLog 로직
+            PrintDebugLog();
         }
     }
 
@@ -97,23 +110,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 //
 //  용도: 창 클래스를 등록합니다.
 //
-ATOM MyRegisterClass(HINSTANCE hInstance)
+ATOM MyRegisterClass(HINSTANCE hInstance, LPCWSTR name, WNDPROC proc)// 윈도우 구성요소 설정
 {
-    WNDCLASSEXW wcex = {};
+    WNDCLASSEXW wcex;
 
     wcex.cbSize = sizeof(WNDCLASSEX);
 
-    wcex.style          = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc    = WndProc;
-    wcex.cbClsExtra     = 0;
-    wcex.cbWndExtra     = 0;
-    wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_EDITORWINDOW));
-    wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDR_MAINFRAME);
-    wcex.lpszClassName  = szWindowClass;
-    wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+    wcex.style = CS_HREDRAW | CS_VREDRAW;
+    wcex.lpfnWndProc = proc;  // lpfnWndProc 타고 가면 나오는 CALLBACK(__stdcall)은 함수호출 규약 중 하나
+    // 함수 포인터가 들어간 형태
+    wcex.cbClsExtra = 0;
+    wcex.cbWndExtra = 0;
+    wcex.hInstance = hInstance;
+    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION)); // 리소스 파일의 Client.ico를 바꾸면 아이콘 모습 변경
+    wcex.hCursor = LoadCursor(nullptr, IDC_ARROW); // 커서 변경
+    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_ICON);
+    wcex.lpszClassName = name;
+    wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
 
     return RegisterClassExW(&wcex);
 }
@@ -128,6 +142,9 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //        이 함수를 통해 인스턴스 핸들을 전역 변수에 저장하고
 //        주 프로그램 창을 만든 다음 표시합니다.
 //
+
+HWND hDebugLogWnd = nullptr;
+
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
@@ -147,6 +164,19 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    application.Initialize();
    ya::InitializeScenes();
    gui::Editor::Initialize();
+
+   //
+   hDebugLogWnd = CreateWindowW(L"DebugLogWindow", L"Debug Log", WS_OVERLAPPEDWINDOW,
+       CW_USEDEFAULT, 0, DEBUGLOG_WINDOW_SIZE_W, DEBUGLOG_WINDOW_SIZE_H, nullptr, nullptr, hInstance, nullptr);
+
+   if (!hDebugLogWnd)
+   {
+       return FALSE;
+   }
+
+   // 디버그 로그 창 보이기
+   ShowWindow(hDebugLogWnd, nCmdShow);
+   UpdateWindow(hDebugLogWnd);
 
    return TRUE;
 }
@@ -190,6 +220,65 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             EndPaint(hWnd, &ps);
         }
         break;
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        break;
+    default:
+        return DefWindowProc(hWnd, message, wParam, lParam);
+    }
+    return 0;
+}
+
+std::wstring debugLogText;
+
+void PrintDebugLog()
+{
+    if (debugLogText.size() > 100)
+    {
+        debugLogText = L"";
+    }
+    debugLogText += ya::DebugLog::GetDebugLog() + L"\n"; // 새로운 줄로 이동
+
+    InvalidateRect(hDebugLogWnd, nullptr, TRUE); // 창 다시 그리기 요청
+}
+
+LRESULT CALLBACK DebugLogWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message)
+    {
+    case WM_COMMAND:
+    {
+        int wmId = LOWORD(wParam);
+        // 메뉴 선택을 구문 분석합니다:
+        switch (wmId)
+        {
+        case IDM_ABOUT:
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+            break;
+        case IDM_EXIT:
+            DestroyWindow(hWnd);
+            break;
+        default:
+            return DefWindowProc(hWnd, message, wParam, lParam);
+        }
+    }
+    break;
+    case WM_PAINT:
+    {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hWnd, &ps);
+        
+        // 디버그 로그 텍스트 출력
+        RECT rect;
+        rect.left = 10;
+        rect.top = 10;
+        rect.right = 500; // 적절한 값으로 변경
+        rect.bottom = 500; // 적절한 값으로 변경
+        DrawText(hdc, debugLogText.c_str(), -1, &rect, DT_WORDBREAK);
+
+        EndPaint(hWnd, &ps);
+    }
+    break;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
