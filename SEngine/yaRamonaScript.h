@@ -10,7 +10,7 @@ namespace ya
 		{
 			int mHeart = 3;
 			int mHp = 100;
-			int mGP = 0;
+			int mSp = 0;
 			int mCoin = 0;
 		};
 
@@ -25,6 +25,18 @@ namespace ya
 		eDirection GetDirection() { return mDirection; }
 		ePlayerState GetState() { return mCurState; }
 
+		bool IsDead() { return mIsDead; }
+		bool IsJump() { return mIsJump; }
+		bool IsDJump() { return mIsDJump; }
+		
+		int GetHeart() { return mAttribute.mHeart; }
+		int GetHp() { return mAttribute.mHp; }
+		int GetSp() { return mAttribute.mSp; }
+		int GetCoin() { return mAttribute.mCoin; }
+
+		void TakeDamage(int damage) { mAttribute.mHp -= damage; }
+		void AddSP(int sp) { mAttribute.mSp += sp; }
+
 		// 이벤트 함수
 		void EvadeComplete();
 
@@ -35,16 +47,19 @@ namespace ya
 		void JumpAttackComplete();
 		void RunAttackComplete();
 
+		void FireBallStart();
+		void SuperStart();
 		void FireBallComplete();
 		void SuperComplete();
 
 		void StunComplete();
 		void KnockDownComplete();
+		void DownedStart();
 		void DownedComplete();
 		void GetUpComplete();
+		void RevivedComplete();
 
-		bool GetIsJump() { return mIsJump; }
-		bool GetIsDJump() { return mIsDJump; }
+		void AttackedStart();
 
 		// 충돌 함수
 		virtual void OnCollisionEnter(Collider2D* other) override;
@@ -149,6 +164,9 @@ namespace ya
 		void L_getup();
 		void R_getup();
 
+		void L_revived();
+		void R_revived();
+
 		// Effect
 		void SetEffectFlickering(float tick, float duration);
 		void SetEffectFlashing(float tick, float duration, Vector4 color);
@@ -213,6 +231,9 @@ namespace ya
 
 		bool mIsFireBall = false;
 		bool mIsSuper = false;
+		const int mFireBallSp = 30;
+		const int mSuperSp = 50;
+
 
 		// Under Attack
 		bool mIsStun = false;
@@ -220,6 +241,9 @@ namespace ya
 		bool mIsDowned = false;
 		bool mIsGetUp = false;
 		bool mIsBackStun = false;
+		bool mIsDead = false;
+
+		int  mAttackedDamage = 10;
 
 		// 충돌체
 		Collider2D* mBodyCd = nullptr;
@@ -265,6 +289,10 @@ namespace ya
 
 		// Shadow
 		GameObject* mShadow = nullptr;
+
+		// Effect
+		//GameObject* mAttackEffect = nullptr;
+		//double mAttackEffectTime = 0.0f;
 
 	};
 }

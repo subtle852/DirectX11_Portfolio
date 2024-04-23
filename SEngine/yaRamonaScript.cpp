@@ -53,6 +53,27 @@ namespace ya
 			* 1.0f);
 		#pragma endregion
 
+		//#pragma region 공격 이펙트
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//													// 공격 이펙트
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//{
+		//	mAttackEffect = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 20.f)
+		//		, Vector3::One * 3
+		//		, eLayerType::Player);
+		//	MeshRenderer* mr = mAttackEffect->AddComponent<MeshRenderer>();
+		//	mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+		//	mr->SetMaterial(Resources::Find<Material>(L"SpriteMaterial_AttackEffect"));
+		//	std::shared_ptr<Texture> texture
+		//		= Resources::Load<Texture>(L"ATTACKEFFECT", L"..\\Resources\\TEXTURE\\RAMONA\\AttackEffect.png");
+		//	mAttackEffect->GetComponent<Transform>()->SetScale((Vector3(texture.get()->GetImageRatioOfWidth() * 1.0f,
+		//		texture.get()->GetImageRatioOfHeight() * 1.0f, 0.0f))
+		//		* 0.5f);
+
+		//	mAttackEffect->SetState(ya::GameObject::eState::Paused);
+		//}
+		//#pragma endregion
+
 		#pragma region 애니메이션
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 애니메이션
@@ -218,8 +239,8 @@ namespace ya
 
 		atlas
 			= Resources::Load<Texture>(L"Downed", L"..\\Resources\\TEXTURE\\RAMONA\\Downed.png");
-		at->Create(L"R_Downed", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
-		at->Create(L"L_Downed", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
+		at->Create(L"R_Downed", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4, Vector2::Zero, 0.8f);
+		at->Create(L"L_Downed", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4, Vector2::Zero, 0.8f);
 
 		atlas
 			= Resources::Load<Texture>(L"GetUp", L"..\\Resources\\TEXTURE\\RAMONA\\GetUp.png");
@@ -229,249 +250,12 @@ namespace ya
 			= Resources::Load<Texture>(L"GetUp_L", L"..\\Resources\\TEXTURE\\RAMONA\\GetUp_L.png");
 		at->Create(L"L_GetUp", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(1038.0f / 9.0f, 116.0f), 9);
 
-		#pragma region Animation Path, Size
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Walk", L"..\\Resources\\TEXTURE\\RAMONA\\Walk.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Walk", atlas, Vector2(0.0f, 0.0f), Vector2(210.0f / 6.0f, 68.0f), 6);
-		//at->PlayAnimation(L"Walk", true);
 
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Run", L"..\\Resources\\TEXTURE\\RAMONA\\Run.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Run", atlas, Vector2(0.0f, 0.0f), Vector2(424.0f / 8.0f, 67.0f), 8);
-		//at->PlayAnimation(L"Run", true);
+		atlas
+			= Resources::Load<Texture>(L"Revived", L"..\\Resources\\TEXTURE\\RAMONA\\Revived.png");
+		at->Create(L"R_Revived", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(1136.0f / 8.0f, 213.0f), 8, Vector2::Zero, 0.1f);
+		at->Create(L"L_Revived", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(592.0f / 8.0f, 160.0f), 8, Vector2::Zero, 0.1f);
 
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Jump", L"..\\Resources\\TEXTURE\\RAMONA\\Jump.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Jump", atlas, Vector2(0.0f, 0.0f), Vector2(432.0f / 9.0f, 78.0f), 9);
-		//at->PlayAnimation(L"Jump", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"DJump", L"..\\Resources\\TEXTURE\\RAMONA\\DJump.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"DJump", atlas, Vector2(0.0f, 0.0f), Vector2(309.0f / 6.0f, 75.0f), 6);
-		//at->PlayAnimation(L"DJump", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Guard", L"..\\Resources\\TEXTURE\\RAMONA\\Guard.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Guard", atlas, Vector2(0.0f, 0.0f), Vector2(219.0f / 5.0f, 70.0f), 5);
-		//at->PlayAnimation(L"Guard", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Evade", L"..\\Resources\\TEXTURE\\RAMONA\\Evade.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Evade", atlas, Vector2(0.0f, 0.0f), Vector2(399.0f / 7.0f, 64.0f), 7);
-		//at->PlayAnimation(L"Evade", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Downed", L"..\\Resources\\TEXTURE\\RAMONA\\Downed.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Downed", atlas, Vector2(0.0f, 0.0f), Vector2(292.0f / 4.0f, 69.0f), 4);
-		//at->PlayAnimation(L"Downed", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Held", L"..\\Resources\\TEXTURE\\RAMONA\\Held_.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Held", atlas, Vector2(0.0f, 0.0f), Vector2(106.0f / 2.0f, 64.0f), 2);
-		//at->PlayAnimation(L"Held", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Behind", L"..\\Resources\\TEXTURE\\RAMONA\\Behind.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Behind", atlas, Vector2(0.0f, 0.0f), Vector2(150.0f / 3.0f, 69.0f), 3);
-		//at->PlayAnimation(L"Behind", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Front", L"..\\Resources\\TEXTURE\\RAMONA\\Front.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Front", atlas, Vector2(0.0f, 0.0f), Vector2(192.0f / 4.0f, 70.0f), 4);
-		//at->PlayAnimation(L"Front", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Stun", L"..\\Resources\\TEXTURE\\RAMONA\\Stun.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Stun", atlas, Vector2(0.0f, 0.0f), Vector2(92.0f / 2.0f, 66.0f), 2);
-		//at->PlayAnimation(L"Stun", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"KnockDown", L"..\\Resources\\TEXTURE\\RAMONA\\KnockDown.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"KnockDown", atlas, Vector2(0.0f, 0.0f), Vector2(988.0f / 13.0f, 88.0f), 13);
-		//at->PlayAnimation(L"KnockDown", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Revived", L"..\\Resources\\TEXTURE\\RAMONA\\Revived.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Revived", atlas, Vector2(0.0f, 0.0f), Vector2(592.0f / 8.0f, 160.0f), 8);
-		//at->PlayAnimation(L"Revived", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"GetUp", L"..\\Resources\\TEXTURE\\RAMONA\\GetUp.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"GetUp", atlas, Vector2(0.0f, 0.0f), Vector2(675.0f / 9.0f, 86.0f), 9);
-		//at->PlayAnimation(L"GetUp", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"StageClear", L"..\\Resources\\TEXTURE\\RAMONA\\StageClear.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"StageClear", atlas, Vector2(0.0f, 0.0f), Vector2(364.0f / 7.0f, 83.0f), 7);
-		//at->PlayAnimation(L"StageClear", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"StageExit", L"..\\Resources\\TEXTURE\\RAMONA\\StageExit.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"StageExit", atlas, Vector2(0.0f, 0.0f), Vector2(986.0f / 21.0f, 78.0f), 21);
-		//at->PlayAnimation(L"StageExit", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"NormalAttack1", L"..\\Resources\\TEXTURE\\RAMONA\\NormalAttack.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"NormalAttack", atlas, Vector2(0.0f, 0.0f), Vector2(558.0f / 9.0f, 70.0f), 9);
-		//at->PlayAnimation(L"NormalAttack", true);
-
-		//// 공격 1,2,3 1애니메이션 진행중에 공격키 누르면 2 진행, 2 진행중에 공격키 누르면 3진행
-		//std::shared_ptr<Texture> atlas
-		//= Resources::Load<Texture>(L"NormalAttack1", L"..\\Resources\\TEXTURE\\RAMONA\\NormalAttack1.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"NormalAttack1", atlas, Vector2(0.0f, 0.0f), Vector2(186.0f / 3.0f, 70.0f), 3);
-		//at->PlayAnimation(L"NormalAttack1", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"NormalAttack2", L"..\\Resources\\TEXTURE\\RAMONA\\NormalAttack2.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"NormalAttack2", atlas, Vector2(0.0f, 0.0f), Vector2(186.0f / 3.0f, 70.0f), 3);
-		//at->PlayAnimation(L"NormalAttack2", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"NormalAttack3", L"..\\Resources\\TEXTURE\\RAMONA\\NormalAttack3.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"NormalAttack3", atlas, Vector2(0.0f, 0.0f), Vector2(186.0f / 3.0f, 70.0f), 3);
-		//at->PlayAnimation(L"NormalAttack3", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Kick", L"..\\Resources\\TEXTURE\\RAMONA\\Kick.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Kick", atlas, Vector2(0.0f, 0.0f), Vector2(310.0f / 5.0f, 70.0f), 5);
-		//at->PlayAnimation(L"Kick", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"WeaponNormalAttack", L"..\\Resources\\TEXTURE\\RAMONA\\NormalWeaponAttack.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"WeaponNormalAttack", atlas, Vector2(0.0f, 0.0f), Vector2(663.0f / 8.0f, 86.0f), 8);
-		//at->PlayAnimation(L"WeaponNormalAttack", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"RunSlideAttack", L"..\\Resources\\TEXTURE\\RAMONA\\RunSlideAttack.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"RunSlideAttack", atlas, Vector2(0.0f, 0.0f), Vector2(328.0f / 5.0f, 66.0f), 5);
-		//at->PlayAnimation(L"RunSlideAttack", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"RunWeaponAttack", L"..\\Resources\\TEXTURE\\RAMONA\\RunWeaponAttack.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"RunWeaponAttack", atlas, Vector2(0.0f, 0.0f), Vector2(752.0f / 8.0f, 70.0f), 8);
-		//at->PlayAnimation(L"RunWeaponAttack", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"BehindAttack", L"..\\Resources\\TEXTURE\\RAMONA\\BehindAttack.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"BehindAttack", atlas, Vector2(0.0f, 0.0f), Vector2(240.0f / 6.0f, 69.0f), 6);
-		//at->PlayAnimation(L"BehindAttack", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"WeaponStabAttack", L"..\\Resources\\TEXTURE\\RAMONA\\WeaponStabAttack.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"WeaponStabAttack", atlas, Vector2(0.0f, 0.0f), Vector2(394.0f / 5.0f, 71.0f), 5);
-		//at->PlayAnimation(L"WeaponStabAttack", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"WeaponDownAttack", L"..\\Resources\\TEXTURE\\RAMONA\\WeaponDownAttack.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"WeaponDownAttack", atlas, Vector2(0.0f, 0.0f), Vector2(255.0f / 5.0f, 75.0f), 5);
-		//at->PlayAnimation(L"WeaponDownAttack", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"JumpSlideAttack", L"..\\Resources\\TEXTURE\\RAMONA\\JumpSlideAttack.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"JumpSlideAttack", atlas, Vector2(0.0f, 0.0f), Vector2(384.0f / 6.0f, 68.0f), 6);
-		//at->PlayAnimation(L"JumpSlideAttack", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"RunJumpAttack", L"..\\Resources\\TEXTURE\\RAMONA\\RunJumpAttack.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"RunJumpAttack", atlas, Vector2(0.0f, 0.0f), Vector2(581.0f / 7.0f, 89.0f), 7);
-		//at->PlayAnimation(L"RunJumpAttack", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"WeaponLand", L"..\\Resources\\TEXTURE\\RAMONA\\WeaponLand.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"WeaponLand", atlas, Vector2(0.0f, 0.0f), Vector2(612.0f / 9.0f, 78.0f), 9);
-		//at->PlayAnimation(L"WeaponLand", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"WeaponSideAttack", L"..\\Resources\\TEXTURE\\RAMONA\\WeaponSideAttack.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"WeaponSideAttack", atlas, Vector2(0.0f, 0.0f), Vector2(805.0f / 8.0f, 79.0f), 8);
-		//at->PlayAnimation(L"WeaponSideAttack", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"JumpDownAttack", L"..\\Resources\\TEXTURE\\RAMONA\\JumpDownAttack.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"JumpDownAttack", atlas, Vector2(0.0f, 0.0f), Vector2(200.0f / 4.0f, 79.0f), 4);
-		//at->PlayAnimation(L"JumpDownAttack", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"RunJumpDownAttck", L"..\\Resources\\TEXTURE\\RAMONA\\RunJumpDownAttack.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"RunJumpDownAttack", atlas, Vector2(0.0f, 0.0f), Vector2(372.0f / 6.0f, 82.0f), 6);
-		//at->PlayAnimation(L"RunJumpDownAttack", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"JumpDownHit", L"..\\Resources\\TEXTURE\\RAMONA\\JumpDownHit.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"JumpDownHit", atlas, Vector2(0.0f, 0.0f), Vector2(329.0f / 7.0f, 76.0f), 7);
-		//at->PlayAnimation(L"JumpDownHit", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"RoundKick", L"..\\Resources\\TEXTURE\\RAMONA\\RoundKick.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"RoundKick", atlas, Vector2(0.0f, 0.0f), Vector2(897.0f / 13.0f, 72.0f), 13);
-		//at->PlayAnimation(L"RoundKick", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"FireBall", L"..\\Resources\\TEXTURE\\RAMONA\\FireBall.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"FireBall", atlas, Vector2(0.0f, 0.0f), Vector2(1144.0f / 13.0f, 70.0f), 13);
-		//at->PlayAnimation(L"FireBall", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"NormalGlowCombo", L"..\\Resources\\TEXTURE\\RAMONA\\NormalGlowCombo.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"NormalGlowCombo", atlas, Vector2(0.0f, 0.0f), Vector2(434.0f / 7.0f, 71.0f), 7);
-		//at->PlayAnimation(L"NormalGlowCombo", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"WeaponGlowCombo", L"..\\Resources\\TEXTURE\\RAMONA\\WeaponGlowCombo.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"WeaponGlowCombo", atlas, Vector2(0.0f, 0.0f), Vector2(839.0f / 10.0f, 84.0f), 10);
-		//at->PlayAnimation(L"WeaponGlowCombo", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Counter", L"..\\Resources\\TEXTURE\\RAMONA\\Counter.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Counter", atlas, Vector2(0.0f, 0.0f), Vector2(1596.0f / 17.0f, 87.0f), 17);
-		//at->PlayAnimation(L"Counter", true);
-
-		//std::shared_ptr<Texture> atlas
-		//	= Resources::Load<Texture>(L"Super", L"..\\Resources\\TEXTURE\\RAMONA\\Super.png");
-		//Animator* at = player->AddComponent<Animator>();
-		//at->Create(L"Super", atlas, Vector2(0.0f, 0.0f), Vector2(3913.0f / 31.0f, 126.0f), 31);
-		//at->PlayAnimation(L"Super", true);
-		#pragma endregion
-		
 		#pragma endregion
 
 		#pragma region 이벤트
@@ -480,9 +264,6 @@ namespace ya
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		at = GetOwner()->GetComponent<Animator>();
-
-		//at->StartEvent(L"L_Jump") = std::bind(&RamonaScript::JumpStart, this);
-		//at->StartEvent(L"R_Jump") = std::bind(&RamonaScript::JumpStart, this);
 
 		at->CompleteEvent(L"L_Evade") = std::bind(&RamonaScript::EvadeComplete, this);
 		at->CompleteEvent(L"R_Evade") = std::bind(&RamonaScript::EvadeComplete, this);
@@ -522,22 +303,35 @@ namespace ya
 		at->CompleteEvent(L"L_RunSlideAttack") = std::bind(&RamonaScript::RunAttackComplete, this);
 		at->CompleteEvent(L"R_RunSlideAttack") = std::bind(&RamonaScript::RunAttackComplete, this);
 		
+		at->StartEvent(L"L_FireBall") = std::bind(&RamonaScript::FireBallStart, this);
+		at->StartEvent(L"R_FireBall") = std::bind(&RamonaScript::FireBallStart, this);
 		at->CompleteEvent(L"L_FireBall") = std::bind(&RamonaScript::FireBallComplete, this);
 		at->CompleteEvent(L"R_FireBall") = std::bind(&RamonaScript::FireBallComplete, this);
+		at->StartEvent(L"L_Super") = std::bind(&RamonaScript::SuperStart, this);
+		at->StartEvent(L"R_Super") = std::bind(&RamonaScript::SuperStart, this);
 		at->CompleteEvent(L"L_Super") = std::bind(&RamonaScript::SuperComplete, this);
 		at->CompleteEvent(L"R_Super") = std::bind(&RamonaScript::SuperComplete, this);
 
+		at->StartEvent(L"L_Stun") = std::bind(&RamonaScript::AttackedStart, this);
+		at->StartEvent(L"R_Stun") = std::bind(&RamonaScript::AttackedStart, this);
 		at->CompleteEvent(L"L_Stun") = std::bind(&RamonaScript::StunComplete, this);
 		at->CompleteEvent(L"R_Stun") = std::bind(&RamonaScript::StunComplete, this);
 
+		at->StartEvent(L"L_KnockDown") = std::bind(&RamonaScript::AttackedStart, this);
+		at->StartEvent(L"R_KnockDown") = std::bind(&RamonaScript::AttackedStart, this);
 		at->CompleteEvent(L"L_KnockDown") = std::bind(&RamonaScript::KnockDownComplete, this);
 		at->CompleteEvent(L"R_KnockDown") = std::bind(&RamonaScript::KnockDownComplete, this);
 
+		at->StartEvent(L"L_Downed") = std::bind(&RamonaScript::DownedStart, this);
+		at->StartEvent(L"R_Downed") = std::bind(&RamonaScript::DownedStart, this);
 		at->CompleteEvent(L"L_Downed") = std::bind(&RamonaScript::DownedComplete, this);
 		at->CompleteEvent(L"R_Downed") = std::bind(&RamonaScript::DownedComplete, this);
 
 		at->CompleteEvent(L"L_GetUp") = std::bind(&RamonaScript::GetUpComplete, this);
 		at->CompleteEvent(L"R_GetUp") = std::bind(&RamonaScript::GetUpComplete, this);
+
+		at->CompleteEvent(L"L_Revived") = std::bind(&RamonaScript::RevivedComplete, this);
+		at->CompleteEvent(L"R_Revived") = std::bind(&RamonaScript::RevivedComplete, this);
 
 		#pragma endregion
 
@@ -548,7 +342,7 @@ namespace ya
 
 		mAttribute.mHeart = 3;
 		mAttribute.mHp = 100;
-		mAttribute.mGP = 0;
+		mAttribute.mSp = 0;
 		mAttribute.mCoin = 0;
 
         #pragma endregion
@@ -594,6 +388,24 @@ namespace ya
 
 	void RamonaScript::Update()
 	{
+		//std::wstring str = std::to_wstring(mIsStun);
+		//std::wstring str2 = std::to_wstring(mIsKnockDown);
+		//ya::DebugLog::PrintDebugLog(L"mIsStun: " + str + L" mIsKnockDown: " + str2);
+
+		//std::wstring str = std::to_wstring(mAttribute.mHeart);
+		//std::wstring str1 = std::to_wstring(mAttribute.mHp);
+		//std::wstring str2 = std::to_wstring(mAttribute.mSp);
+		//ya::DebugLog::PrintDebugLog(L"mHeart: " + str + L" mHp: " + str1 + L" mSp: " + str2);
+
+		//std::wstring str;
+		//std::wstring message;
+		//for (size_t i = 0; i < mAttackState.size(); ++i) 
+		//{
+		//	str = std::to_wstring(static_cast<int>(mAttackState[i]));
+		//	message += L"AttackState[" + std::to_wstring(i) + L"]: " + str + L" ";
+		//}
+		//ya::DebugLog::PrintDebugLog(message);
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 이펙트
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -888,6 +700,13 @@ namespace ya
 			case ePlayerState::L_GetUp:
 				L_getup();
 				break;
+
+			case ePlayerState::R_Revived:
+				R_revived();
+				break;
+			case ePlayerState::L_Revived:
+				L_revived();
+				break;
 			}
 		}
 
@@ -989,6 +808,8 @@ namespace ya
 
 				if (CanMoveCondition())// 좌우 움직임 제한하지 않는 스킬인지 확인
 				{
+					//if
+
 					pos.x -= mWalkSpeed * Time::DeltaTime();
 					tr->SetPosition(pos);
 				}
@@ -1177,7 +998,7 @@ namespace ya
 																// 달리기
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			if (Input::GetKey(eKeyCode::LSHIFT))
+			if (Input::GetKey(eKeyCode::LSHIFT) && CanMoveCondition())
 			{
 				if (mCurState == ePlayerState::L_Walk || mCurState == ePlayerState::R_Walk)
 				{
@@ -1938,50 +1759,39 @@ namespace ya
 																// 궁극기
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			// FireBall: R (GP 50 이하)
 			if (Input::GetKeyDown(eKeyCode::R) && NoneAnimationCondition() && CanAttackCondition())
 			{
-				//if (0.0f <= mAbilty.mGP && mAbilty.mGP <= 50.0f)
-				//{
-
-				//}
-
-				mIsFireBall = true;
-
-				if (mDirection == eDirection::L)
+				if ( mAttribute.mSp < 30)
 				{
-					mCurState = ePlayerState::L_FireBall;
+
 				}
+				// FireBall: R (최소 GP 30)
+				else if (mFireBallSp <= mAttribute.mSp && mAttribute.mSp < mSuperSp)
+				{
+					mIsFireBall = true;
+
+					if (mDirection == eDirection::L)
+					{
+						mCurState = ePlayerState::L_FireBall;
+					}
+					else
+					{
+						mCurState = ePlayerState::R_FireBall;
+					}
+				}
+				// FireBall: R (최소 GP 50)
 				else
 				{
-					mCurState = ePlayerState::R_FireBall;
-				}
-			}
+					mIsSuper = true;
 
-			// Super: R (GP 50 초과)// R버튼인데 GP 구현이 되지 않아서 일단 T키로 입력
-			//if (Input::GetKeyDown(eKeyCode::R) && mIsSuper == false && mIsJump == false && mIsDJump == false)
-			//{
-			//	if (mAbilty.mGP > 50.0f)
-			//	{
-
-			//	}
-			//}
-			if (Input::GetKeyDown(eKeyCode::T) && NoneAnimationCondition() && CanAttackCondition() && CanAttackCondition())
-			{
-				mIsSuper = true;
-
-				//Transform* tr = this->GetOwner()->GetComponent<Transform>();
-				//Vector3 pos = tr->GetPosition();
-				//pos.y += 1.0f;
-				//tr->SetPosition(pos);
-
-				if (mDirection == eDirection::L)
-				{
-					mCurState = ePlayerState::L_Super;
-				}
-				else
-				{
-					mCurState = ePlayerState::R_Super;
+					if (mDirection == eDirection::L)
+					{
+						mCurState = ePlayerState::L_Super;
+					}
+					else
+					{
+						mCurState = ePlayerState::R_Super;
+					}
 				}
 			}
 
@@ -2101,18 +1911,38 @@ namespace ya
 			mIsCollidingFirst = 0;
 		}
 
+		// AttackEffect 시간체크 후 삭제하는 부분
+		//if (mAttackEffect->GetState() == ya::GameObject::eState::Active)
+		//{
+		//	mAttackEffectTime += Time::DeltaTime();
+
+		//	if (mAttackEffectTime > 0.5)
+		//	{
+		//		mAttackEffectTime = 0.0;
+		//		mAttackEffect->SetState(ya::GameObject::eState::Paused);
+		//	}
+		//}
+		//else
+		//{
+		//	mAttackEffectTime = 0.0;
+		//}
+
+		//if (mUpperCd->GetState() == eColliderState::IsColliding)
+		//if (mLowerCd->GetState() == eColliderState::IsColliding)
+		//if (mBothCd->GetState() == eColliderState::IsColliding)
+		//if (mBackCd->GetState() == eColliderState::IsColliding)
+		//if (mAllCd->GetState() == eColliderState::IsColliding)
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 																// 상태 bool 변수 동기화
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		if (Input::GetKey(eKeyCode::LSHIFT))
 		{
-			ya::DebugLog::PrintDebugLog(L"RUN");
 			mIsRun = true;
 		}
 		else
 		{
-			ya::DebugLog::PrintDebugLog(L"NO RUN");
 			mIsRun = false;
 		}
 
@@ -2404,6 +2234,16 @@ namespace ya
 		}
 	}
 
+	void RamonaScript::FireBallStart()
+	{
+		mAttribute.mSp -= mFireBallSp;
+	}
+
+	void RamonaScript::SuperStart()
+	{
+		mAttribute.mSp -= mSuperSp;
+	}
+
 	void RamonaScript::FireBallComplete()
 	{
 		mIsFireBall = false;
@@ -2460,9 +2300,39 @@ namespace ya
 		}
 	}
 
+	void RamonaScript::DownedStart()
+	{
+		if (mAttribute.mHp <= 0)
+		{
+			mIsDead = true;
+			SetEffectFlickering(0.05f, 4.5f);
+		}
+	}
+
 	void RamonaScript::DownedComplete()
 	{
 		// 멤버 변수 mIsDowned
+
+		if (mAttribute.mHp <= 0)
+		{
+			if (mAttribute.mHeart <= 0)
+				return;
+
+			mAttribute.mHeart -= 1;
+			mAttribute.mHp = 100;
+			//mIsDead = false;// 바로 안풀고 일어나면
+
+			if (mDirection == eDirection::L)
+			{
+				mCurState = ePlayerState::L_Revived;
+			}
+			else
+			{
+				mCurState = ePlayerState::R_Revived;
+			}
+
+			return;
+		}
 
 		if (mDirection == eDirection::L)
 		{
@@ -2486,6 +2356,28 @@ namespace ya
 		{
 			mCurState = ePlayerState::R_Idle;
 		}
+	}
+
+	void RamonaScript::RevivedComplete()
+	{
+		// 멤버 변수 mIsRevived
+		mIsDead = false;
+
+		if (mDirection == eDirection::L)
+		{
+			mCurState = ePlayerState::L_Idle;
+		}
+		else
+		{
+			mCurState = ePlayerState::R_Idle;
+		}
+	}
+
+	void RamonaScript::AttackedStart()
+	{
+
+		mAttribute.mHp -= mAttackedDamage;
+
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2515,8 +2407,8 @@ namespace ya
 					mEnemyAttackState[i] = (other->GetOwner()->GetComponent<LukeScript>()->GetAttackState())[i];
 				}
 
-				// 가드 상태
-				if (mCurState == ePlayerState::L_Guard || mCurState == ePlayerState::R_Guard)
+				// 가드 상태 OR EVADE 상태
+				if (mCurState == ePlayerState::L_Guard || mCurState == ePlayerState::R_Guard || mCurState == ePlayerState::L_Evade || mCurState == ePlayerState::R_Evade)
 				{
 					// Guard 상태일 때, InActive로 바꾸는 것이 아니라
 					// Guard 상태도 상시 Active 상태로 바꾸고
@@ -2583,40 +2475,112 @@ namespace ya
 						// 적의 공격 스킬에 따라 해당하는 상태 전환 
 						if (mEnemyAttackState[3])
 						{
-							mAttribute.mHp -= 50.0f;
+							//mAttribute.mHp -= 10.0f;// 해당 부분 애니메이션 실행될 때 
+							//if (mAttribute.mHp == 5)
+
 
 							if (mDirection == eDirection::L)
 							{
 								mCurState = ePlayerState::L_KnockDown;
+								mIsKnockDown = true;
 							}
 							else
 							{
 								mCurState = ePlayerState::R_KnockDown;
+								mIsKnockDown = true;
 							}
 						}
 						else
 						{
-							mAttribute.mHp -= 50.0f;
-
-							if (mDirection == eDirection::L)
+							//mAttribute.mHp -= 5.0f;// 해당 부분 애니메이션 실행될 때 
+							if (mAttribute.mHp <= mAttackedDamage)
 							{
-								mCurState = ePlayerState::L_Stun;
+								if (mDirection == eDirection::L)
+								{
+									mCurState = ePlayerState::L_KnockDown; 
+									mIsKnockDown = true;
+								}
+								else
+								{
+									mCurState = ePlayerState::R_KnockDown; 
+									mIsKnockDown = true;
+								}
 							}
 							else
 							{
-								mCurState = ePlayerState::R_Stun;
+								if (mDirection == eDirection::L)
+								{
+									mCurState = ePlayerState::L_Stun;
+									mIsStun = true;
+								}
+								else
+								{
+									mCurState = ePlayerState::R_Stun;
+									mIsStun = true;
+								}
 							}
 						}
 
-						mIsCollidingFirst == 1;
+						mIsCollidingFirst = 1;
 					}
 				}
 			}
 
-			if (mUpperCd->GetState() == eColliderState::IsColliding)
-			{
-				int a = 0;
-			}
+
+			// Attack Effect 켜주는 부분
+			//if (mUpperCd->GetState() == eColliderState::IsColliding)
+			//{
+			//	mAttackEffect->SetState(ya::GameObject::eState::Active);
+			//	Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			//	Vector3 playerPos = playerTr->GetPosition();
+			//	Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
+			//	Vector3 attackEffectPos = attackEffectTr->GetPosition();
+			//	playerPos.x += 0.4f;
+			//	playerPos.y += 0.1f;
+			//	attackEffectTr->SetPosition(playerPos);
+			//}
+			//if (mLowerCd->GetState() == eColliderState::IsColliding)
+			//{
+			//	mAttackEffect->SetState(ya::GameObject::eState::Active);
+			//	Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			//	Vector3 playerPos = playerTr->GetPosition();
+			//	Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
+			//	Vector3 attackEffectPos = attackEffectTr->GetPosition();
+			//	playerPos.x += 0.4f;
+			//	playerPos.y -= 0.12f;
+			//	attackEffectTr->SetPosition(playerPos);
+			//}
+			//if (mBothCd->GetState() == eColliderState::IsColliding)
+			//{
+			//	mAttackEffect->SetState(ya::GameObject::eState::Active);
+			//	Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			//	Vector3 playerPos = playerTr->GetPosition();
+			//	Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
+			//	Vector3 attackEffectPos = attackEffectTr->GetPosition();
+			//	playerPos.x += 0.4f;
+			//	attackEffectTr->SetPosition(playerPos);
+			//}
+			//if (mBackCd->GetState() == eColliderState::IsColliding)
+			//{
+			//	mAttackEffect->SetState(ya::GameObject::eState::Active);
+			//	Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			//	Vector3 playerPos = playerTr->GetPosition();
+			//	Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
+			//	Vector3 attackEffectPos = attackEffectTr->GetPosition();
+			//	playerPos.x -= 0.2f;
+			//	playerPos.y -= 0.12f;
+			//	attackEffectTr->SetPosition(playerPos);
+			//}
+			//if (mAllCd->GetState() == eColliderState::IsColliding)
+			//{
+			//	//mAttackEffect->SetState(ya::GameObject::eState::Active);
+			//	//Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			//	//Vector3 playerPos = playerTr->GetPosition();
+			//	//Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
+			//	//Vector3 attackEffectPos = attackEffectTr->GetPosition();
+			//	//playerPos.x += 0.2f;
+			//	//attackEffectTr->SetPosition(playerPos);
+			//}
 		}
 	}
 	void RamonaScript::OnCollisionExit(Collider2D* other)
@@ -2699,7 +2663,7 @@ namespace ya
 	bool RamonaScript::CanChangeState()
 	{
 		if (
-				mIsStun == true || mIsKnockDown == true || mIsDowned == true || mIsGetUp == true || mIsBackStun == true
+				mIsStun == true || mIsKnockDown == true || mIsDowned == true || mIsGetUp == true || mIsBackStun == true || mIsDead == true
 			// || mIsKickAttack == true || mIsRoundKickAttack == true || mIsBehindKickAttack == true
 			)
 			return false;
@@ -3072,6 +3036,16 @@ namespace ya
 	{
 		Animator* at = this->GetOwner()->GetComponent<Animator>();
 		at->PlayAnimation(L"R_GetUp", true);
+	}
+	void RamonaScript::L_revived()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Revived", true);
+	}
+	void RamonaScript::R_revived()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Revived", true);
 	}
 	void RamonaScript::SetEffectFlickering(float tick, float duration)
 	{

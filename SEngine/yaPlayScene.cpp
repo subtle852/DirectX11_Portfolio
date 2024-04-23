@@ -25,12 +25,15 @@
 #include "yaLukeScript.h"
 #include "yaRigidbody.h"
 
+#include "..\\Editor_Window\\yaDebugLog.h"
+
 namespace ya
 {
 	GameObject* PlayScene::mRamona = nullptr;
 	Vector3 PlayScene::mRamonaPos = Vector3::Zero;
 	eDirection PlayScene::mRamonaDir = eDirection::R;
 	ePlayerState PlayScene::mRamonaState = ePlayerState::R_Idle;
+	bool PlayScene::mRamonaDead = false;
 
 
 	PlayScene::PlayScene()
@@ -145,6 +148,10 @@ namespace ya
 			MeshRenderer* mr = mLuke->AddComponent<MeshRenderer>();
 			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
 			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			Rigidbody* rb = mLuke->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
 
 			std::shared_ptr<Texture> atlas
 				= Resources::Load<Texture>(L"Basic_Luke_Idle", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
@@ -271,6 +278,21 @@ namespace ya
 			mRamonaDir = mRamona->GetComponent<RamonaScript>()->GetDirection();
 
 			mRamonaState = mRamona->GetComponent<RamonaScript>()->GetState();
+
+			mRamonaDead = mRamona->GetComponent<RamonaScript>()->IsDead();
+
+
+			std::wstring str = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHeart());
+			std::wstring str1 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHp());
+			std::wstring str2 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetSp());
+			std::wstring str3 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetCoin());
+			std::wstring str4;
+			if (mLuke->GetState() == GameObject::eState::Active)
+			{
+				str4 = std::to_wstring(mLuke->GetComponent<LukeScript>()->GetHp());
+			}
+
+			ya::DebugLog::PrintDebugLog(L"Heart: " + str + L" Hp: " + str1 + L" Sp: " + str2 + L" Coin: " + str3 + L" || EnemyHp: " + str4);
 		}
 
 

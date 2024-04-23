@@ -8,6 +8,7 @@
 #include "yaPlayScene.h"
 #include "yaRamonaScript.h"
 #include "yaLukeScript.h"
+#include "yaRigidbody.h"
 
 namespace ya
 {
@@ -116,9 +117,9 @@ namespace ya
 				if (Rs == nullptr)
 					return;
 
-				if (Rs->GetIsJump() == true)
+				if (Rs->IsJump() == true)
 					return;
-				if (Rs->GetIsDJump() == true)
+				if (Rs->IsDJump() == true)
 					return;
 
 				obPos.y -= 0.005f;
@@ -154,14 +155,16 @@ namespace ya
 			}
 			else if (mLeftCd->GetState() == eColliderState::IsColliding)
 			{
-				ob->GetComponent<LukeScript>()->ChangeWalkDirectionNState(eDirection::R);
+				if(ob->GetComponent<LukeScript>()->IsWait())
+					ob->GetComponent<LukeScript>()->ChangeWalkDirectionNState(eDirection::R);
 
 				obPos.x += 0.005f;
 				obTr->SetPosition(obPos);
 			}
 			else if (mRightCd->GetState() == eColliderState::IsColliding)
 			{
-				ob->GetComponent<LukeScript>()->ChangeWalkDirectionNState(eDirection::L);
+				if (ob->GetComponent<LukeScript>()->IsWait())
+					ob->GetComponent<LukeScript>()->ChangeWalkDirectionNState(eDirection::L);
 
 				obPos.x -= 0.005f;
 				obTr->SetPosition(obPos);

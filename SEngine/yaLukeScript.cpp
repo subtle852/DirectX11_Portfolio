@@ -9,6 +9,10 @@
 #include "yaPlayScene.h"
 #include "yaCollider2D.h"
 #include "yaRamonaScript.h"
+#include "yaRigidbody.h"
+#include "yaObject.h"
+#include "yaMeshRenderer.h"
+#include "..\\Editor_Window\\yaDebugLog.h"
 
 namespace ya
 {
@@ -21,6 +25,25 @@ namespace ya
 	}
 	void LukeScript::Initialize()
 	{
+		SetEffectFlashing(0.25f, 5.0f, Vector4(0.5f, 0.5f, 0.5f, 1.0f));// White
+
+		#pragma region 그림자
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 그림자
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		mShadow = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 40.f)
+			, Vector3::One * 3
+			, eLayerType::Player);
+		MeshRenderer* mr = mShadow->AddComponent<MeshRenderer>();
+		mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+		mr->SetMaterial(Resources::Find<Material>(L"SpriteMaterial_Shadow"));
+		std::shared_ptr<Texture> texture
+			= Resources::Load<Texture>(L"SHADOW", L"..\\Resources\\TEXTURE\\RAMONA\\Shadow.png");
+		mShadow->GetComponent<Transform>()->SetScale((Vector3(texture.get()->GetImageRatioOfWidth() * 2.0f,
+			texture.get()->GetImageRatioOfHeight() * 2.0f, 0.0f))
+			* 1.0f);
+		#pragma endregion
+
 		#pragma region 애니메이션
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 애니메이션
@@ -203,6 +226,9 @@ namespace ya
 	}
 	void LukeScript::Update()
 	{
+		//std::wstring str = std::to_wstring(mHp);
+		//ya::DebugLog::PrintDebugLog(L"mHp: " + str);
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// FSM
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -345,15 +371,100 @@ namespace ya
 		// 플레이어 위치, 방향 업데이트
 		if (PlayScene::IsPlayerExist())
 		{
+			mIsPlayerDead = PlayScene::IsPlayerDead();
 			mPlayerPos = PlayScene::GetPlayerPosition();
 			mPlayerDir = PlayScene::GetPlayerDirection();
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 그림자 업데이트
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		Transform* myTr = GetOwner()->GetComponent<Transform>();
+		Vector3 myPos = myTr->GetPosition();
+		myPos.y -= 0.5f;
+
+		Transform* shadowTr = mShadow->GetComponent<Transform>();
+		shadowTr->SetPosition(myPos);
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 이펙트 업데이트
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		if (mOnFlickering == true)
+		{
+			mFlickeringCurTime += Time::DeltaTime();
+			mFlickeringMaxTime -= Time::DeltaTime();
+			if (mFlickeringMaxTime <= 0.0f && GetOwner()->mIsEffectFlickering == false)
+			{
+				GetOwner()->mIsEffectFlickering = false;
+				mOnFlickering = false;
+			}
+
+			else
+			{
+				if (GetOwner()->mIsEffectFlickering == true)
+				{
+					if (mFlickeringCurTime >= mFlickeringTickTime)
+					{
+						mFlickeringCurTime = 0.0f;
+						GetOwner()->mIsEffectFlickering = false;
+					}
+				}
+				if (GetOwner()->mIsEffectFlickering == false)
+				{
+					if (mFlickeringCurTime >= mFlickeringTickTime)
+					{
+						mFlickeringCurTime = 0.0f;
+						GetOwner()->mIsEffectFlickering = true;
+					}
+				}
+			}
+		}
+
+		if (mOnFlashing == true)
+		{
+			mFlashingCurTime += Time::DeltaTime();
+			mFlashingMaxTime -= Time::DeltaTime();
+			if (mFlashingMaxTime <= 0.0f && GetOwner()->mIsEffectFlashing == false)
+			{
+				GetOwner()->mIsEffectFlashing = false;
+				mOnFlashing = false;
+			}
+
+			else
+			{
+				if (GetOwner()->mIsEffectFlashing == true)
+				{
+					if (mFlashingCurTime >= mFlashingTickTime)
+					{
+						mFlashingCurTime = 0.0f;
+						GetOwner()->mIsEffectFlashing = false;
+					}
+				}
+				if (GetOwner()->mIsEffectFlashing == false)
+				{
+					if (mFlashingCurTime >= mFlashingTickTime)
+					{
+						mFlashingCurTime = 0.0f;
+						GetOwner()->mIsEffectFlashing = true;
+					}
+				}
+			}
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 속성 업데이트
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		
+		if (mIsDead == true)
+		{
+			mDeadTime -= Time::DeltaTime();
+			if (mDeadTime <= 0.0f)
+			{
+				this->GetOwner()->SetState(ya::GameObject::eState::Dead);
+			}
+		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 콜라이더 업데이트
@@ -653,8 +764,8 @@ namespace ya
 
 		// mBodyCd 활성화 비활성화 조건
 		if (mCurState == eLukeState::L_Guard || mCurState == eLukeState::R_Guard
-			|| mIsArm || mIsKick || mIsSideKick || mIsUpper
-			|| mIsAttacked1 || mIsAttacked2 || mIsAttacked3 || mIsAttacked4)
+			|| mIsArm || mIsKick || mIsSideKick || mIsUpper)
+			//|| mIsAttacked1 || mIsAttacked2 || mIsAttacked3 || mIsAttacked4)
 			// 가드가 붙은 스킬아냐 아니냐로 구분을 해서 적용을 할지 고민중
 			// 가드를 하고 있다가 바로 스킬을 쓴다면, 계속 무적이고 플레이어의 공격상태와 겹치게 되면 상황이 애매해짐 
 		{
@@ -698,28 +809,70 @@ namespace ya
 		// Attacked 상태 변수 동기화
 		if (mCurState == eLukeState::L_Attacked1 || mCurState == eLukeState::R_Attacked1)
 		{
+			if (mCurState == eLukeState::L_Attacked1)
+			{
+				Rigidbody* rb = this->GetOwner()->GetComponent<Rigidbody>();
+				rb->SetGround(true);
+				rb->AddForce(Vector2(100.4f, 0.0f));
+			}
+			else
+			{
+				Rigidbody* rb = this->GetOwner()->GetComponent<Rigidbody>();
+				rb->SetGround(true);
+				rb->AddForce(Vector2(-100.4f, 0.0f));
+			}
+
 			mIsAttacked1 = true;
 		}
 		else
 		{
 			mIsAttacked1 = false;
 		}
+
 		if (mCurState == eLukeState::L_Attacked2 || mCurState == eLukeState::R_Attacked2)
 		{
+			if (mCurState == eLukeState::L_Attacked2)
+			{
+				Rigidbody* rb = this->GetOwner()->GetComponent<Rigidbody>();
+				rb->SetGround(true);
+				rb->AddForce(Vector2(100.4f, 0.0f));
+			}
+			else
+			{
+				Rigidbody* rb = this->GetOwner()->GetComponent<Rigidbody>();
+				rb->SetGround(true);
+				rb->AddForce(Vector2(-100.4f, 0.0f));
+			}
+
 			mIsAttacked2 = true;
 		}
 		else
 		{
 			mIsAttacked2 = false;
 		}
+
 		if (mCurState == eLukeState::L_Attacked3 || mCurState == eLukeState::R_Attacked3)
 		{
+			if (mCurState == eLukeState::L_Attacked3)
+			{
+				Rigidbody* rb = this->GetOwner()->GetComponent<Rigidbody>();
+				rb->SetGround(true);
+				rb->AddForce(Vector2(100.4f, 0.0f));
+			}
+			else
+			{
+				Rigidbody* rb = this->GetOwner()->GetComponent<Rigidbody>();
+				rb->SetGround(true);
+				rb->AddForce(Vector2(-100.4f, 0.0f));
+			}
+
 			mIsAttacked3 = true;
 		}
 		else
 		{
 			mIsAttacked3 = false;
 		}
+
 		if (mCurState == eLukeState::L_Attacked4 || mCurState == eLukeState::R_Attacked4)
 		{
 			mIsAttacked4 = true;
@@ -860,6 +1013,13 @@ namespace ya
 		mIsAttacked3 = false;
 		mIsDowned = true;
 
+		mCanAttacked4 = true;
+
+		if (mHp <= 0.0f) 
+		{
+			SetEffectFlickering(0.05f, mDeadTime);
+		}
+
 		if (mDirection == eDirection::L)
 			ChangeState(eLukeState::L_Downed);
 		else
@@ -871,6 +1031,8 @@ namespace ya
 		mIsAttacked4 = false;
 		mIsDowned = true;
 
+		mCanAttacked4 = false;
+
 		if (mDirection == eDirection::L)
 			ChangeState(eLukeState::L_Downed);
 		else
@@ -881,9 +1043,9 @@ namespace ya
 	{
 		if (mHp <= 0.0f)
 		{
-			int a = 0;
+			mIsDead = true;
+			return;
 		}
-
 		else
 		{
 			mIsDowned = false;
@@ -919,6 +1081,9 @@ namespace ya
 	{
 		if (other->GetOwner()->GetName() == L"Ramona")
 		{
+			if (other->GetOwner()->GetComponent<RamonaScript>()->IsDead() == true)
+				return;
+
 			if (mBodyCd->GetState() == eColliderState::IsColliding)
 			{
 				if (mIsCollidingFirst == 0
@@ -954,6 +1119,9 @@ namespace ya
 					}
 					else// 가드 미사용 == Attacked
 					{
+						other->GetOwner()->GetComponent<RamonaScript>()->AddSP(10);
+						mHp -= mAttackedDamage;
+
 						std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
 							, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
 							, mPlayerAttackState.begin());
@@ -968,17 +1136,22 @@ namespace ya
 						mIsCollidingFirst = 1;
 					}
 				}
-				else if (mIsCollidingFirst == 0 && mIsDowned
+				else if (mIsCollidingFirst == 0 && mIsDowned == true// Downed 공격을 당하는 조건문
 					&& mIsAttacked1 == false && mIsAttacked2 == false && mIsAttacked3 == false && mIsAttacked4 == false
 					&& mIsGetUp == false
 					&& mIsArm == false && mIsKick == false && mIsSideKick == false && mIsUpper == false && mIsGuard == false)
 				{
-					std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
-						, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
-						, mPlayerAttackState.begin());
+					if (mCanAttacked4 == true)
+					{
+						mHp -= mAttackedDamage;
 
-					SetAttackedState();
-					mIsCollidingFirst = 1;
+						std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
+							, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
+							, mPlayerAttackState.begin());
+
+						SetAttackedState();
+						mIsCollidingFirst = 1;
+					}
 				}
 			}
 		}
@@ -992,6 +1165,26 @@ namespace ya
 			//this->GetOwner()->GetComponent<Collider2D>()->SetState(eColliderState::NotColliding);// 이것도 해줄 필요 없지않은가???
 			//mIsAttacked1 = false;
 		}
+	}
+
+	void LukeScript::SetEffectFlickering(float tick, float duration)
+	{
+		GetOwner()->mIsEffectFlickering = true;
+		mOnFlickering = true;
+		mFlickeringCurTime = 0.0f;
+		mFlickeringMaxTime = duration;
+		mFlickeringTickTime = tick;
+	}
+
+	void LukeScript::SetEffectFlashing(float tick, float duration, Vector4 color)
+	{
+		GetOwner()->mIsEffectFlashing = true;
+		GetOwner()->mEffectColor = color;
+
+		mOnFlashing = true;
+		mFlashingCurTime = 0.0f;
+		mFlashingMaxTime = duration;
+		mFlashingTickTime = tick;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1100,76 +1293,100 @@ namespace ya
 		if (mIsDowned)
 			goto DOWNED_ATTACKED;
 
-		if (mPlayerAttackState[0] || mPlayerAttackState[1] || mPlayerAttackState[2] || mPlayerAttackState[4] || mPlayerAttackState[5])
+		if (mHp <= 0)
 		{
-			//mHp -= 50.0f;
+			mIsDead = true;
 
-			if (mHp > 0.0f)
+			if (mPos.x < mPlayerPos.x)// 적 - 플레이어
 			{
-				if (mPos.x < mPlayerPos.x)// 적 - 플레이어
+				if (mIsAttacked3 == false)
 				{
-					if (mIsAttacked1 == false)
-					{
-						ChangeState(eLukeState::R_Attacked1);
-						mIsAttacked1 = true;
-					}
+					ChangeState(eLukeState::R_Attacked3);
+					mIsAttacked3 = true;
 				}
-				else// 플레이어 - 적
+			}
+			else// 플레이어 - 적
+			{
+				if (mIsAttacked3 == false)
 				{
-					if (mIsAttacked1 == false)
-					{
-						ChangeState(eLukeState::L_Attacked1);
-						mIsAttacked1 = true;
-					}
+					ChangeState(eLukeState::L_Attacked3);
+					mIsAttacked3 = true;
 				}
 			}
 		}
-
-		else if (mPlayerAttackState[3] || mPlayerAttackState[6] || mPlayerAttackState[8] || mPlayerAttackState[9] || mPlayerAttackState[12] || mPlayerAttackState[13])
+		else
 		{
-			//mHp -= 50.0f;
-
-			if (mHp > 0.0f)
+			if (mPlayerAttackState[0] || mPlayerAttackState[1] || mPlayerAttackState[2] || mPlayerAttackState[4] || mPlayerAttackState[5])
 			{
-				if (mPos.x < mPlayerPos.x)// 적 - 플레이어
+				//mHp -= 50.0f;
+
+				if (mHp > 0.0f)
 				{
-					if (mIsAttacked2 == false)
+					if (mPos.x < mPlayerPos.x)// 적 - 플레이어
 					{
-						ChangeState(eLukeState::R_Attacked2);
-						mIsAttacked2 = true;
+						if (mIsAttacked1 == false)
+						{
+							ChangeState(eLukeState::R_Attacked1);
+							mIsAttacked1 = true;
+						}
 					}
-				}
-				else// 플레이어 - 적
-				{
-					if (mIsAttacked2 == false)
+					else// 플레이어 - 적
 					{
-						ChangeState(eLukeState::L_Attacked2);
-						mIsAttacked2 = true;
+						if (mIsAttacked1 == false)
+						{
+							ChangeState(eLukeState::L_Attacked1);
+							mIsAttacked1 = true;
+						}
 					}
 				}
 			}
-		}
 
-		else if (mPlayerAttackState[10] || mPlayerAttackState[11] || mPlayerAttackState[14] || mPlayerAttackState[15] || mPlayerAttackState[16])
-		{
-			//mHp -= 50.0f;
-
-			if (mHp > 0.0f)
+			else if (mPlayerAttackState[3] || mPlayerAttackState[6] || mPlayerAttackState[8] || mPlayerAttackState[9] || mPlayerAttackState[12] || mPlayerAttackState[13])
 			{
-				if (mPos.x < mPlayerPos.x)// 적 - 플레이어
+				//mHp -= 50.0f;
+
+				if (mHp > 0.0f)
 				{
-					if (mIsAttacked3 == false)
+					if (mPos.x < mPlayerPos.x)// 적 - 플레이어
 					{
-						ChangeState(eLukeState::R_Attacked3);
-						mIsAttacked3 = true;
+						if (mIsAttacked2 == false)
+						{
+							ChangeState(eLukeState::R_Attacked2);
+							mIsAttacked2 = true;
+						}
+					}
+					else// 플레이어 - 적
+					{
+						if (mIsAttacked2 == false)
+						{
+							ChangeState(eLukeState::L_Attacked2);
+							mIsAttacked2 = true;
+						}
 					}
 				}
-				else// 플레이어 - 적
+			}
+
+			else if (mPlayerAttackState[10] || mPlayerAttackState[11] || mPlayerAttackState[14] || mPlayerAttackState[15] || mPlayerAttackState[16])
+			{
+				//mHp -= 50.0f;
+
+				if (mHp > 0.0f)
 				{
-					if (mIsAttacked3 == false)
+					if (mPos.x < mPlayerPos.x)// 적 - 플레이어
 					{
-						ChangeState(eLukeState::L_Attacked3);
-						mIsAttacked3 = true;
+						if (mIsAttacked3 == false)
+						{
+							ChangeState(eLukeState::R_Attacked3);
+							mIsAttacked3 = true;
+						}
+					}
+					else// 플레이어 - 적
+					{
+						if (mIsAttacked3 == false)
+						{
+							ChangeState(eLukeState::L_Attacked3);
+							mIsAttacked3 = true;
+						}
 					}
 				}
 			}

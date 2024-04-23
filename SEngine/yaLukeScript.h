@@ -87,6 +87,8 @@ namespace ya
 		virtual void OnCollisionStay(Collider2D* other) override;
 		virtual void OnCollisionExit(Collider2D* other) override;
 
+		// private
+		int GetHp() { return mHp; }
 		eDirection GetDirection() { return mDirection; }
 		void SetDirection(eDirection dir) { mDirection = dir; }
 		eLukeState GetState() { return mCurState; }
@@ -106,6 +108,18 @@ namespace ya
 				mCurState = eLukeState::R_Walk;
 			}
 		}
+		bool IsWait() 
+		{
+			if (mCurState == eLukeState::L_Walk || mCurState == eLukeState::R_Walk
+				|| mCurState == eLukeState::L_Run || mCurState == eLukeState::R_Run)
+				return true;
+			
+			return false;
+		}
+
+		// Effect
+		void SetEffectFlickering(float tick, float duration);
+		void SetEffectFlashing(float tick, float duration, Vector4 color);
 
 	private:
 		//bool NoneAnimationCondition();
@@ -113,6 +127,9 @@ namespace ya
 		// 플레이어 감지 함수
 		bool IsPlayerInDetectionRange()// 플레이어 인식 감지 함수: 대기 상태로 돌입 조건
 		{
+			if (mIsPlayerDead == true)
+				return false;
+
 			// 적과 플레이어 사이의 거리 계산
 			float distanceX = mPlayerPos.x - mPos.x;
 			float distanceY = mPlayerPos.y - mPos.y;
@@ -124,6 +141,9 @@ namespace ya
 
 		bool IsPlayerInCombatRange()// 플레이어 전투 감지 함수: 전투 상태로 돌입 조건
 		{
+			if (mIsPlayerDead == true)
+				return false;
+
 			// 적과 플레이어 사이의 거리 계산
 			float distanceX = mPlayerPos.x - mPos.x;
 			float distanceY = mPlayerPos.y - mPos.y;
@@ -195,7 +215,7 @@ namespace ya
 
 	private:
 		// 어빌리티
-		float mHp = 100.0f;
+		int mHp = 100;
 
 		// 주요 상태
 		eLukeState mCurState = eLukeState::R_Idle;
@@ -211,6 +231,7 @@ namespace ya
 		eDirection mPlayerDir;
 		ePlayerState mPlayerPreState;
 		ePlayerState mPlayerCurState;
+		bool mIsPlayerDead;
 
 		// 플레이어 인식 감지 (단순)
 		const float mDetectionRange = 1.5f;
@@ -266,14 +287,36 @@ namespace ya
 		bool mIsAttacked2 = false;
 		bool mIsAttacked3 = false;
 		bool mIsAttacked4 = false;
+		bool mCanAttacked4 = false;
 
 		bool mIsGetUp = false;
 
 		bool mIsDowned = false;
-		//bool mIsDead = false;
+		bool mIsDead = false;
 
-		bool mIsFlying = false;
-		bool mIsRaiding = false;
+		float mDeadTime = 3.0f;
+
+		int  mAttackedDamage = 20;
+
+
+		//bool mIsFlying = false;
+		//bool mIsRaiding = false;
+
+		// Shadow
+		GameObject* mShadow = nullptr;
+
+		// Effect
+		// Flickering
+		bool mOnFlickering = false;
+		float mFlickeringCurTime = 0.0f;
+		float mFlickeringMaxTime = 0.0f;
+		float mFlickeringTickTime = 0.0f;
+
+		// Flashing
+		bool mOnFlashing = false;
+		float mFlashingCurTime = 0.0f;
+		float mFlashingMaxTime = 0.0f;
+		float mFlashingTickTime = 0.0f;
 
 		// 어떤 공격 스킬을 사용중인지 담고 있는 bool 배열
 		bool mAttackState[10] = { false, };

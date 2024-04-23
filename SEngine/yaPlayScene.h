@@ -3,6 +3,8 @@
 
 namespace ya
 {
+	class RamonaScript;
+
 	class PlayScene : public Scene
 	{
 	public:
@@ -23,6 +25,12 @@ namespace ya
 				return true;
 
 			return false;
+		}
+
+		static bool IsPlayerDead()
+		{
+			if (mRamona != nullptr)
+				return mRamonaDead;
 		}
 
 		static Vector3 GetPlayerPosition()
@@ -49,6 +57,7 @@ namespace ya
 		static Vector3 mRamonaPos;
 		static eDirection mRamonaDir;
 		static ePlayerState mRamonaState;
+		static bool mRamonaDead;
 
 		GameObject* mLuke = nullptr;
 		//GameObject* mLuke2 = nullptr;

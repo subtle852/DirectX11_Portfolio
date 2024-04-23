@@ -555,6 +555,17 @@ namespace renderer
 			Resources::Insert(L"SpriteMaterial_Shadow", spriteMaterial);
 		}
 
+		//////////////////////////////////////////////////////////// AttackEffect
+		{
+			std::shared_ptr<Texture> texture
+				= Resources::Load<Texture>(L"ATTACKEFFECT", L"..\\Resources\\TEXTURE\\RAMONA\\AttackEffect.png");
+			std::shared_ptr<Material> spriteMaterial = std::make_shared<Material>();
+			spriteMaterial->SetShader(spriteShader);
+			spriteMaterial->SetTexture(texture);
+			spriteMaterial->SetRenderingMode(eRenderingMode::Transparent);
+			Resources::Insert(L"SpriteMaterial_AttackEffect", spriteMaterial);
+		}
+
 
 #pragma endregion
 	}
