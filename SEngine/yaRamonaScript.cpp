@@ -54,7 +54,7 @@ namespace ya
 			* 1.0f);
 		#pragma endregion
 
-		#pragma region 공격 이펙트
+		#pragma region 공격 이펙트 (미정)
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//													// 공격 이펙트
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -240,8 +240,8 @@ namespace ya
 
 		atlas
 			= Resources::Load<Texture>(L"Downed", L"..\\Resources\\TEXTURE\\RAMONA\\Downed.png");
-		at->Create(L"R_Downed", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4, Vector2::Zero, 0.8f);
-		at->Create(L"L_Downed", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4, Vector2::Zero, 0.8f);
+		at->Create(L"R_Downed", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4, Vector2::Zero, 0.3f);
+		at->Create(L"L_Downed", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4, Vector2::Zero, 0.3f);
 
 		atlas
 			= Resources::Load<Texture>(L"GetUp", L"..\\Resources\\TEXTURE\\RAMONA\\GetUp.png");
@@ -253,9 +253,9 @@ namespace ya
 
 
 		atlas
-			= Resources::Load<Texture>(L"Revived", L"..\\Resources\\TEXTURE\\RAMONA\\Revived.png");
-		at->Create(L"R_Revived", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(1136.0f / 8.0f, 213.0f), 8, Vector2::Zero, 0.1f);
-		at->Create(L"L_Revived", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(592.0f / 8.0f, 160.0f), 8, Vector2::Zero, 0.1f);
+			= Resources::Load<Texture>(L"Revive", L"..\\Resources\\TEXTURE\\RAMONA\\Revive.png");
+		at->Create(L"R_Revive", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(1136.0f / 8.0f, 213.0f), 8, Vector2::Zero, 0.1f);
+		at->Create(L"L_Revive", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(592.0f / 8.0f, 160.0f), 8, Vector2::Zero, 0.1f);
 
 		#pragma endregion
 
@@ -331,8 +331,8 @@ namespace ya
 		at->CompleteEvent(L"L_GetUp") = std::bind(&RamonaScript::GetUpComplete, this);
 		at->CompleteEvent(L"R_GetUp") = std::bind(&RamonaScript::GetUpComplete, this);
 
-		at->CompleteEvent(L"L_Revived") = std::bind(&RamonaScript::RevivedComplete, this);
-		at->CompleteEvent(L"R_Revived") = std::bind(&RamonaScript::RevivedComplete, this);
+		at->CompleteEvent(L"L_Revive") = std::bind(&RamonaScript::ReviveComplete, this);
+		at->CompleteEvent(L"R_Revive") = std::bind(&RamonaScript::ReviveComplete, this);
 
 		#pragma endregion
 
@@ -609,11 +609,11 @@ namespace ya
 				L_getup();
 				break;
 
-			case ePlayerState::R_Revived:
-				R_revived();
+			case ePlayerState::R_Revive:
+				R_revive();
 				break;
-			case ePlayerState::L_Revived:
-				L_revived();
+			case ePlayerState::L_Revive:
+				L_revive();
 				break;
 			}
 		}
@@ -724,6 +724,7 @@ namespace ya
 		}
 		#pragma endregion
 
+		#pragma region 속성
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 속성
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -732,6 +733,7 @@ namespace ya
 		{
 			int a = 0;
 		}
+		#pragma endregion
 
 		#pragma region 콜라이더
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -766,6 +768,7 @@ namespace ya
 		}
 		#pragma endregion
 
+		#pragma region 조작
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 위치
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1787,6 +1790,9 @@ namespace ya
 
 		}
 
+		#pragma endregion
+
+		#pragma region 충돌관련 동기화
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 콜라이더 & 스킬 동기화
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1876,7 +1882,7 @@ namespace ya
 		}
 
 		// All Collider
-		if (mIsSuper)
+		if (mIsSuper || mIsReviveAttack)
 		{
 			mAllCd->SetActivation(eColliderActivation::Active);
 		}
@@ -1885,12 +1891,28 @@ namespace ya
 			mAllCd->SetActivation(eColliderActivation::InActive);
 		}
 
+		if (mIsReviveAttack)
+		{
+			mReviveAttackTime -= Time::DeltaTime();
+			if (mReviveAttackTime <= 0.0f)
+			{
+				mIsReviveAttack = false;
+			}
+		}
+		else
+		{
+			mReviveAttackTime = 0.5f;
+		}
+
 		// mIsCollidingFirst
 		if (mCurState == ePlayerState::L_Idle || mCurState == ePlayerState::R_Idle || mCurState == ePlayerState::L_Run || mCurState == ePlayerState::R_Run)
 		{
 			mIsCollidingFirst = 0;
 		}
 
+		#pragma endregion
+
+		#pragma region 공격 이펙트 (미정)
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 														// 공격 이펙트
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1911,6 +1933,9 @@ namespace ya
 		//	mAttackEffectTime = 0.0;
 		//}
 
+		#pragma endregion
+
+		#pragma region 상태변수 동기화
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 																// 상태 bool 변수 동기화
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2070,6 +2095,9 @@ namespace ya
 			mIsSuper = false;
 		}
 
+		#pragma endregion
+
+		#pragma region AttackState 동기화
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 스킬 상태 Update
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2091,8 +2119,13 @@ namespace ya
 		mAttackState[14] = mIsRunSlideAttack;
 		mAttackState[15] = mIsFireBall;
 		mAttackState[16] = mIsSuper;
+		mAttackState[17] = mIsReviveAttack;
+
+		#pragma endregion
+		
 	}
 
+	#pragma region OnCollision
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 충돌
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2305,6 +2338,10 @@ namespace ya
 		int a = 0;
 	}
 
+	#pragma endregion
+
+	#pragma region 이벤트 함수
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 이벤트 함수
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2514,11 +2551,11 @@ namespace ya
 
 			if (mDirection == eDirection::L)
 			{
-				mCurState = ePlayerState::L_Revived;
+				mCurState = ePlayerState::L_Revive;
 			}
 			else
 			{
-				mCurState = ePlayerState::R_Revived;
+				mCurState = ePlayerState::R_Revive;
 			}
 
 			return;
@@ -2548,10 +2585,12 @@ namespace ya
 		}
 	}
 
-	void RamonaScript::RevivedComplete()
+	void RamonaScript::ReviveComplete()
 	{
-		// 멤버 변수 mIsRevived
+		// 멤버 변수 mIsRevive
 		mIsDead = false;
+
+		mIsReviveAttack = true;
 
 		if (mDirection == eDirection::L)
 		{
@@ -2569,6 +2608,8 @@ namespace ya
 		mAttribute.mHp -= mAttackedDamage;
 
 	}
+
+	#pragma endregion
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 기타 함수
@@ -2650,6 +2691,7 @@ namespace ya
 		return true;
 	}
 
+	#pragma region 애니메이션 함수
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 														// 상태 애니메이션 함수
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3016,16 +3058,18 @@ namespace ya
 		Animator* at = this->GetOwner()->GetComponent<Animator>();
 		at->PlayAnimation(L"R_GetUp", true);
 	}
-	void RamonaScript::L_revived()
+	void RamonaScript::L_revive()
 	{
 		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Revived", true);
+		at->PlayAnimation(L"L_Revive", true);
 	}
-	void RamonaScript::R_revived()
+	void RamonaScript::R_revive()
 	{
 		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Revived", true);
+		at->PlayAnimation(L"R_Revive", true);
 	}
+
+	#pragma endregion
 
 	void RamonaScript::SetEffectFlickering(float tick, float duration)
 	{

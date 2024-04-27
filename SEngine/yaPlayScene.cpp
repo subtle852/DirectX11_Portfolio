@@ -282,33 +282,33 @@ namespace ya
 			mRamonaDead = mRamona->GetComponent<RamonaScript>()->IsDead();
 
 
-			//{
-			//	std::wstring str = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHeart());
-			//	std::wstring str1 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHp());
-			//	std::wstring str2 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetSp());
-			//	std::wstring str3 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetCoin());
-			//	std::wstring str4;
-			//	std::wstring str5;
-			//	std::wstring str6;
-			//	if (mLuke01 != nullptr)
-			//	{
-			//		if (mLuke01->GetState() == GameObject::eState::Active)
-			//			str4 = std::to_wstring(mLuke01->GetComponent<LukeScript>()->GetHp());
-			//	}
-			//	if (mLuke02 != nullptr)
-			//	{
-			//		if (mLuke02->GetState() == GameObject::eState::Active)
-			//			str5 = std::to_wstring(mLuke02->GetComponent<LukeScript>()->GetHp());
-			//	}
-			//	if (mLuke03 != nullptr)
-			//	{
-			//		if (mLuke03->GetState() == GameObject::eState::Active)
-			//			str6 = std::to_wstring(mLuke03->GetComponent<LukeScript>()->GetHp());
-			//	}
+			{
+				std::wstring str = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHeart());
+				std::wstring str1 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHp());
+				std::wstring str2 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetSp());
+				std::wstring str3 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetCoin());
+				std::wstring str4;
+				std::wstring str5;
+				std::wstring str6;
+				if (mLuke01 != nullptr)
+				{
+					if (mLuke01->GetState() == GameObject::eState::Active)
+						str4 = std::to_wstring(mLuke01->GetComponent<LukeScript>()->GetHp());
+				}
+				if (mLuke02 != nullptr)
+				{
+					if (mLuke02->GetState() == GameObject::eState::Active)
+						str5 = std::to_wstring(mLuke02->GetComponent<LukeScript>()->GetHp());
+				}
+				if (mLuke03 != nullptr)
+				{
+					if (mLuke03->GetState() == GameObject::eState::Active)
+						str6 = std::to_wstring(mLuke03->GetComponent<LukeScript>()->GetHp());
+				}
 
-			//	ya::DebugLog::PrintDebugLog(L"Heart: " + str + L" Hp: " + str1 + L" Sp: " + str2 + L" Coin: " + str3
-			//		+ L" || Enemy01Hp: " + str4 + L" || Enemy02Hp: " + str5 + L" || Enemy03Hp: " + str6);
-			//}
+				ya::DebugLog::PrintDebugLog(L"Heart: " + str + L" Hp: " + str1 + L" Sp: " + str2 + L" Coin: " + str3
+					+ L" || Enemy01Hp: " + str4 + L" || Enemy02Hp: " + str5 + L" || Enemy03Hp: " + str6);
+			}
 		}
 
 

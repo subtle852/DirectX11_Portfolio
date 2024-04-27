@@ -21,13 +21,13 @@ namespace ya
 		mAttackState.resize(10, false);
 		mPlayerAttackState.resize(20, false);
 	}
+
 	LukeScript::~LukeScript()
 	{
 	}
+
 	void LukeScript::Initialize()
 	{
-		SetEffectFlashing(0.25f, 5.0f, Vector4(0.5f, 0.5f, 0.5f, 1.0f));// White
-
 		#pragma region 그림자
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 그림자
@@ -118,8 +118,8 @@ namespace ya
 
 		atlas
 			= Resources::Load<Texture>(L"Luke_GetUp", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_GETUP.png");
-		at->Create(L"R_GetUp", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-		at->Create(L"L_GetUp", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+		at->Create(L"R_GetUp", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8, Vector2::Zero, 0.08f);
+		at->Create(L"L_GetUp", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8, Vector2::Zero, 0.08f);
 
 		atlas
 			= Resources::Load<Texture>(L"Luke_Downed", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_DEAD.png");
@@ -191,7 +191,7 @@ namespace ya
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		mBodyCd = this->GetOwner()->AddComponent<Collider2D>();
-		mBodyCd->SetSize(Vector2(0.15f, 0.15f));
+		mBodyCd->SetSize(Vector2(0.2f, 0.2f));
 		mBodyCd->SetIsBody(true);
 		
 		mSkillCd = this->GetOwner()->AddComponent<Collider2D>();
@@ -223,6 +223,7 @@ namespace ya
 		#pragma endregion
 
 	}
+
 	void LukeScript::Update()
 	{
 		#pragma region 디버그
@@ -368,6 +369,7 @@ namespace ya
 
 		#pragma endregion
 
+		#pragma region 속성
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 속성 업데이트
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -393,6 +395,8 @@ namespace ya
 				this->GetOwner()->SetState(ya::GameObject::eState::Dead);
 			}
 		}
+
+		#pragma endregion
 
 		#pragma region 그림자
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -495,6 +499,7 @@ namespace ya
 
 		#pragma endregion
 
+		#pragma region AI
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// AI
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -503,7 +508,8 @@ namespace ya
 		// 추후 공격을 당하는 변수들 합쳐서 함수로 대체 예정
 		if (mIsAttacked1 == false && mIsAttacked2 == false && mIsAttacked3 == false && mIsAttacked4 == false 
 			&& mBodyCd->GetState() == eColliderState::NotColliding 
-			&& mIsDowned == false)
+			&& mIsDowned == false
+			&& mIsGetUp == false)
 		{
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 탐지거리 내 플레이어 O
@@ -706,6 +712,9 @@ namespace ya
 			}
 		}
 
+		#pragma endregion
+
+		#pragma region 충돌관련 동기화
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 																// 충돌
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -749,6 +758,9 @@ namespace ya
 			mSkillCd->SetActivation(eColliderActivation::InActive);
 		}
 
+		#pragma endregion
+
+		#pragma region 상태변수 동기화
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 														// 상태 bool 변수 동기화
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -893,6 +905,9 @@ namespace ya
 			mIsUpper = false;
 		}
 
+		#pragma endregion
+
+		#pragma region AttackState 동기화
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 														// 스킬 상태 Update
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -901,8 +916,12 @@ namespace ya
 		mAttackState[1] = mIsKick;
 		mAttackState[2] = mIsSideKick;
 		mAttackState[3] = mIsUpper;
+
+		#pragma endregion
+
 	}
 
+	#pragma region OnCollision
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 충돌
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -929,11 +948,18 @@ namespace ya
 
 			if (mBodyCd->GetState() == eColliderState::IsColliding)
 			{
+				mRandWaitOrRun = 0;
+				
+				std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
+					, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
+					, mPlayerAttackState.begin());
+
 				if (mIsCollidingFirst == 0
 					&& mIsAttacked1 == false && mIsAttacked2 == false && mIsAttacked3 == false && mIsAttacked4 == false
 					&& mIsDowned == false
 					&& mIsGetUp == false
-					&& mIsArm == false && mIsKick == false && mIsSideKick == false && mIsUpper == false && mIsGuard == false)
+					&& mIsArm == false && mIsKick == false && mIsSideKick == false && mIsUpper == false && mIsGuard == false
+					&& mPlayerAttackState[17] == false)
 					// 처음 충돌
 					// + 충돌 조건(다운되어있는데 갑자기 공격을 받았다고 해서 Guard나 Idle로 바뀌지 않기 위한 조건)
 					// 추후 충돌 조건은 따로 정리할 예정
@@ -976,7 +1002,8 @@ namespace ya
 				else if (mIsCollidingFirst == 0 && mIsDowned == true// Downed 공격을 당하는 조건문
 					&& mIsAttacked1 == false && mIsAttacked2 == false && mIsAttacked3 == false && mIsAttacked4 == false
 					&& mIsGetUp == false
-					&& mIsArm == false && mIsKick == false && mIsSideKick == false && mIsUpper == false && mIsGuard == false)
+					&& mIsArm == false && mIsKick == false && mIsSideKick == false && mIsUpper == false && mIsGuard == false
+					&& mPlayerAttackState[17] == false)
 				{
 					if (mCanAttacked4 == true)
 					{
@@ -989,6 +1016,15 @@ namespace ya
 						SetAttackedState();
 						mIsCollidingFirst = 1;
 					}
+				}
+				else if (mIsCollidingFirst == 0 && mPlayerAttackState[17])
+				{
+					std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
+						, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
+						, mPlayerAttackState.begin());
+
+					SetAttackedState();
+					mIsCollidingFirst = 1;
 				}
 			}
 		}
@@ -1029,6 +1065,9 @@ namespace ya
 
 	}
 
+	#pragma endregion
+
+	#pragma region 이벤트 함수
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 														// 이벤트
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1055,8 +1094,10 @@ namespace ya
 	{
 		// 막으려 하는 해당 스킬의 duration이 다르기 때문에 duration 까지 가드를 유지하기 위한 부분 
 		ePlayerState playerState = PlayScene::GetPlayerState();
-		if (playerState == ePlayerState::L_Idle || playerState == ePlayerState::R_Idle || playerState == ePlayerState::L_Walk || playerState == ePlayerState::R_Walk || 
-			playerState == ePlayerState::L_Jump || playerState == ePlayerState::R_Jump || playerState == ePlayerState::L_Run || playerState == ePlayerState::R_Run)
+		if (playerState == ePlayerState::L_Idle || playerState == ePlayerState::R_Idle 
+			|| playerState == ePlayerState::L_Walk || playerState == ePlayerState::R_Walk 
+			|| playerState == ePlayerState::L_Jump || playerState == ePlayerState::R_Jump 
+			|| playerState == ePlayerState::L_Run || playerState == ePlayerState::R_Run)
 		{
 			if (mPlayerPos.x < mPos.x)
 				ChangeState(eLukeState::L_Idle);
@@ -1152,7 +1193,9 @@ namespace ya
 		else
 			ChangeState(eLukeState::R_Idle);
 	}
+	#pragma endregion
 
+	#pragma region 애니메이션 함수
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 													// 상태 애니메이션 함수
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1338,6 +1381,8 @@ namespace ya
 		at->PlayAnimation(L"R_Raiding", true);
 	}
 
+	#pragma endregion
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 														// 동작 내부 함수
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1351,7 +1396,7 @@ namespace ya
 		if (mCombatTimer <= 0.0f)
 		{
 			// 공격 or 방어 or 대기 중 하나를 랜덤으로 실행
-			const int wait = 2;// wait가 높을 수록 공격 및 방어가 아닌 대기할 확률이 높아짐
+			const int wait = 3;// wait가 높을 수록 공격 및 방어가 아닌 대기할 확률이 높아짐
 
 			std::mt19937 mt(rd());
 			std::uniform_int_distribution<int> dist(0, (int)eLukeCombatState::End + wait);
@@ -1519,7 +1564,7 @@ namespace ya
 				}
 			}
 
-			else if (mPlayerAttackState[10] || mPlayerAttackState[11] || mPlayerAttackState[14] || mPlayerAttackState[15] || mPlayerAttackState[16])
+			else if (mPlayerAttackState[10] || mPlayerAttackState[11] || mPlayerAttackState[14] || mPlayerAttackState[15] || mPlayerAttackState[16] || mPlayerAttackState[17])
 			{
 				//mHp -= 50.0f;
 

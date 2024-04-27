@@ -174,7 +174,7 @@ namespace ya::enums
 		L_GetUp,
 		R_GetUp,
 
-		L_Revived,
-		R_Revived,
+		L_Revive,
+		R_Revive,
 	};
 }

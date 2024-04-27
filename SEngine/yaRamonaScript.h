@@ -63,7 +63,7 @@ namespace ya
 		void DownedStart();
 		void DownedComplete();
 		void GetUpComplete();
-		void RevivedComplete();
+		void ReviveComplete();
 
 		void AttackedStart();
 
@@ -161,8 +161,8 @@ namespace ya
 		void L_getup();
 		void R_getup();
 
-		void L_revived();
-		void R_revived();
+		void L_revive();
+		void R_revive();
 
 		// Effect
 		void SetEffectFlickering(float tick, float duration);
@@ -229,6 +229,9 @@ namespace ya
 		bool mIsSuper = false;
 		const int mFireBallSp = 30;
 		const int mSuperSp = 50;
+
+		bool mIsReviveAttack = false;
+		float mReviveAttackTime = 0.5f;
 
 		// Under Attack
 		bool mIsStun = false;
