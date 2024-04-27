@@ -4,7 +4,7 @@
 
 namespace ya
 {
-	class RamonaScript : public Script
+	class RamonaScript : public PlayerScript
 	{
 		struct RamonaAttribute
 		{
@@ -21,23 +21,29 @@ namespace ya
 		virtual void Initialize() override;
 		virtual void Update() override;
 
+		// 충돌 함수
+		virtual void OnCollisionEnter(Collider2D* other) override;
+		virtual void OnCollisionStay(Collider2D* other) override;
+		virtual void OnCollisionExit(Collider2D* other) override;
+
 		// private 변수관련 함수
 		eDirection GetDirection() { return mDirection; }
 		ePlayerState GetState() { return mCurState; }
 
-		bool IsDead() { return mIsDead; }
-		bool IsJump() { return mIsJump; }
-		bool IsDJump() { return mIsDJump; }
-		
 		int GetHeart() { return mAttribute.mHeart; }
 		int GetHp() { return mAttribute.mHp; }
 		int GetSp() { return mAttribute.mSp; }
 		int GetCoin() { return mAttribute.mCoin; }
 
+		bool IsDead() { return mIsDead; }
+		bool IsJump() { return mIsJump; }
+		bool IsDJump() { return mIsDJump; }
+		
 		void TakeDamage(int damage) { mAttribute.mHp -= damage; }
-		void AddSP(int sp) { mAttribute.mSp += sp; }
+		void AddSp(int sp) { mAttribute.mSp += sp; }
 
-		// 이벤트 함수
+	private:
+		//// 이벤트 함수
 		void EvadeComplete();
 
 		void NormalAttackComplete();
@@ -61,15 +67,7 @@ namespace ya
 
 		void AttackedStart();
 
-		// 충돌 함수
-		virtual void OnCollisionEnter(Collider2D* other) override;
-		virtual void OnCollisionStay(Collider2D* other) override;
-		virtual void OnCollisionExit(Collider2D* other) override;
-
-	private:
-
 		//// 조건 함수
-
 		// 다른 애니메이션 진행중인데 좌우상하 키가 눌린다고 해서 
 		// 특정 애니메이션(ex. Walk)이 진행되면 안되기에 다른 애니메이션이 진행중인지 확인하는 조건
 		bool NoneAnimationCondition();
@@ -87,7 +85,6 @@ namespace ya
 
 		// State가 바뀌면 안되는 상태 ex. Stun, KnockDown,... 이런 상태 진행중에 다른 상태로 전환되면 안됨
 		bool CanChangeState();
-
 
 		//// State 함수
 		void L_idle();
@@ -181,8 +178,7 @@ namespace ya
 
 		eDirection mDirection = eDirection::R;
 
-		//// State 변수
-		
+		// State 변수
 		// Walk
 		const float mWalkSpeed = 0.7f;
 
@@ -234,7 +230,6 @@ namespace ya
 		const int mFireBallSp = 30;
 		const int mSuperSp = 50;
 
-
 		// Under Attack
 		bool mIsStun = false;
 		bool mIsKnockDown = false;
@@ -242,7 +237,6 @@ namespace ya
 		bool mIsGetUp = false;
 		bool mIsBackStun = false;
 		bool mIsDead = false;
-
 		int  mAttackedDamage = 10;
 
 		// 충돌체
@@ -253,26 +247,14 @@ namespace ya
 		Collider2D* mBackCd = nullptr;
 		Collider2D* mAllCd = nullptr;
 
-		// 어떤 공격 스킬을 사용중인지 담고 있는 bool 배열
-		//bool mAttackState[20] = { false, };
-		
-		std::vector<bool> mAttackState;
-		
-
-		// mAttackState 배열 시작 주소를 보내주는 함수
-	public:
-		//const bool* GetAttackState() { return &mAttackState[0]; }
-		const std::vector<bool>& GetAttackState() const { return mAttackState; }
-
-	private:
-		// 적 공격 스킬 상태를 담고 있는 bool 배열
-		bool mEnemyAttackState[10] = { false, };
-
 		// 충돌이 처음인지 확인하는 변수
 		int mIsCollidingFirst = 0;
 
 		// 플레이어 기준 적의 방향(왼쪽, 오른쪽)을 체크
-		int mEnemyPosition = 1;// -1 (왼쪽) 플레이어 +1 (오른쪽)
+		int mEnemyDirectionFromPlayer = 1;// -1 (왼쪽) 플레이어 +1 (오른쪽)
+
+		// Shadow
+		GameObject* mShadow = nullptr;
 
 		// Effect
 		// Flickering
@@ -287,12 +269,17 @@ namespace ya
 		float mFlashingMaxTime = 0.0f;
 		float mFlashingTickTime = 0.0f;
 
-		// Shadow
-		GameObject* mShadow = nullptr;
-
-		// Effect
+		// Attack Effect
 		//GameObject* mAttackEffect = nullptr;
 		//double mAttackEffectTime = 0.0f;
 
+		// 적 공격 스킬 상태를 담고 있는 bool 배열
+		std::vector<bool> mEnemyAttackState;
+
+		// 어떤 공격 스킬을 사용중인지 담고 있는 bool vector
+		std::vector<bool> mAttackState;
+		
+	public:
+		const std::vector<bool>& GetAttackState() const { return mAttackState; }
 	};
 }

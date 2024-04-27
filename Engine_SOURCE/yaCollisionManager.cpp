@@ -82,9 +82,9 @@ namespace ya
 						if (rightObj->GetState()
 							!= GameObject::eState::Active)
 							continue;
-						if (leftCol->GetIsBody() == true && rightCol->GetIsBody() == true)
-							continue;
-						//if (leftCol->GetIsBody() == false && rightCol->GetIsBody() == false)
+						//if (leftCol->IsBody() == true && rightCol->IsBody() == true)
+						//	continue;
+						//if (leftCol->IsBody() == false && rightCol->IsBody() == false)
 						//	continue;
 
 						ColliderCollision(compsLeft[i], compsRight[j]);

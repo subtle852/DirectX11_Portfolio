@@ -59,8 +59,9 @@ namespace ya
 		static ePlayerState mRamonaState;
 		static bool mRamonaDead;
 
-		GameObject* mLuke = nullptr;
-		//GameObject* mLuke2 = nullptr;
+		GameObject* mLuke01 = nullptr;
+		GameObject* mLuke02 = nullptr;
+		GameObject* mLuke03 = nullptr;
 
 		// static Vector3 mTargetPos;
 		// 일반적인 상황에서는 플레이어

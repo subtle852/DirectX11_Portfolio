@@ -5,6 +5,7 @@
 #include <cstring>
 #include <cstdint>
 #include <type_traits>
+#include <typeinfo>
 
 #define arraysize(a) (sizeof(a) / sizeof(a[0]))
 

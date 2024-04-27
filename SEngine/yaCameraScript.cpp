@@ -97,7 +97,7 @@ namespace ya
 		if (ob == nullptr)
 			return;
 
-		if (other->GetIsBody() == false)// 바디 콜라이더 O, 스킬 콜라이더 X
+		if (other->IsBody() == false)// 바디 콜라이더 O, 스킬 콜라이더 X
 			return;
 
 		Transform* obTr = ob->GetComponent<Transform>();

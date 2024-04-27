@@ -29,13 +29,7 @@
     <ClCompile Include="yaSubspace02Scene.cpp">
       <Filter>Contents\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="yaRamonaScript.cpp">
-      <Filter>Contents\Script\PLAYER</Filter>
-    </ClCompile>
     <ClCompile Include="yaPlayer.cpp" />
-    <ClCompile Include="yaMiniScript.cpp">
-      <Filter>Contents\Script\PLAYER</Filter>
-    </ClCompile>
     <ClCompile Include="yaEnemyScript.cpp">
       <Filter>Contents\Script\ENEMY\Base</Filter>
     </ClCompile>
@@ -59,6 +53,12 @@
     </ClCompile>
     <ClCompile Include="yaBoss01Script.cpp">
       <Filter>Contents\Script\BOSS\STAGE01</Filter>
+    </ClCompile>
+    <ClCompile Include="yaMiniScript.cpp">
+      <Filter>Contents\Script\PLAYER\Mini</Filter>
+    </ClCompile>
+    <ClCompile Include="yaRamonaScript.cpp">
+      <Filter>Contents\Script\PLAYER\Ramona</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -93,13 +93,7 @@
     <ClInclude Include="LoadScenes.h">
       <Filter>Contents\Load</Filter>
     </ClInclude>
-    <ClInclude Include="yaRamonaScript.h">
-      <Filter>Contents\Script\PLAYER</Filter>
-    </ClInclude>
     <ClInclude Include="yaPlayer.h" />
-    <ClInclude Include="yaMiniScript.h">
-      <Filter>Contents\Script\PLAYER</Filter>
-    </ClInclude>
     <ClInclude Include="yaEnemyScript.h">
       <Filter>Contents\Script\ENEMY\Base</Filter>
     </ClInclude>
@@ -123,6 +117,12 @@
     </ClInclude>
     <ClInclude Include="yaBoss01Script.h">
       <Filter>Contents\Script\BOSS\STAGE01</Filter>
+    </ClInclude>
+    <ClInclude Include="yaMiniScript.h">
+      <Filter>Contents\Script\PLAYER\Mini</Filter>
+    </ClInclude>
+    <ClInclude Include="yaRamonaScript.h">
+      <Filter>Contents\Script\PLAYER\Ramona</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +194,12 @@
     </Filter>
     <Filter Include="Contents\Script\BOSS\STAGE01">
       <UniqueIdentifier>{41a8e3d9-a700-4630-9644-ba96a86c9599}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script\PLAYER\Mini">
+      <UniqueIdentifier>{f2bb5217-9ece-4975-a989-633a01140d2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script\PLAYER\Ramona">
+      <UniqueIdentifier>{f1bb6743-4633-4f5f-803b-10706e730635}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

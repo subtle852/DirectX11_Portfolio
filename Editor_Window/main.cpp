@@ -167,7 +167,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    //
    hDebugLogWnd = CreateWindowW(L"DebugLogWindow", L"Debug Log", WS_OVERLAPPEDWINDOW,
-       CW_USEDEFAULT, 0, DEBUGLOG_WINDOW_SIZE_W, DEBUGLOG_WINDOW_SIZE_H, nullptr, nullptr, hInstance, nullptr);
+       WINDOW_SIZE_W, 0, DEBUGLOG_WINDOW_SIZE_W, DEBUGLOG_WINDOW_SIZE_H, nullptr, nullptr, hInstance, nullptr);
 
    if (!hDebugLogWnd)
    {

@@ -32,7 +32,7 @@ namespace ya
 		void SetActivation(eColliderActivation activation) { mActivation = activation; }
 		eColliderState GetState() { return mState; }
 		void SetState(eColliderState state) { mState = state; }
-		bool GetIsBody() { return mIsBody; }
+		bool IsBody() { return mIsBody; }
 		void SetIsBody(bool isBody) { mIsBody = isBody; }
 		bool GetCanGuard() { return mCanGuard; }
 		void SetCanGuard(bool canGuard) { mCanGuard = canGuard; }

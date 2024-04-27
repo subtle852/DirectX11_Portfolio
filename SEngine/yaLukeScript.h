@@ -1,9 +1,10 @@
 #pragma once
 #include "yaScript.h"
+#include "yaEnemyScript.h"
 
 namespace ya
 {
-	class LukeScript : public Script
+	class LukeScript : public EnemyScript
 	{
 		enum class eLukeState
 		{
@@ -72,22 +73,12 @@ namespace ya
 		virtual void Initialize() override;
 		virtual void Update() override;
 
-		// 이벤트 함수
-		void JumpStart();
-		void Attacked1Complete();
-		void CombatComplete();
-		void GuardComplete();
-		void Attacked3Complete();
-		void Attacked4Complete();
-		void DownedComplete();
-		void GetUpComplete();
-
 		// 충돌 함수
 		virtual void OnCollisionEnter(Collider2D* other) override;
 		virtual void OnCollisionStay(Collider2D* other) override;
 		virtual void OnCollisionExit(Collider2D* other) override;
 
-		// private
+		// private 변수관련 함수
 		int GetHp() { return mHp; }
 		eDirection GetDirection() { return mDirection; }
 		void SetDirection(eDirection dir) { mDirection = dir; }
@@ -103,7 +94,7 @@ namespace ya
 			}
 			else
 			{
-				mDirectionInt = 1;
+				mDirectionInt = +1;
 				mDirection = dir;
 				mCurState = eLukeState::R_Walk;
 			}
@@ -117,14 +108,16 @@ namespace ya
 			return false;
 		}
 
-		// Effect
-		void SetEffectFlickering(float tick, float duration);
-		void SetEffectFlashing(float tick, float duration, Vector4 color);
-
 	private:
-		//bool NoneAnimationCondition();
+		//// 이벤트 함수
+		void CombatComplete();
+		void GuardComplete();
+		void Attacked1Complete();
+		void Attacked3Complete();
+		void Attacked4Complete();
+		void DownedComplete();
+		void GetUpComplete();
 
-		// 플레이어 감지 함수
 		bool IsPlayerInDetectionRange()// 플레이어 인식 감지 함수: 대기 상태로 돌입 조건
 		{
 			if (mIsPlayerDead == true)
@@ -138,7 +131,6 @@ namespace ya
 			// 플레이어가 감지 범위 내에 있는지 확인
 			return distance <= mDetectionRange;
 		}
-
 		bool IsPlayerInCombatRange()// 플레이어 전투 감지 함수: 전투 상태로 돌입 조건
 		{
 			if (mIsPlayerDead == true)
@@ -152,17 +144,11 @@ namespace ya
 			// 플레이어가 감지 범위 내에 있는지 확인
 			return distance <= mCombatRange;
 		}
-
 		// 랜덤 거리 추출 함수
 		float GetRandomMoveDistance() 
 		{
 			return baseMoveDistance + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / maxMoveRange));
 		}
-
-		// 동작 내부 함수
-		void Combat();
-
-		void SetAttackedState();
 
 		// State 함수
 		void L_idle();
@@ -212,6 +198,13 @@ namespace ya
 		void L_raiding();
 		void R_raiding();
 
+		// 동작 내부 함수
+		void Combat();
+		void SetAttackedState();
+
+		// Effect
+		void SetEffectFlickering(float tick, float duration);
+		void SetEffectFlashing(float tick, float duration, Vector4 color);
 
 	private:
 		// 어빌리티
@@ -246,7 +239,7 @@ namespace ya
 		float maxMoveRange = 0.3f;
 
 		// AI 이동 방향 변경을 위한 타이머 변수
-		float mMoveTimer;
+		float mMoveTimer = 0.0f;
 		const float mMoveInterval = 2.0f; // 2초마다 랜덤으로 방향 변경
 
 		// AI 전투 변경을 위한 타이머 변수
@@ -298,7 +291,6 @@ namespace ya
 
 		int  mAttackedDamage = 20;
 
-
 		//bool mIsFlying = false;
 		//bool mIsRaiding = false;
 
@@ -318,15 +310,13 @@ namespace ya
 		float mFlashingMaxTime = 0.0f;
 		float mFlashingTickTime = 0.0f;
 
-		// 어떤 공격 스킬을 사용중인지 담고 있는 bool 배열
-		bool mAttackState[10] = { false, };
-
-	public:
-		// mAttackState 배열 시작 주소를 보내주는 함수
-		const bool* GetAttackState() { return &mAttackState[0]; }
-
-	private:
 		// 플레이어 공격 스킬 상태를 담고 있는 bool 배열
 		std::vector<bool> mPlayerAttackState;
+
+		// 어떤 공격 스킬을 사용중인지 담고 있는 bool vector
+		std::vector<bool> mAttackState;
+
+	public:
+		const std::vector<bool>& GetAttackState() const { return mAttackState; }
 	};
 }

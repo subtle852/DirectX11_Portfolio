@@ -18,6 +18,7 @@ namespace ya
 {
 	LukeScript::LukeScript()
 	{
+		mAttackState.resize(10, false);
 		mPlayerAttackState.resize(20, false);
 	}
 	LukeScript::~LukeScript()
@@ -33,7 +34,7 @@ namespace ya
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		mShadow = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 40.f)
 			, Vector3::One * 3
-			, eLayerType::Player);
+			, eLayerType::BG);
 		MeshRenderer* mr = mShadow->AddComponent<MeshRenderer>();
 		mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
 		mr->SetMaterial(Resources::Find<Material>(L"SpriteMaterial_Shadow"));
@@ -205,10 +206,10 @@ namespace ya
 															// 초기화 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		mMoveTimer = 0.0f;
-
 		// 처음 시작하는 방향 랜덤
-		if (rand() % 2 == 0)
+		std::mt19937 mt(rd());
+		std::uniform_int_distribution<int> dist(0, 1);
+		if (dist(mt) == 0)
 		{
 			mDirection = eDirection::L;
 			mDirectionInt = -1;
@@ -219,16 +220,18 @@ namespace ya
 			mDirectionInt = +1;
 		}
 
-		// 랜덤 함수를 위한 함수 실행
-		rd();// 반환 값 무시된 상태
-
 		#pragma endregion
+
 	}
 	void LukeScript::Update()
 	{
+		#pragma region 디버그
 		//std::wstring str = std::to_wstring(mHp);
 		//ya::DebugLog::PrintDebugLog(L"mHp: " + str);
 
+		#pragma endregion
+
+		#pragma region FSM
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// FSM
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -363,6 +366,11 @@ namespace ya
 
 		mPrevState = mCurState;
 
+		#pragma endregion
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 속성 업데이트
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// 본인 위치 업데이트
 		Transform* tr = this->GetOwner()->GetComponent<Transform>();
 		Vector3 pos = tr->GetPosition();
@@ -376,10 +384,20 @@ namespace ya
 			mPlayerDir = PlayScene::GetPlayerDirection();
 		}
 
+		// 죽는 경우 사라지기 전까지 타임
+		if (mIsDead == true)
+		{
+			mDeadTime -= Time::DeltaTime();
+			if (mDeadTime <= 0.0f)
+			{
+				this->GetOwner()->SetState(ya::GameObject::eState::Dead);
+			}
+		}
+
+		#pragma region 그림자
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 그림자 업데이트
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 		Transform* myTr = GetOwner()->GetComponent<Transform>();
 		Vector3 myPos = myTr->GetPosition();
 		myPos.y -= 0.5f;
@@ -387,6 +405,14 @@ namespace ya
 		Transform* shadowTr = mShadow->GetComponent<Transform>();
 		shadowTr->SetPosition(myPos);
 
+		if (mDeadTime <= 0.1f)
+		{
+			mShadow->SetState(ya::GameObject::eState::Paused);
+		}
+
+		#pragma endregion
+
+		#pragma region 이펙트
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 이펙트 업데이트
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -452,20 +478,9 @@ namespace ya
 			}
 		}
 
+		#pragma endregion
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-															// 속성 업데이트
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		if (mIsDead == true)
-		{
-			mDeadTime -= Time::DeltaTime();
-			if (mDeadTime <= 0.0f)
-			{
-				this->GetOwner()->SetState(ya::GameObject::eState::Dead);
-			}
-		}
-
+		#pragma region 콜라이더
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 콜라이더 업데이트
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -477,6 +492,8 @@ namespace ya
 		{
 			mSkillCd->SetCenter(Vector2(0.3f, 0.0f));
 		}
+
+		#pragma endregion
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// AI
@@ -617,7 +634,7 @@ namespace ya
 					}
 
 					// 대기하는 경우
-					else// (mRandWaitOrRun == 1)
+					else// (mRandWaitOrRun == +1)
 					{
 						if (mPlayerPos.x + 0.15f < mPos.x && (mCurState == eLukeState::L_Idle || mCurState == eLukeState::R_Idle || mCurState == eLukeState::L_Run || mCurState == eLukeState::R_Run))
 						{	
@@ -663,7 +680,7 @@ namespace ya
 					{
 						mDirection = eDirection::R;
 						mDirectionInt = +1;
-					} // -1 또는 1로 랜덤하게 설정
+					} // -1 또는 +1로 랜덤하게 설정
 
 					// 타이머 초기화
 					mMoveTimer = mMoveInterval;
@@ -693,60 +710,6 @@ namespace ya
 																// 충돌
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		// 해당 부분 onCollisionStay로 이동
-		// 
-		//if (mBodyCd->GetState() == eColliderState::IsColliding)
-		//{
-		//	if (mIsCollidingFirst == 0 
-		//		&& mIsAttacked1 == false && mIsAttacked2 == false && mIsAttacked3 == false && mIsAttacked4 == false 
-		//		&& mIsDowned == false && mIsGetUp == false
-		//		&& mIsArm == false && mIsKick == false && mIsSideKick == false && mIsUpper == false && mIsGuard == false)
-		//		// 처음 충돌
-		//		// + 충돌 조건(다운되어있는데 갑자기 공격을 받았다고 해서 Guard나 Idle로 바뀌지 않기 위한 조건)
-		//		// 추후 충돌 조건은 따로 정리할 예정
-		//	{
-		//		//// 플레이어 현재 스킬 저장
-		//		//mPlayerPreState = PlayScene::GetPlayerState();
-
-		//		// 방어 스킬 사용할지 안할지 랜덤으로 실행
-		//		std::mt19937 mt(rd());
-		//		std::uniform_int_distribution<int> dist(0, 4);
-		//		int randGuard = dist(mt);
-
-		//		if (randGuard == 0)
-		//		{
-		//			if (mPlayerPos.x < mPos.x)
-		//			{
-		//				mDirection = eDirection::L;
-		//				ChangeState(eLukeState::L_Guard);
-
-		//				mIsCollidingFirst = 1;
-		//			}
-		//			else
-		//			{
-		//				mDirection = eDirection::R;
-		//				ChangeState(eLukeState::R_Guard);
-
-		//				mIsCollidingFirst = 1;
-		//			}
-		//		}
-		//		else
-		//		{
-		//			SetAttackedState();
-		//			mIsCollidingFirst = 1;
-		//		}
-		//	}
-
-		//	//// 콤보 공격을 하는 경우 충돌 처리를 처음으로 돌려놓는 부분 
-		//	//if (//mIsNormalAttackComboInit == false && 
-		//	//	(PlayScene::GetPlayerState() == ePlayerState::L_NormalAttack2 || PlayScene::GetPlayerState() == ePlayerState::R_NormalAttack2
-		//	//		|| PlayScene::GetPlayerState() == ePlayerState::R_NormalAttack3 || PlayScene::GetPlayerState() == ePlayerState::R_NormalAttack3))
-		//	//{
-		//	//	mIsCollidingFirst = 0;
-		//	//	mIsNormalAttackComboInit = true;
-		//	//}
-		//}
-
 		// 충돌하지 않는 상태일 때
 		if (mBodyCd->GetState() == eColliderState::NotColliding)
 		{
@@ -762,25 +725,19 @@ namespace ya
 			mIsNormalAttackComboInit = false;
 		}
 
-		// mBodyCd 활성화 비활성화 조건
-		if (mCurState == eLukeState::L_Guard || mCurState == eLukeState::R_Guard
-			|| mIsArm || mIsKick || mIsSideKick || mIsUpper)
-			//|| mIsAttacked1 || mIsAttacked2 || mIsAttacked3 || mIsAttacked4)
-			// 가드가 붙은 스킬아냐 아니냐로 구분을 해서 적용을 할지 고민중
-			// 가드를 하고 있다가 바로 스킬을 쓴다면, 계속 무적이고 플레이어의 공격상태와 겹치게 되면 상황이 애매해짐 
-		{
-			mBodyCd->SetActivation(eColliderActivation::InActive);
-		}
-		else
-		{
-			mBodyCd->SetActivation(eColliderActivation::Active);
-		}
-
-		// 오류 임시 해결
-		if (Input::GetKey(eKeyCode::Q))
-		{
-			mBodyCd->SetState(eColliderState::NotColliding);
-		}
+		//// mBodyCd 활성화 비활성화 조건
+		//if (mCurState == eLukeState::L_Guard || mCurState == eLukeState::R_Guard
+		//	|| mIsArm || mIsKick || mIsSideKick || mIsUpper)
+		//	//|| mIsAttacked1 || mIsAttacked2 || mIsAttacked3 || mIsAttacked4)
+		//	// 가드가 붙은 스킬아냐 아니냐로 구분을 해서 적용을 할지 고민중
+		//	// 가드를 하고 있다가 바로 스킬을 쓴다면, 계속 무적이고 플레이어의 공격상태와 겹치게 되면 상황이 애매해짐 
+		//{
+		//	mBodyCd->SetActivation(eColliderActivation::InActive);
+		//}
+		//else
+		//{
+		//	mBodyCd->SetActivation(eColliderActivation::Active);
+		//}
 
 		// mSkillCd 활성화 비활성화 조건
 		if (mIsArm || mIsKick || mIsSideKick || mIsUpper)
@@ -882,6 +839,7 @@ namespace ya
 			mIsAttacked4 = false;
 		}
 
+		// Downed 상태 변수 동기화
 		if (mCurState == eLukeState::L_Downed|| mCurState == eLukeState::R_Downed)
 		{
 			mIsDowned = true;
@@ -946,27 +904,134 @@ namespace ya
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-														// 이벤트
+															// 충돌
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void LukeScript::JumpStart()
+	void LukeScript::OnCollisionEnter(Collider2D* other)
 	{
+
 	}
 
-	void LukeScript::Attacked1Complete()
+	void LukeScript::OnCollisionStay(Collider2D* other)
 	{
-		mIsAttacked1 = false;
-		mIsAttacked2 = false;
-		//mIsAttacked3 = false;
-		mIsAttacked4 = false;
+		if (dynamic_cast<PlayerScript*>(other->GetOwner()->GetComponent<PlayerScript>()))
+			//if (other->GetOwner()->GetName() == L"Ramona")
+		{
+			if (other->GetOwner()->GetComponent<RamonaScript>()->IsDead() == true)
+				return;
 
-		//mIsCollidingFirst = 0;
+			if (this->GetOwner()->GetComponent<Collider2D>()->IsBody() == true && other->IsBody() == true)
+				return;
 
-		if (mPlayerPos.x < mPos.x)
-			ChangeState(eLukeState::L_Idle);
-		else
-			ChangeState(eLukeState::R_Idle);
+			if (mCurState == eLukeState::L_Guard || mCurState == eLukeState::R_Guard
+				|| mIsArm || mIsKick || mIsSideKick || mIsUpper)
+				return;
+
+			if (mBodyCd->GetState() == eColliderState::IsColliding)
+			{
+				if (mIsCollidingFirst == 0
+					&& mIsAttacked1 == false && mIsAttacked2 == false && mIsAttacked3 == false && mIsAttacked4 == false
+					&& mIsDowned == false
+					&& mIsGetUp == false
+					&& mIsArm == false && mIsKick == false && mIsSideKick == false && mIsUpper == false && mIsGuard == false)
+					// 처음 충돌
+					// + 충돌 조건(다운되어있는데 갑자기 공격을 받았다고 해서 Guard나 Idle로 바뀌지 않기 위한 조건)
+					// 추후 충돌 조건은 따로 정리할 예정
+				{
+					// 방어 스킬 사용할지 안할지 랜덤으로 실행
+					std::mt19937 mt(rd());
+					std::uniform_int_distribution<int> dist(0, 4);
+					int randGuard = dist(mt);
+
+					if (randGuard == 0)// 가드 사용
+					{
+						if (mPlayerPos.x < mPos.x)
+						{
+							mDirection = eDirection::L;
+							ChangeState(eLukeState::L_Guard);
+
+							mIsCollidingFirst = 1;
+						}
+						else
+						{
+							mDirection = eDirection::R;
+							ChangeState(eLukeState::R_Guard);
+
+							mIsCollidingFirst = 1;
+						}
+					}
+					else// 가드 미사용 == Attacked
+					{
+						other->GetOwner()->GetComponent<RamonaScript>()->AddSp(10);
+						mHp -= mAttackedDamage;
+
+						std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
+							, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
+							, mPlayerAttackState.begin());
+
+						SetAttackedState();
+						mIsCollidingFirst = 1;
+					}
+				}
+				else if (mIsCollidingFirst == 0 && mIsDowned == true// Downed 공격을 당하는 조건문
+					&& mIsAttacked1 == false && mIsAttacked2 == false && mIsAttacked3 == false && mIsAttacked4 == false
+					&& mIsGetUp == false
+					&& mIsArm == false && mIsKick == false && mIsSideKick == false && mIsUpper == false && mIsGuard == false)
+				{
+					if (mCanAttacked4 == true)
+					{
+						//mHp -= mAttackedDamage;
+
+						std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
+							, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
+							, mPlayerAttackState.begin());
+
+						SetAttackedState();
+						mIsCollidingFirst = 1;
+					}
+				}
+			}
+		}
+
+		if (dynamic_cast<EnemyScript*>(other->GetOwner()->GetComponent<EnemyScript>()))
+		{
+			if (this->GetOwner()->GetComponent<Collider2D>()->IsBody() == true && other->IsBody() == true)
+			{
+				if (mBodyCd->GetState() == eColliderState::IsColliding)
+				{
+					if (mIsDowned || mIsGetUp || mIsWalk || mIsRun)
+						return;
+
+					//Transform* obTr = other->GetOwner()->GetComponent<Transform>();
+					//Vector3 obPos = obTr->GetPosition();
+
+					//float displacement = other->GetOwner()->GetComponent<Transform>()->GetPosition().x
+					//	- this->GetOwner()->GetComponent<Transform>()->GetPosition().x;
+					//if (displacement > 0)
+					//{
+					//	obPos.x += 0.001f;
+					//	obTr->SetPosition(obPos);
+					//}
+					//else
+					//{
+					//	obPos.x -= 0.001f;
+					//	obTr->SetPosition(obPos);
+					//}
+
+					mRandWaitOrRun = 1;
+				}
+			}
+		}
 	}
+
+	void LukeScript::OnCollisionExit(Collider2D* other)
+	{
+
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+														// 이벤트
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void LukeScript::CombatComplete()
 	{
@@ -981,7 +1046,6 @@ namespace ya
 		else
 			ChangeState(eLukeState::R_Idle);
 
-		//mCombatInterval = float(rand() % 4 + 1.5f);// 0 ~ 3// 1.5f ~ 4.5f 
 		std::mt19937 mt(rd());
 		std::uniform_int_distribution<int> dist(0, 3);
 		mCombatInterval = (float)(dist(mt) + 1.0f);
@@ -1008,6 +1072,21 @@ namespace ya
 		}
 	}
 
+	void LukeScript::Attacked1Complete()
+	{
+		mIsAttacked1 = false;
+		mIsAttacked2 = false;
+		//mIsAttacked3 = false;
+		mIsAttacked4 = false;
+
+		//mIsCollidingFirst = 0;
+
+		if (mPlayerPos.x < mPos.x)
+			ChangeState(eLukeState::L_Idle);
+		else
+			ChangeState(eLukeState::R_Idle);
+	}
+
 	void LukeScript::Attacked3Complete()
 	{
 		mIsAttacked3 = false;
@@ -1032,6 +1111,12 @@ namespace ya
 		mIsDowned = true;
 
 		mCanAttacked4 = false;
+
+		if (mHp <= 0.0f)
+		{
+			SetEffectFlickering(0.05f, mDeadTime);
+			mIsDead = true;
+		}
 
 		if (mDirection == eDirection::L)
 			ChangeState(eLukeState::L_Downed);
@@ -1069,122 +1154,188 @@ namespace ya
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-															// 충돌
+													// 상태 애니메이션 함수
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void LukeScript::OnCollisionEnter(Collider2D* other)
+	void LukeScript::L_idle()
 	{
-
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Idle", true);
 	}
-
-	void LukeScript::OnCollisionStay(Collider2D* other)
+	void LukeScript::R_idle()
 	{
-		if (other->GetOwner()->GetName() == L"Ramona")
-		{
-			if (other->GetOwner()->GetComponent<RamonaScript>()->IsDead() == true)
-				return;
-
-			if (mBodyCd->GetState() == eColliderState::IsColliding)
-			{
-				if (mIsCollidingFirst == 0
-					&& mIsAttacked1 == false && mIsAttacked2 == false && mIsAttacked3 == false && mIsAttacked4 == false
-					&& mIsDowned == false 
-					&& mIsGetUp == false
-					&& mIsArm == false && mIsKick == false && mIsSideKick == false && mIsUpper == false && mIsGuard == false)
-					// 처음 충돌
-					// + 충돌 조건(다운되어있는데 갑자기 공격을 받았다고 해서 Guard나 Idle로 바뀌지 않기 위한 조건)
-					// 추후 충돌 조건은 따로 정리할 예정
-				{
-					// 방어 스킬 사용할지 안할지 랜덤으로 실행
-					std::mt19937 mt(rd());
-					std::uniform_int_distribution<int> dist(0, 4);
-					int randGuard = dist(mt);
-
-					if (randGuard == 0)// 가드 사용
-					{
-						if (mPlayerPos.x < mPos.x)
-						{
-							mDirection = eDirection::L;
-							ChangeState(eLukeState::L_Guard);
-
-							mIsCollidingFirst = 1;
-						}
-						else
-						{
-							mDirection = eDirection::R;
-							ChangeState(eLukeState::R_Guard);
-
-							mIsCollidingFirst = 1;
-						}
-					}
-					else// 가드 미사용 == Attacked
-					{
-						other->GetOwner()->GetComponent<RamonaScript>()->AddSP(10);
-						mHp -= mAttackedDamage;
-
-						std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
-							, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
-							, mPlayerAttackState.begin());
-
-						//for (int i = 0; i < 17; i++)
-						//{
-						//	//mPlayerAttackState[i] = other->GetOwner()->GetComponent<RamonaScript>()->mAttackState[i];
-						//	mPlayerAttackState[i] = (other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState())[i];;
-						//}
-
-						SetAttackedState();
-						mIsCollidingFirst = 1;
-					}
-				}
-				else if (mIsCollidingFirst == 0 && mIsDowned == true// Downed 공격을 당하는 조건문
-					&& mIsAttacked1 == false && mIsAttacked2 == false && mIsAttacked3 == false && mIsAttacked4 == false
-					&& mIsGetUp == false
-					&& mIsArm == false && mIsKick == false && mIsSideKick == false && mIsUpper == false && mIsGuard == false)
-				{
-					if (mCanAttacked4 == true)
-					{
-						mHp -= mAttackedDamage;
-
-						std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
-							, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
-							, mPlayerAttackState.begin());
-
-						SetAttackedState();
-						mIsCollidingFirst = 1;
-					}
-				}
-			}
-		}
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Idle", true);
 	}
-
-	void LukeScript::OnCollisionExit(Collider2D* other)
+	void LukeScript::L_angry()
 	{
-		if (other->GetOwner()->GetName() == L"Ramona")
-		{
-			// OnCollsionExit 상태로 충돌이 끝나면 false로 변경
-			//this->GetOwner()->GetComponent<Collider2D>()->SetState(eColliderState::NotColliding);// 이것도 해줄 필요 없지않은가???
-			//mIsAttacked1 = false;
-		}
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Angry", true);
 	}
-
-	void LukeScript::SetEffectFlickering(float tick, float duration)
+	void LukeScript::R_angry()
 	{
-		GetOwner()->mIsEffectFlickering = true;
-		mOnFlickering = true;
-		mFlickeringCurTime = 0.0f;
-		mFlickeringMaxTime = duration;
-		mFlickeringTickTime = tick;
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Angry", true);
 	}
-
-	void LukeScript::SetEffectFlashing(float tick, float duration, Vector4 color)
+	void LukeScript::L_walk()
 	{
-		GetOwner()->mIsEffectFlashing = true;
-		GetOwner()->mEffectColor = color;
-
-		mOnFlashing = true;
-		mFlashingCurTime = 0.0f;
-		mFlashingMaxTime = duration;
-		mFlashingTickTime = tick;
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Walk", true);
+	}
+	void LukeScript::R_walk()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Walk", true);
+	}
+	void LukeScript::L_run()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Run", true);
+	}
+	void LukeScript::R_run()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Run", true);
+	}
+	void LukeScript::L_armattack()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_ArmAttack", true);
+	}
+	void LukeScript::R_armattack()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_ArmAttack", true);
+	}
+	void LukeScript::L_kickattack()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_KickAttack", true);
+	}
+	void LukeScript::R_kickattack()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_KickAttack", true);
+	}
+	void LukeScript::L_sidekickattack()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_SideKickAttack", true);
+	}
+	void LukeScript::R_sidekickattack()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_SideKickAttack", true);
+	}
+	void LukeScript::L_upperattack()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_UpperAttack", true);
+	}
+	void LukeScript::R_upperattack()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_UpperAttack", true);
+	}
+	void LukeScript::L_guard()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Guard", true);
+	}
+	void LukeScript::R_guard()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Guard", true);
+	}
+	void LukeScript::L_attacked1()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Attacked1", true);
+	}
+	void LukeScript::R_attacked1()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Attacked1", true);
+	}
+	void LukeScript::L_attacked2()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Attacked2", true);
+	}
+	void LukeScript::R_attacked2()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Attacked2", true);
+	}
+	void LukeScript::L_attacked3()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Attacked3", true);
+	}
+	void LukeScript::R_attacked3()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Attacked3", true);
+	}
+	void LukeScript::L_attacked4()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Attacked4", true);
+	}
+	void LukeScript::R_attacked4()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Attacked4", true);
+	}
+	void LukeScript::L_getup()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_GetUp", true);
+	}
+	void LukeScript::R_getup()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_GetUp", true);
+	}
+	void LukeScript::L_downed()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Downed", true);
+	}
+	void LukeScript::R_downed()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Downed", true);
+	}
+	void LukeScript::L_dead()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Dead", true);
+	}
+	void LukeScript::R_dead()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Dead", true);
+	}
+	void LukeScript::L_flying()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Flying", true);
+	}
+	void LukeScript::R_flying()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Flying", true);
+	}
+	void LukeScript::L_raiding()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_Raiding", true);
+	}
+	void LukeScript::R_raiding()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_Raiding", true);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1199,9 +1350,11 @@ namespace ya
 
 		if (mCombatTimer <= 0.0f)
 		{
-			// 공격 방어 스킬들 중 하나를 랜덤으로 실행
+			// 공격 or 방어 or 대기 중 하나를 랜덤으로 실행
+			const int wait = 2;// wait가 높을 수록 공격 및 방어가 아닌 대기할 확률이 높아짐
+
 			std::mt19937 mt(rd());
-			std::uniform_int_distribution<int> dist(0, (int)eLukeCombatState::End + 2);
+			std::uniform_int_distribution<int> dist(0, (int)eLukeCombatState::End + wait);
 			int randStateNum = dist(mt);
 
 			switch (static_cast<eLukeCombatState>(randStateNum))
@@ -1392,15 +1545,15 @@ namespace ya
 			}
 		}
 
-		DOWNED_ATTACKED:
+	DOWNED_ATTACKED:
 		if (mIsDowned == true &&
 			(mPlayerAttackState[3] || mPlayerAttackState[4] || mPlayerAttackState[5] || mPlayerAttackState[6] || mPlayerAttackState[7]
-			|| mPlayerAttackState[9] || mPlayerAttackState[10] || mPlayerAttackState[11] || mPlayerAttackState[12] || mPlayerAttackState[13]
-			|| mPlayerAttackState[14] || mPlayerAttackState[15] || mPlayerAttackState[16]))
+				|| mPlayerAttackState[9] || mPlayerAttackState[10] || mPlayerAttackState[11] || mPlayerAttackState[12] || mPlayerAttackState[13]
+				|| mPlayerAttackState[14] || mPlayerAttackState[15] || mPlayerAttackState[16]))
 		{
-			//mHp -= 50.0f;
+			mHp -= mAttackedDamage;
 
-			if (mHp > 0.0f)
+			if (mHp >= 0.0f)
 			{
 				if (mPos.x < mPlayerPos.x)// 적 - 플레이어
 				{
@@ -1422,188 +1575,23 @@ namespace ya
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-													// 상태 애니메이션 함수
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void LukeScript::SetEffectFlickering(float tick, float duration)
+	{
+		GetOwner()->mIsEffectFlickering = true;
+		mOnFlickering = true;
+		mFlickeringCurTime = 0.0f;
+		mFlickeringMaxTime = duration;
+		mFlickeringTickTime = tick;
+	}
 
-	void LukeScript::L_idle()
+	void LukeScript::SetEffectFlashing(float tick, float duration, Vector4 color)
 	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Idle", true);
-	}
-	void LukeScript::R_idle()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Idle", true);
-	}
-	void LukeScript::L_angry()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Angry", true);
-	}
-	void LukeScript::R_angry()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Angry", true);
-	}
-	void LukeScript::L_walk()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Walk", true);
-	}
-	void LukeScript::R_walk()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Walk", true);
-	}
-	void LukeScript::L_run()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Run", true);
-	}
-	void LukeScript::R_run()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Run", true);
-	}
-	void LukeScript::L_armattack()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_ArmAttack", true);
-	}
-	void LukeScript::R_armattack()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_ArmAttack", true);
-	}
-	void LukeScript::L_kickattack()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_KickAttack", true);
-	}
-	void LukeScript::R_kickattack()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_KickAttack", true);
-	}
-	void LukeScript::L_sidekickattack()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_SideKickAttack", true);
-	}
-	void LukeScript::R_sidekickattack()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_SideKickAttack", true);
-	}
-	void LukeScript::L_upperattack()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_UpperAttack", true);
-	}
-	void LukeScript::R_upperattack()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_UpperAttack", true);
-	}
-	void LukeScript::L_guard()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Guard", true);
-	}
-	void LukeScript::R_guard()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Guard", true);
-	}
-	void LukeScript::L_attacked1()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Attacked1", true);
-	}
-	void LukeScript::R_attacked1()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Attacked1", true);
-	}
-	void LukeScript::L_attacked2()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Attacked2", true);
-	}
-	void LukeScript::R_attacked2()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Attacked2", true);
-	}
-	void LukeScript::L_attacked3()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Attacked3", true);
-	}
-	void LukeScript::R_attacked3()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Attacked3", true);
-	}
-	void LukeScript::L_attacked4()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Attacked4", true);
-	}
-	void LukeScript::R_attacked4()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Attacked4", true);
-	}
-	void LukeScript::L_getup()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_GetUp", true);
-	}
-	void LukeScript::R_getup()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_GetUp", true);
-	}
-	void LukeScript::L_downed()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Downed", true);
-	}
-	void LukeScript::R_downed()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Downed", true);
-	}
-	void LukeScript::L_dead()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Dead", true);
-	}
-	void LukeScript::R_dead()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Dead", true);
-	}
-	void LukeScript::L_flying()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Flying", true);
-	}
-	void LukeScript::R_flying()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Flying", true);
-	}
-	void LukeScript::L_raiding()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Raiding", true);
-	}
-	void LukeScript::R_raiding()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Raiding", true);
+		GetOwner()->mIsEffectFlashing = true;
+		GetOwner()->mEffectColor = color;
+
+		mOnFlashing = true;
+		mFlashingCurTime = 0.0f;
+		mFlashingMaxTime = duration;
+		mFlashingTickTime = tick;
 	}
 }

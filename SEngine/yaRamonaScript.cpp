@@ -1,18 +1,19 @@
 #include "yaRamonaScript.h"
 #include "yaCameraScript.h"
 #include "yaTransform.h"
+#include "yaObject.h"
 #include "yaGameObject.h"
 #include "yaTime.h"
 #include "yaInput.h"
 #include "yaAnimator.h"
 #include "yaResources.h"
 #include "yaCollider2D.h"
-#include "yaLukeScript.h"
 #include "yaRigidbody.h"
 #include "yaRenderer.h"
-#include "yaConstantBuffer.h"
-#include "yaObject.h"
 #include "yaMeshRenderer.h"
+#include "yaConstantBuffer.h"
+#include "yaEnemyScript.h"
+#include "yaLukeScript.h"
 #include "..\\Editor_Window\\yaDebugLog.h"
 
 namespace ya
@@ -20,6 +21,7 @@ namespace ya
 	RamonaScript::RamonaScript()
 	{
 		mAttackState.resize(20, false);
+		mEnemyAttackState.resize(10, false);
 	}
 
 	RamonaScript::~RamonaScript()
@@ -35,14 +37,13 @@ namespace ya
 		//SetEffectFlashing(0.25f, 5.0f, Vector4(1.2f, 0.0f, 0.0f, 1.0f));// Red
 
 		
-
 		#pragma region 그림자
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 그림자
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		mShadow = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 40.f)
 			, Vector3::One * 3
-			, eLayerType::Player);
+			, eLayerType::BG);
 		MeshRenderer* mr = mShadow->AddComponent<MeshRenderer>();
 		mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
 		mr->SetMaterial(Resources::Find<Material>(L"SpriteMaterial_Shadow"));
@@ -53,7 +54,7 @@ namespace ya
 			* 1.0f);
 		#pragma endregion
 
-		//#pragma region 공격 이펙트
+		#pragma region 공격 이펙트
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//													// 공격 이펙트
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +73,7 @@ namespace ya
 
 		//	mAttackEffect->SetState(ya::GameObject::eState::Paused);
 		//}
-		//#pragma endregion
+		#pragma endregion
 
 		#pragma region 애니메이션
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -388,6 +389,8 @@ namespace ya
 
 	void RamonaScript::Update()
 	{
+		#pragma region 디버그
+
 		//std::wstring str = std::to_wstring(mIsStun);
 		//std::wstring str2 = std::to_wstring(mIsKnockDown);
 		//ya::DebugLog::PrintDebugLog(L"mIsStun: " + str + L" mIsKnockDown: " + str2);
@@ -406,100 +409,7 @@ namespace ya
 		//}
 		//ya::DebugLog::PrintDebugLog(message);
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-															// 이펙트
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		if (mOnFlickering == true)
-		{
-			mFlickeringCurTime += Time::DeltaTime();
-			mFlickeringMaxTime -= Time::DeltaTime();
-			if (mFlickeringMaxTime <= 0.0f && GetOwner()->mIsEffectFlickering == false)
-			{
-				GetOwner()->mIsEffectFlickering = false;
-				mOnFlickering = false;
-			}
-
-			else 
-			{
-				if (GetOwner()->mIsEffectFlickering == true)
-				{
-					if (mFlickeringCurTime >= mFlickeringTickTime)
-					{
-						mFlickeringCurTime = 0.0f;
-						GetOwner()->mIsEffectFlickering = false;
-					}
-				}
-				if (GetOwner()->mIsEffectFlickering == false)
-				{
-					if (mFlickeringCurTime >= mFlickeringTickTime)
-					{
-						mFlickeringCurTime = 0.0f;
-						GetOwner()->mIsEffectFlickering = true;
-					}
-				}
-			}
-		}
-
-		if (mOnFlashing == true)
-		{
-			mFlashingCurTime += Time::DeltaTime();
-			mFlashingMaxTime -= Time::DeltaTime();
-			if (mFlashingMaxTime <= 0.0f && GetOwner()->mIsEffectFlashing == false)
-			{
-				GetOwner()->mIsEffectFlashing = false;
-				mOnFlashing = false;
-			}
-
-			else
-			{
-				if (GetOwner()->mIsEffectFlashing == true)
-				{
-					if (mFlashingCurTime >= mFlashingTickTime)
-					{
-						mFlashingCurTime = 0.0f;
-						GetOwner()->mIsEffectFlashing = false;
-					}
-				}
-				if (GetOwner()->mIsEffectFlashing == false)
-				{
-					if (mFlashingCurTime >= mFlashingTickTime)
-					{
-						mFlashingCurTime = 0.0f;
-						GetOwner()->mIsEffectFlashing = true;
-					}
-				}
-			}
-		}
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-															// 그림자
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
-		// 애니메이션 모두 정중앙으로 포토샵 수정 해야 자연스러워짐
-		// 
-		// 그림자 수정하는 경우:
-		// 그림자 사이즈가 조절되야 하는 경우 ex. 점프
-		// 그림자를 지워야하는 경우 ex. 궁극기 (그림자가 방해되는 경우)
-
-		if (mIsJump || mIsDJump)
-		{
-			Transform* playerTr = GetOwner()->GetComponent<Transform>();
-			Vector3 playerPos = playerTr->GetPosition();
-
-			Transform* shadowTr = mShadow->GetComponent<Transform>();
-			Vector3 shadowPos = shadowTr->GetPosition();
-			playerPos.y = shadowPos.y;
-			shadowTr->SetPosition(playerPos);
-		}
-		else
-		{
-			Transform* playerTr = GetOwner()->GetComponent<Transform>();
-			Vector3 playerPos = playerTr->GetPosition();
-			playerPos.y -= 0.5f;
-
-			Transform* shadowTr = mShadow->GetComponent<Transform>();
-			shadowTr->SetPosition(playerPos);
-		}
+		#pragma endregion
 
 		#pragma region FSM
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -508,8 +418,6 @@ namespace ya
 
 		if (mPrevState != mCurState)
 		{
-			Animator* at = this->GetOwner()->GetComponent<Animator>();
-
 			switch (mCurState)
 			{
 			case ePlayerState::L_Idle:
@@ -717,6 +625,105 @@ namespace ya
 		// 이전 상태와 현재 상태를 비교해서 다른 경우, case에 따라 작동하게 됨
 #pragma endregion
 
+		#pragma region 이펙트
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 이펙트
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		if (mOnFlickering == true)
+		{
+			mFlickeringCurTime += Time::DeltaTime();
+			mFlickeringMaxTime -= Time::DeltaTime();
+			if (mFlickeringMaxTime <= 0.0f && GetOwner()->mIsEffectFlickering == false)
+			{
+				GetOwner()->mIsEffectFlickering = false;
+				mOnFlickering = false;
+			}
+
+			else
+			{
+				if (GetOwner()->mIsEffectFlickering == true)
+				{
+					if (mFlickeringCurTime >= mFlickeringTickTime)
+					{
+						mFlickeringCurTime = 0.0f;
+						GetOwner()->mIsEffectFlickering = false;
+					}
+				}
+				if (GetOwner()->mIsEffectFlickering == false)
+				{
+					if (mFlickeringCurTime >= mFlickeringTickTime)
+					{
+						mFlickeringCurTime = 0.0f;
+						GetOwner()->mIsEffectFlickering = true;
+					}
+				}
+			}
+		}
+
+		if (mOnFlashing == true)
+		{
+			mFlashingCurTime += Time::DeltaTime();
+			mFlashingMaxTime -= Time::DeltaTime();
+			if (mFlashingMaxTime <= 0.0f && GetOwner()->mIsEffectFlashing == false)
+			{
+				GetOwner()->mIsEffectFlashing = false;
+				mOnFlashing = false;
+			}
+
+			else
+			{
+				if (GetOwner()->mIsEffectFlashing == true)
+				{
+					if (mFlashingCurTime >= mFlashingTickTime)
+					{
+						mFlashingCurTime = 0.0f;
+						GetOwner()->mIsEffectFlashing = false;
+					}
+				}
+				if (GetOwner()->mIsEffectFlashing == false)
+				{
+					if (mFlashingCurTime >= mFlashingTickTime)
+					{
+						mFlashingCurTime = 0.0f;
+						GetOwner()->mIsEffectFlashing = true;
+					}
+				}
+			}
+		}
+		#pragma endregion
+
+		#pragma region 그림자
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 그림자
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		// 애니메이션 모두 정중앙으로 포토샵 수정 해야 자연스러워짐
+		// 
+		// 그림자 수정하는 경우:
+		// 그림자 사이즈가 조절되야 하는 경우 ex. 점프
+		// 그림자를 지워야하는 경우 ex. 궁극기 (그림자가 방해되는 경우)
+
+		if (mIsJump || mIsDJump)
+		{
+			Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			Vector3 playerPos = playerTr->GetPosition();
+
+			Transform* shadowTr = mShadow->GetComponent<Transform>();
+			Vector3 shadowPos = shadowTr->GetPosition();
+			playerPos.y = shadowPos.y;
+			shadowTr->SetPosition(playerPos);
+		}
+		else
+		{
+			Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			Vector3 playerPos = playerTr->GetPosition();
+			playerPos.y -= 0.5f;
+
+			Transform* shadowTr = mShadow->GetComponent<Transform>();
+			shadowTr->SetPosition(playerPos);
+		}
+		#pragma endregion
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 속성
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -726,6 +733,7 @@ namespace ya
 			int a = 0;
 		}
 
+		#pragma region 콜라이더
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 콜라이더
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -756,6 +764,7 @@ namespace ya
 
 			mBackCd->SetCenter(Vector2(-0.3f, -0.2f));
 		}
+		#pragma endregion
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 위치
@@ -763,32 +772,6 @@ namespace ya
 
 		Transform* tr = GetOwner()->GetComponent<Transform>();
 		Vector3 pos = tr->GetPosition();
-
-		//// 좌우상하 이동제한
-		//{
-		//	if (pos.x <= -2.89)// 좌
-		//	{
-		//		pos.x = -2.89;
-		//	}
-
-		//	if (pos.y >= 0.75)// 상
-		//	{
-		//		pos.y = 0.75;
-		//	}
-
-		//	if (pos.x >= 2.88)// 우
-		//	{
-		//		pos.x = 2.88;
-		//	}
-
-		//	if (pos.y <= -1.29)// 하
-		//	{
-		//		pos.y = -1.29;
-		//	}
-
-		//	tr->SetPosition(pos);
-		//}
-
 
 		if (CanChangeState())// 독립성이 부여되어야 하는 상태들은 여기서 걸러짐
 		{
@@ -1121,7 +1104,6 @@ namespace ya
 					Vector3 shadowCurScale = mShadow->GetComponent<Transform>()->GetScale();
 					shadowCurScale.x -= 1.2f * Time::DeltaTime();
 					shadowCurScale.y -= 1.2f * Time::DeltaTime();
-					shadowCurScale.z -= 1.2f * Time::DeltaTime();
 					mShadow->GetComponent<Transform>()->SetScale(shadowCurScale);
 
 
@@ -1224,10 +1206,13 @@ namespace ya
 
 					// 그림자 사이즈 조절
 					Vector3 shadowCurScale = mShadow->GetComponent<Transform>()->GetScale();
-					shadowCurScale.x += 1.2f * Time::DeltaTime();
-					shadowCurScale.y += 1.2f * Time::DeltaTime();
-					shadowCurScale.z += 1.2f * Time::DeltaTime();
-					mShadow->GetComponent<Transform>()->SetScale(shadowCurScale);
+
+					if (shadowCurScale.x <= 1.0f && shadowCurScale.y <= 1.0f)
+					{
+						shadowCurScale.x += 1.2f * Time::DeltaTime();
+						shadowCurScale.y += 1.2f * Time::DeltaTime();
+						mShadow->GetComponent<Transform>()->SetScale(shadowCurScale);
+					}
 
 					if (pos.y <= mJumpStartPosY)// 좌표 하락하다가 점프 시작한 y좌표 위치에 도달(점프를, 좌표를 멈춰야 함)
 					{
@@ -1796,12 +1781,10 @@ namespace ya
 			}
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-																// 추가해야할 부분
+																// 추가 고려중인 부분
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 			// Glow, Counter,...
-			// 위 상태는 Collider를 추가하는 선행작업이 요구
-			// Collider 몇 개를? 어떤 위치에? 배치할지 고민 후 진행
+
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1842,13 +1825,14 @@ namespace ya
 		//	mBodyCd->SetActivation(eColliderActivation::Active);
 		//}
 
-		
-		if(! (mCurState == ePlayerState::L_Guard || mCurState == ePlayerState::R_Guard))// 가드를 사용하지 않는 상태는 false로 초기화
+
+		// Guard를 사용하지 않는 상태는 false로 초기화
+		if(! (mCurState == ePlayerState::L_Guard || mCurState == ePlayerState::R_Guard))
 		{
 			mBodyCd->SetCanGuard(false);
 		}
 
-		// Upper
+		// Upper Collider
 		if (mIsNormalAttack1 || mIsNormalAttack2 || mIsNormalAttack3)
 		{
 			mUpperCd->SetActivation(eColliderActivation::Active);
@@ -1858,7 +1842,7 @@ namespace ya
 			mUpperCd->SetActivation(eColliderActivation::InActive);
 		}
 
-		// Lower
+		// Lower Collider
 		if (mIsKickAttack || mIsWeaponDownAttack || mIsWeaponStabAttack 
 			|| mIsJumpDownAttack || mIsJumpSlideAttack || mIsRunJumpAttack || mIsRunSlideAttack)
 		{
@@ -1869,7 +1853,7 @@ namespace ya
 			mLowerCd->SetActivation(eColliderActivation::InActive);
 		}
 
-		// Both
+		// Both Collider
 		if (mIsRoundKickAttack || mIsWeaponNormalAttack || mIsWeaponSideAttack 
 			|| mIsRunWeaponAttack || mIsFireBall)
 		{
@@ -1881,7 +1865,7 @@ namespace ya
 			mBothCd->SetActivation(eColliderActivation::InActive);
 		}
 
-		// Back
+		// Back Collider
 		if (mIsBehindKickAttack)
 		{
 			mBackCd->SetActivation(eColliderActivation::Active);
@@ -1891,7 +1875,7 @@ namespace ya
 			mBackCd->SetActivation(eColliderActivation::InActive);
 		}
 
-		// All
+		// All Collider
 		if (mIsSuper)
 		{
 			mAllCd->SetActivation(eColliderActivation::Active);
@@ -1901,15 +1885,15 @@ namespace ya
 			mAllCd->SetActivation(eColliderActivation::InActive);
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-															// 충돌
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		
+		// mIsCollidingFirst
 		if (mCurState == ePlayerState::L_Idle || mCurState == ePlayerState::R_Idle || mCurState == ePlayerState::L_Run || mCurState == ePlayerState::R_Run)
 		{
 			mIsCollidingFirst = 0;
 		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+														// 공격 이펙트
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		// AttackEffect 시간체크 후 삭제하는 부분
 		//if (mAttackEffect->GetState() == ya::GameObject::eState::Active)
@@ -1927,12 +1911,6 @@ namespace ya
 		//	mAttackEffectTime = 0.0;
 		//}
 
-		//if (mUpperCd->GetState() == eColliderState::IsColliding)
-		//if (mLowerCd->GetState() == eColliderState::IsColliding)
-		//if (mBothCd->GetState() == eColliderState::IsColliding)
-		//if (mBackCd->GetState() == eColliderState::IsColliding)
-		//if (mAllCd->GetState() == eColliderState::IsColliding)
-
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 																// 상태 bool 변수 동기화
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1949,7 +1927,7 @@ namespace ya
 		// 공격 당하는 관련 변수들
 		if (mCurState == ePlayerState::L_Stun || mCurState == ePlayerState::R_Stun)
 		{
-			if (mEnemyPosition == -1)
+			if (mEnemyDirectionFromPlayer == -1)
 			{
 				Rigidbody* rb = this->GetOwner()->GetComponent<Rigidbody>();
 				rb->SetGround(true);
@@ -1972,7 +1950,7 @@ namespace ya
 
 		if (mCurState == ePlayerState::L_KnockDown || mCurState == ePlayerState::R_KnockDown)
 		{
-			if (mEnemyPosition == -1)
+			if (mEnemyDirectionFromPlayer == -1)
 			{
 				Rigidbody* rb = this->GetOwner()->GetComponent<Rigidbody>();
 				rb->SetGround(true);
@@ -2013,7 +1991,7 @@ namespace ya
 
 		if (mCurState == ePlayerState::L_BackStun || mCurState == ePlayerState::R_BackStun)
 		{
-			if (mEnemyPosition == -1)
+			if (mEnemyDirectionFromPlayer == -1)
 			{
 				Rigidbody* rb = this->GetOwner()->GetComponent<Rigidbody>();
 				rb->SetGround(true);
@@ -2035,7 +2013,6 @@ namespace ya
 		}
 
 		// 공격 변수들
-		//...
 		if (mCurState == ePlayerState::L_RunSlideAttack || mCurState == ePlayerState::R_RunSlideAttack)
 		{
 			mIsRunSlideAttack = true;
@@ -2071,7 +2048,8 @@ namespace ya
 		}
 
 		// 공격 변수들 강제 초기화
-		if (mCurState == ePlayerState::L_Idle || mCurState == ePlayerState::R_Idle || mCurState == ePlayerState::L_Run|| mCurState == ePlayerState::R_Run)
+		if (mCurState == ePlayerState::L_Idle || mCurState == ePlayerState::R_Idle 
+			|| mCurState == ePlayerState::L_Run|| mCurState == ePlayerState::R_Run)
 		{
 			mIsNormalAttack1 = false;
 			mIsNormalAttack2 = false;
@@ -2113,6 +2091,218 @@ namespace ya
 		mAttackState[14] = mIsRunSlideAttack;
 		mAttackState[15] = mIsFireBall;
 		mAttackState[16] = mIsSuper;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 충돌
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void RamonaScript::OnCollisionEnter(Collider2D* other)// Enter가 정상 작동하는지 재확인 요망
+	{
+		//if (other->GetOwner()->GetName() == L"Luke" || other->GetOwner()->GetName() == L"Luke2" || other->GetOwner()->GetName() == L"Luke3")
+		//{
+		//	for (int i = 0; i < 4; i++)
+		//	{
+		//		mEnemyAttackState[i] = (other->GetOwner()->GetComponent<LukeScript>()->GetAttackState())[i];
+		//	}
+		//}
+	}
+
+	void RamonaScript::OnCollisionStay(Collider2D* other)
+	{
+		if (dynamic_cast<EnemyScript*>(other->GetOwner()->GetComponent<EnemyScript>()))
+		//if (other->GetOwner()->GetName() == L"Luke" || other->GetOwner()->GetName() == L"Luke2" || other->GetOwner()->GetName() == L"Luke3")
+		// 이 부분은 GameObject 상속받은 Enemy 만의 고유 이름이나 고유 상태를 확인 하거나 형변환으로 확인할 예정
+		{
+			if (this->GetOwner()->GetComponent<Collider2D>()->IsBody() == true && other->IsBody() == true)
+				return;
+
+			if (mBodyCd->GetState() == eColliderState::IsColliding)
+			{
+				// 공격 당하는 스킬이 무엇인지에 대한 업데이트
+				std::copy(other->GetOwner()->GetComponent<LukeScript>()->GetAttackState().begin()
+						, other->GetOwner()->GetComponent<LukeScript>()->GetAttackState().end()
+						, mEnemyAttackState.begin());
+
+				// 가드 상태 OR EVADE 상태
+				if (mCurState == ePlayerState::L_Guard || mCurState == ePlayerState::R_Guard || mCurState == ePlayerState::L_Evade || mCurState == ePlayerState::R_Evade)
+				{
+					// Guard 상태일 때, InActive로 바꾸는 것이 아니라
+					// Guard 상태도 상시 Active 상태로 바꾸고
+					// mCanGuard로 판단해서 
+					// mCanGuard가 true이면 맞는 동작, 상태, 애니를 실행 안하도록 아래 충돌 부분에 구현하면 됨
+					mBodyCd->SetActivation(eColliderActivation::Active);
+
+					// 충돌을 한 경우
+					if (mBodyCd->GetPosition().x < mBodyCd->GetOtherPos().x)// 바디 - 상대스킬
+					{
+						if (mDirection == eDirection::R)// 막을 수 있음
+						{
+							mBodyCd->SetCanGuard(true);
+						}
+						else// 막을 수 없음
+						{
+							mBodyCd->SetCanGuard(false);
+						}
+					}
+					else// 상대 스킬 - 바디
+					{
+						if (mDirection == eDirection::R)// 막을 수 없음
+						{
+							mBodyCd->SetCanGuard(false);
+						}
+						else// 막을 수 있음
+						{
+							mBodyCd->SetCanGuard(true);
+						}
+					}
+				}
+				else// 가드 상태가 아니면 false로 (이 부분은 Update에서도 해주고 있음)
+				{
+					mBodyCd->SetCanGuard(false);
+				}
+
+				// 공격 당하는 모션
+				if (mBodyCd->GetCanGuard() == false)// 가드로 스킬을 막는 경우가 아니라면, 공격 당하는 상태로 전환
+				{
+					if (mIsCollidingFirst == 0
+						&& mIsStun == false && mIsKnockDown == false && mIsDowned == false && mIsGetUp == false && mIsBackStun == false)
+						// 처음 충돌
+						// + 충돌 조건(다운되어있는데 갑자기 공격을 받았다고 해서 Guard나 Idle로 바뀌지 않기 위한 조건)
+						// 추후 충돌 조건은 따로 정리할 예정
+						// 물론, Downed 상태에서 또 공격을 당했을 때, DownStun을 발동해야하는 경우 예외적으로 설정해주어야 함
+					{
+						// 적 공격 스킬 참고 
+						// mAttackState[0] = mIsArm;
+						// mAttackState[1] = mIsKick;
+						// mAttackState[2] = mIsSideKick;
+						// mAttackState[3] = mIsUpper;
+
+
+						//if (mBodyCd->GetPosition().x < mBodyCd->GetOtherPos().x)
+						//	mEnemyDirectionFromPlayer = 1;
+						//else
+						//	mEnemyDirectionFromPlayer = -1;
+
+						if (mBodyCd->GetPosition().x < other->GetPosition().x)
+							mEnemyDirectionFromPlayer = 1;
+						else
+							mEnemyDirectionFromPlayer = -1;
+
+						// 적의 공격 스킬에 따라 해당하는 상태 전환 
+						if (mEnemyAttackState[3])
+						{
+							//mAttribute.mHp -= 10.0f;// 해당 부분 애니메이션 실행될 때 
+							//if (mAttribute.mHp == 5)
+
+
+							if (mDirection == eDirection::L)
+							{
+								mCurState = ePlayerState::L_KnockDown;
+								mIsKnockDown = true;
+							}
+							else
+							{
+								mCurState = ePlayerState::R_KnockDown;
+								mIsKnockDown = true;
+							}
+						}
+						else
+						{
+							//mAttribute.mHp -= 5.0f;// 해당 부분 애니메이션 실행될 때 
+							if (mAttribute.mHp <= mAttackedDamage)
+							{
+								if (mDirection == eDirection::L)
+								{
+									mCurState = ePlayerState::L_KnockDown;
+									mIsKnockDown = true;
+								}
+								else
+								{
+									mCurState = ePlayerState::R_KnockDown;
+									mIsKnockDown = true;
+								}
+							}
+							else
+							{
+								if (mDirection == eDirection::L)
+								{
+									mCurState = ePlayerState::L_Stun;
+									mIsStun = true;
+								}
+								else
+								{
+									mCurState = ePlayerState::R_Stun;
+									mIsStun = true;
+								}
+							}
+						}
+
+						mIsCollidingFirst = 1;
+					}
+				}
+			}
+
+
+			// Attack Effect 켜주는 부분
+			//if (mUpperCd->GetState() == eColliderState::IsColliding)
+			//{
+			//	mAttackEffect->SetState(ya::GameObject::eState::Active);
+			//	Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			//	Vector3 playerPos = playerTr->GetPosition();
+			//	Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
+			//	Vector3 attackEffectPos = attackEffectTr->GetPosition();
+			//	playerPos.x += 0.4f;
+			//	playerPos.y += 0.1f;
+			//	attackEffectTr->SetPosition(playerPos);
+			//}
+			//if (mLowerCd->GetState() == eColliderState::IsColliding)
+			//{
+			//	mAttackEffect->SetState(ya::GameObject::eState::Active);
+			//	Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			//	Vector3 playerPos = playerTr->GetPosition();
+			//	Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
+			//	Vector3 attackEffectPos = attackEffectTr->GetPosition();
+			//	playerPos.x += 0.4f;
+			//	playerPos.y -= 0.12f;
+			//	attackEffectTr->SetPosition(playerPos);
+			//}
+			//if (mBothCd->GetState() == eColliderState::IsColliding)
+			//{
+			//	mAttackEffect->SetState(ya::GameObject::eState::Active);
+			//	Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			//	Vector3 playerPos = playerTr->GetPosition();
+			//	Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
+			//	Vector3 attackEffectPos = attackEffectTr->GetPosition();
+			//	playerPos.x += 0.4f;
+			//	attackEffectTr->SetPosition(playerPos);
+			//}
+			//if (mBackCd->GetState() == eColliderState::IsColliding)
+			//{
+			//	mAttackEffect->SetState(ya::GameObject::eState::Active);
+			//	Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			//	Vector3 playerPos = playerTr->GetPosition();
+			//	Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
+			//	Vector3 attackEffectPos = attackEffectTr->GetPosition();
+			//	playerPos.x -= 0.2f;
+			//	playerPos.y -= 0.12f;
+			//	attackEffectTr->SetPosition(playerPos);
+			//}
+			//if (mAllCd->GetState() == eColliderState::IsColliding)
+			//{
+			//	//mAttackEffect->SetState(ya::GameObject::eState::Active);
+			//	//Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			//	//Vector3 playerPos = playerTr->GetPosition();
+			//	//Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
+			//	//Vector3 attackEffectPos = attackEffectTr->GetPosition();
+			//	//playerPos.x += 0.2f;
+			//	//attackEffectTr->SetPosition(playerPos);
+			//}
+		}
+	}
+	void RamonaScript::OnCollisionExit(Collider2D* other)
+	{
+		int a = 0;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2381,219 +2571,9 @@ namespace ya
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-															// 충돌
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	void RamonaScript::OnCollisionEnter(Collider2D* other)// Enter가 정상 작동하는지 재확인 요망
-	{
-		//if (other->GetOwner()->GetName() == L"Luke" || other->GetOwner()->GetName() == L"Luke2" || other->GetOwner()->GetName() == L"Luke3")
-		//{
-		//	for (int i = 0; i < 4; i++)
-		//	{
-		//		mEnemyAttackState[i] = (other->GetOwner()->GetComponent<LukeScript>()->GetAttackState())[i];
-		//	}
-		//}
-	}
-	void RamonaScript::OnCollisionStay(Collider2D* other)
-	{
-		if (other->GetOwner()->GetName() == L"Luke" || other->GetOwner()->GetName() == L"Luke2" || other->GetOwner()->GetName() == L"Luke3")
-			// 이 부분은 GameObject 상속받은 Enemy 만의 고유 이름이나 고유 상태를 확인 하거나 형변환으로 확인할 예정
-		{
-			if (mBodyCd->GetState() == eColliderState::IsColliding)
-			{
-				// 공격 당하는 스킬이 무엇인지에 대한 업데이트
-				for (int i = 0; i < 4; i++)
-				{
-					mEnemyAttackState[i] = (other->GetOwner()->GetComponent<LukeScript>()->GetAttackState())[i];
-				}
-
-				// 가드 상태 OR EVADE 상태
-				if (mCurState == ePlayerState::L_Guard || mCurState == ePlayerState::R_Guard || mCurState == ePlayerState::L_Evade || mCurState == ePlayerState::R_Evade)
-				{
-					// Guard 상태일 때, InActive로 바꾸는 것이 아니라
-					// Guard 상태도 상시 Active 상태로 바꾸고
-					// mCanGuard로 판단해서 
-					// mCanGuard가 true이면 맞는 동작, 상태, 애니를 실행 안하도록 아래 충돌 부분에 구현하면 됨
-					mBodyCd->SetActivation(eColliderActivation::Active);
-
-					// 충돌을 한 경우
-					if (mBodyCd->GetPosition().x < mBodyCd->GetOtherPos().x)// 바디 - 상대스킬
-					{
-						if (mDirection == eDirection::R)// 막을 수 있음
-						{
-							mBodyCd->SetCanGuard(true);
-						}
-						else// 막을 수 없음
-						{
-							mBodyCd->SetCanGuard(false);
-						}
-					}
-					else// 상대 스킬 - 바디
-					{
-						if (mDirection == eDirection::R)// 막을 수 없음
-						{
-							mBodyCd->SetCanGuard(false);
-						}
-						else// 막을 수 있음
-						{
-							mBodyCd->SetCanGuard(true);
-						}
-					}
-				}
-				else// 가드 상태가 아니면 false로 (이 부분은 Update에서도 해주고 있음)
-				{
-					mBodyCd->SetCanGuard(false);
-				}
-
-				// 공격 당하는 모션
-				if (mBodyCd->GetCanGuard() == false)// 가드로 스킬을 막는 경우가 아니라면, 공격 당하는 상태로 전환
-				{
-					if (mIsCollidingFirst == 0
-						&& mIsStun == false && mIsKnockDown == false && mIsDowned == false && mIsGetUp == false && mIsBackStun == false)
-						// 처음 충돌
-						// + 충돌 조건(다운되어있는데 갑자기 공격을 받았다고 해서 Guard나 Idle로 바뀌지 않기 위한 조건)
-						// 추후 충돌 조건은 따로 정리할 예정
-						// 물론, Downed 상태에서 또 공격을 당했을 때, DownStun을 발동해야하는 경우 예외적으로 설정해주어야 함
-					{
-						// 적 공격 스킬 참고 
-						// mAttackState[0] = mIsArm;
-						// mAttackState[1] = mIsKick;
-						// mAttackState[2] = mIsSideKick;
-						// mAttackState[3] = mIsUpper;
-
-
-						//if (mBodyCd->GetPosition().x < mBodyCd->GetOtherPos().x)
-						//	mEnemyPosition = 1;
-						//else
-						//	mEnemyPosition = -1;
-						
-						if (mBodyCd->GetPosition().x < other->GetPosition().x)
-							mEnemyPosition = 1;
-						else
-							mEnemyPosition = -1;
-
-						// 적의 공격 스킬에 따라 해당하는 상태 전환 
-						if (mEnemyAttackState[3])
-						{
-							//mAttribute.mHp -= 10.0f;// 해당 부분 애니메이션 실행될 때 
-							//if (mAttribute.mHp == 5)
-
-
-							if (mDirection == eDirection::L)
-							{
-								mCurState = ePlayerState::L_KnockDown;
-								mIsKnockDown = true;
-							}
-							else
-							{
-								mCurState = ePlayerState::R_KnockDown;
-								mIsKnockDown = true;
-							}
-						}
-						else
-						{
-							//mAttribute.mHp -= 5.0f;// 해당 부분 애니메이션 실행될 때 
-							if (mAttribute.mHp <= mAttackedDamage)
-							{
-								if (mDirection == eDirection::L)
-								{
-									mCurState = ePlayerState::L_KnockDown; 
-									mIsKnockDown = true;
-								}
-								else
-								{
-									mCurState = ePlayerState::R_KnockDown; 
-									mIsKnockDown = true;
-								}
-							}
-							else
-							{
-								if (mDirection == eDirection::L)
-								{
-									mCurState = ePlayerState::L_Stun;
-									mIsStun = true;
-								}
-								else
-								{
-									mCurState = ePlayerState::R_Stun;
-									mIsStun = true;
-								}
-							}
-						}
-
-						mIsCollidingFirst = 1;
-					}
-				}
-			}
-
-
-			// Attack Effect 켜주는 부분
-			//if (mUpperCd->GetState() == eColliderState::IsColliding)
-			//{
-			//	mAttackEffect->SetState(ya::GameObject::eState::Active);
-			//	Transform* playerTr = GetOwner()->GetComponent<Transform>();
-			//	Vector3 playerPos = playerTr->GetPosition();
-			//	Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
-			//	Vector3 attackEffectPos = attackEffectTr->GetPosition();
-			//	playerPos.x += 0.4f;
-			//	playerPos.y += 0.1f;
-			//	attackEffectTr->SetPosition(playerPos);
-			//}
-			//if (mLowerCd->GetState() == eColliderState::IsColliding)
-			//{
-			//	mAttackEffect->SetState(ya::GameObject::eState::Active);
-			//	Transform* playerTr = GetOwner()->GetComponent<Transform>();
-			//	Vector3 playerPos = playerTr->GetPosition();
-			//	Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
-			//	Vector3 attackEffectPos = attackEffectTr->GetPosition();
-			//	playerPos.x += 0.4f;
-			//	playerPos.y -= 0.12f;
-			//	attackEffectTr->SetPosition(playerPos);
-			//}
-			//if (mBothCd->GetState() == eColliderState::IsColliding)
-			//{
-			//	mAttackEffect->SetState(ya::GameObject::eState::Active);
-			//	Transform* playerTr = GetOwner()->GetComponent<Transform>();
-			//	Vector3 playerPos = playerTr->GetPosition();
-			//	Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
-			//	Vector3 attackEffectPos = attackEffectTr->GetPosition();
-			//	playerPos.x += 0.4f;
-			//	attackEffectTr->SetPosition(playerPos);
-			//}
-			//if (mBackCd->GetState() == eColliderState::IsColliding)
-			//{
-			//	mAttackEffect->SetState(ya::GameObject::eState::Active);
-			//	Transform* playerTr = GetOwner()->GetComponent<Transform>();
-			//	Vector3 playerPos = playerTr->GetPosition();
-			//	Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
-			//	Vector3 attackEffectPos = attackEffectTr->GetPosition();
-			//	playerPos.x -= 0.2f;
-			//	playerPos.y -= 0.12f;
-			//	attackEffectTr->SetPosition(playerPos);
-			//}
-			//if (mAllCd->GetState() == eColliderState::IsColliding)
-			//{
-			//	//mAttackEffect->SetState(ya::GameObject::eState::Active);
-			//	//Transform* playerTr = GetOwner()->GetComponent<Transform>();
-			//	//Vector3 playerPos = playerTr->GetPosition();
-			//	//Transform* attackEffectTr = mAttackEffect->GetComponent<Transform>();
-			//	//Vector3 attackEffectPos = attackEffectTr->GetPosition();
-			//	//playerPos.x += 0.2f;
-			//	//attackEffectTr->SetPosition(playerPos);
-			//}
-		}
-	}
-	void RamonaScript::OnCollisionExit(Collider2D* other)
-	{
-		int a = 0;
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 기타 함수
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	// 애니메이션이 동작되어서는 안되는 상황: 
-	// ex. 점프 중 우측 키를 눌렀다고 해서 R_Walk가 실행되면 안됨
+
 	bool RamonaScript::NoneAnimationCondition()
 	{
 		if (
@@ -2610,7 +2590,6 @@ namespace ya
 		return false;
 	}
 
-	// 좌우 상하 이동을 막아야하는 상황
 	bool RamonaScript::CanMoveCondition()
 	{
 		if (
@@ -3047,6 +3026,7 @@ namespace ya
 		Animator* at = this->GetOwner()->GetComponent<Animator>();
 		at->PlayAnimation(L"R_Revived", true);
 	}
+
 	void RamonaScript::SetEffectFlickering(float tick, float duration)
 	{
 		GetOwner()->mIsEffectFlickering = true;

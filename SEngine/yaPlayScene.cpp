@@ -48,6 +48,7 @@ namespace ya
 		CollisionManager::SetLayer(eLayerType::Player, eLayerType::Enemy, true);
 		CollisionManager::SetLayer(eLayerType::Player, eLayerType::Camera, true);
 		CollisionManager::SetLayer(eLayerType::Enemy, eLayerType::Camera, true);
+		CollisionManager::SetLayer(eLayerType::Enemy, eLayerType::Enemy, true);
 
 		// STAGE 01 - BG 
 		{
@@ -115,92 +116,91 @@ namespace ya
 					, eLayerType::Player);
 			mRamona->SetName(L"Ramona");
 
-			//Collider2D* cd = mRamona->AddComponent<Collider2D>();// 충돌체는 RamonaScript에서 생성
-			//cd->SetSize(Vector2(0.15f, 0.15f));
-
 			MeshRenderer* mr = mRamona->AddComponent<MeshRenderer>();
 			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
 			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-			Rigidbody* rb = mRamona->AddComponent<Rigidbody>();
-			rb->SetGround(true);
-			rb->SetMass(1.0f);
 
 			std::shared_ptr<Texture> atlas
 				= Resources::Load<Texture>(L"Ramona_Idle", L"..\\Resources\\TEXTURE\\RAMONA\\Idle.png");
 			Animator* at = mRamona->AddComponent<Animator>();
 			at->Create(L"Ramona_temp", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(0.0f, 0.0f), 6);
 			at->PlayAnimation(L"Ramona_temp", true);
+
+			Rigidbody* rb = mRamona->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
 				
-			//at->CompleteEvent(L"Idle") = std::bind();
 			mRamona->AddComponent<RamonaScript>();
 		}
 		{
-			mLuke
+			mLuke01
 				= object::Instantiate<GameObject>(Vector3(2.0f, -1.2f, 40.f)
 					, Vector3::One * 3
 					, eLayerType::Enemy);
-			mLuke->SetName(L"Luke");
+			mLuke01->SetName(L"Luke01");
 
-			//Collider2D* cd2 = mLuke->AddComponent<Collider2D>();
-			//cd2->SetSize(Vector2(0.15f, 0.15f));
-
-			MeshRenderer* mr = mLuke->AddComponent<MeshRenderer>();
+			MeshRenderer* mr = mLuke01->AddComponent<MeshRenderer>();
 			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
 			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
 
-			Rigidbody* rb = mLuke->AddComponent<Rigidbody>();
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle01", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke01->AddComponent<Animator>();
+			at->Create(L"Luke_temp01", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp01", true);
+			
+			Rigidbody* rb = mLuke01->AddComponent<Rigidbody>();
 			rb->SetGround(true);
 			rb->SetMass(1.0f);
 
-			std::shared_ptr<Texture> atlas
-				= Resources::Load<Texture>(L"Basic_Luke_Idle", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-			Animator* at = mLuke->AddComponent<Animator>();
-			at->Create(L"Luke_temp", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-			at->PlayAnimation(L"Luke_temp", true);
-
-			mLuke->AddComponent<LukeScript>();
+			mLuke01->AddComponent<LukeScript>();
 		}
+		{
+			mLuke02
+				= object::Instantiate<GameObject>(Vector3(1.5f, 0.5f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mLuke02->SetName(L"Luke02");
 
-		//{
-		//	GameObject* mLuke2
-		//		= object::Instantiate<GameObject>(Vector3(1.5f, 0.5f, 40.f)
-		//			, Vector3::One * 3
-		//			, eLayerType::Enemy);
-		//	mLuke2->SetName(L"Luke2");
+			MeshRenderer* mr = mLuke02->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
 
-		//	MeshRenderer* mr = mLuke2->AddComponent<MeshRenderer>();
-		//	mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-		//	mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle02", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke02->AddComponent<Animator>();
+			at->Create(L"Luke_temp02", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp02", true);
 
-		//	std::shared_ptr<Texture> atlas
-		//		= Resources::Load<Texture>(L"Basic_Luke_Idle2", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-		//	Animator* at = mLuke2->AddComponent<Animator>();
-		//	at->Create(L"Luke_temp2", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-		//	at->PlayAnimation(L"Luke_temp2", true);
+			Rigidbody* rb = mLuke02->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
 
-		//	mLuke2->AddComponent<LukeScript>();
-		//}
+			mLuke02->AddComponent<LukeScript>();
+		}
+		{
+			mLuke03
+				= object::Instantiate<GameObject>(Vector3(1.7f, -0.5f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mLuke03->SetName(L"Luke03");
 
-		//{
-		//	GameObject* mLuke3
-		//		= object::Instantiate<GameObject>(Vector3(1.7f, -0.5f, 40.f)
-		//			, Vector3::One * 3
-		//			, eLayerType::Enemy);
-		//	mLuke3->SetName(L"Luke3");
+			MeshRenderer* mr = mLuke03->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
 
-		//	MeshRenderer* mr = mLuke3->AddComponent<MeshRenderer>();
-		//	mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-		//	mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle03", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke03->AddComponent<Animator>();
+			at->Create(L"Luke_temp03", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp03", true);
 
-		//	std::shared_ptr<Texture> atlas
-		//		= Resources::Load<Texture>(L"Basic_Luke_Idle3", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-		//	Animator* at = mLuke3->AddComponent<Animator>();
-		//	at->Create(L"Luke_temp3", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-		//	at->PlayAnimation(L"Luke_temp3", true);
+			Rigidbody* rb = mLuke03->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
 
-		//	mLuke3->AddComponent<LukeScript>();
-		//}
+			mLuke03->AddComponent<LukeScript>();
+		}
 
 		// Light
 		{
@@ -282,17 +282,33 @@ namespace ya
 			mRamonaDead = mRamona->GetComponent<RamonaScript>()->IsDead();
 
 
-			std::wstring str = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHeart());
-			std::wstring str1 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHp());
-			std::wstring str2 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetSp());
-			std::wstring str3 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetCoin());
-			std::wstring str4;
-			if (mLuke->GetState() == GameObject::eState::Active)
-			{
-				str4 = std::to_wstring(mLuke->GetComponent<LukeScript>()->GetHp());
-			}
+			//{
+			//	std::wstring str = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHeart());
+			//	std::wstring str1 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHp());
+			//	std::wstring str2 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetSp());
+			//	std::wstring str3 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetCoin());
+			//	std::wstring str4;
+			//	std::wstring str5;
+			//	std::wstring str6;
+			//	if (mLuke01 != nullptr)
+			//	{
+			//		if (mLuke01->GetState() == GameObject::eState::Active)
+			//			str4 = std::to_wstring(mLuke01->GetComponent<LukeScript>()->GetHp());
+			//	}
+			//	if (mLuke02 != nullptr)
+			//	{
+			//		if (mLuke02->GetState() == GameObject::eState::Active)
+			//			str5 = std::to_wstring(mLuke02->GetComponent<LukeScript>()->GetHp());
+			//	}
+			//	if (mLuke03 != nullptr)
+			//	{
+			//		if (mLuke03->GetState() == GameObject::eState::Active)
+			//			str6 = std::to_wstring(mLuke03->GetComponent<LukeScript>()->GetHp());
+			//	}
 
-			ya::DebugLog::PrintDebugLog(L"Heart: " + str + L" Hp: " + str1 + L" Sp: " + str2 + L" Coin: " + str3 + L" || EnemyHp: " + str4);
+			//	ya::DebugLog::PrintDebugLog(L"Heart: " + str + L" Hp: " + str1 + L" Sp: " + str2 + L" Coin: " + str3
+			//		+ L" || Enemy01Hp: " + str4 + L" || Enemy02Hp: " + str5 + L" || Enemy03Hp: " + str6);
+			//}
 		}
 
 
