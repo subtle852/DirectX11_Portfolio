@@ -8,6 +8,7 @@
 #include "yaPlayScene.h"
 #include "yaRamonaScript.h"
 #include "yaLukeScript.h"
+#include "yaBoss01Script.h"
 #include "yaRigidbody.h"
 
 namespace ya
@@ -155,16 +156,32 @@ namespace ya
 			}
 			else if (mLeftCd->GetState() == eColliderState::IsColliding)
 			{
-				if(ob->GetComponent<LukeScript>()->IsWait())
-					ob->GetComponent<LukeScript>()->ChangeWalkDirectionNState(eDirection::R);
+				if (dynamic_cast<LukeScript*>(other->GetOwner()->GetComponent<LukeScript>()))
+				{
+					if (ob->GetComponent<LukeScript>()->IsWait())
+						ob->GetComponent<LukeScript>()->ChangeWalkDirectionNState(eDirection::R);
+				}
+				else if (dynamic_cast<Boss01Script*>(other->GetOwner()->GetComponent<Boss01Script>()))
+				{
+					if (ob->GetComponent<Boss01Script>()->IsWait())
+						ob->GetComponent<Boss01Script>()->ChangeWalkDirectionNState(eDirection::R);
+				}
 
 				obPos.x += 0.005f;
 				obTr->SetPosition(obPos);
 			}
 			else if (mRightCd->GetState() == eColliderState::IsColliding)
 			{
-				if (ob->GetComponent<LukeScript>()->IsWait())
-					ob->GetComponent<LukeScript>()->ChangeWalkDirectionNState(eDirection::L);
+				if (dynamic_cast<LukeScript*>(other->GetOwner()->GetComponent<LukeScript>()))
+				{
+					if (ob->GetComponent<LukeScript>()->IsWait())
+						ob->GetComponent<LukeScript>()->ChangeWalkDirectionNState(eDirection::L);
+				}
+				else if (dynamic_cast<Boss01Script*>(other->GetOwner()->GetComponent<Boss01Script>()))
+				{
+					if (ob->GetComponent<Boss01Script>()->IsWait())
+						ob->GetComponent<Boss01Script>()->ChangeWalkDirectionNState(eDirection::L);
+				}
 
 				obPos.x -= 0.005f;
 				obTr->SetPosition(obPos);

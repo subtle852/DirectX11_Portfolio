@@ -14,6 +14,7 @@
 #include "yaConstantBuffer.h"
 #include "yaEnemyScript.h"
 #include "yaLukeScript.h"
+#include "yaBoss01Script.h"
 #include "..\\Editor_Window\\yaDebugLog.h"
 
 namespace ya
@@ -2152,10 +2153,24 @@ namespace ya
 
 			if (mBodyCd->GetState() == eColliderState::IsColliding)
 			{
-				// 공격 당하는 스킬이 무엇인지에 대한 업데이트
-				std::copy(other->GetOwner()->GetComponent<LukeScript>()->GetAttackState().begin()
+				if (dynamic_cast<LukeScript*>(other->GetOwner()->GetComponent<EnemyScript>()))
+				{
+					// 공격 당하는 스킬이 무엇인지에 대한 업데이트
+					std::copy(other->GetOwner()->GetComponent<LukeScript>()->GetAttackState().begin()
 						, other->GetOwner()->GetComponent<LukeScript>()->GetAttackState().end()
 						, mEnemyAttackState.begin());
+				}
+				else if (dynamic_cast<Boss01Script*>(other->GetOwner()->GetComponent<EnemyScript>()))
+				{
+					// 공격 당하는 스킬이 무엇인지에 대한 업데이트
+					std::copy(other->GetOwner()->GetComponent<Boss01Script>()->GetAttackState().begin()
+						, other->GetOwner()->GetComponent<Boss01Script>()->GetAttackState().end()
+						, mEnemyAttackState.begin());
+				}
+				else
+				{
+
+				}
 
 				// 가드 상태 OR EVADE 상태
 				if (mCurState == ePlayerState::L_Guard || mCurState == ePlayerState::R_Guard || mCurState == ePlayerState::L_Evade || mCurState == ePlayerState::R_Evade)
