@@ -11,6 +11,8 @@ namespace ya
 			// Appear / Disappear
 			L_Appear,
 			R_Appear,
+			L_AppearWait,
+			R_AppearWait,
 			L_DisAppear,
 			R_DisAppear,
 
@@ -125,6 +127,8 @@ namespace ya
 
 	private:
 		//// 이벤트 함수
+		void AppearComplete();
+		void SuperStrComplete();
 		void CombatComplete();
 		void GuardComplete();
 		void DamageStunComplete();
@@ -170,6 +174,8 @@ namespace ya
 		// Appear / Disappear
 		void L_appear();
 		void R_appear();
+		void L_appearWait();
+		void R_appearWait();
 		void L_disAppear();
 		void R_disAppear();
 
@@ -231,7 +237,8 @@ namespace ya
 
 	private:
 		// 어빌리티
-		int mHp = 100;
+		int mHp = 500;
+		int mMaxHp = 500;
 
 		// 주요 상태
 		eBoss01State mCurState = eBoss01State::R_Idle;
@@ -287,7 +294,11 @@ namespace ya
 		Collider2D* mSkillCd = nullptr;
 
 		// State 변수
-		bool mPhase = 0;
+		unsigned int mPhase = 0;
+		unsigned int mLevelofPhase0 = 0;
+		unsigned int mLevelofPhase1 = 0;
+		unsigned int mLevelofPhase2 = 0;
+		unsigned int mLevelofPhase3 = 0;
 
 		bool mIsAppear = false;
 		bool mIsDisAppear = false;
@@ -322,7 +333,7 @@ namespace ya
 		int  mAttackedDamage = 20;
 
 		// 등장 화면
-		GameObject* mInitEffect = nullptr;
+		GameObject* mAppearEffect = nullptr;
 
 		// Shadow
 		GameObject* mShadow = nullptr;

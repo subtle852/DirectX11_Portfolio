@@ -567,6 +567,17 @@ namespace renderer
 			Resources::Insert(L"SpriteMaterial_AttackEffect", spriteMaterial);
 		}
 
+		//////////////////////////////////////////////////////////// BossInitEffect
+		{
+			std::shared_ptr<Texture> texture
+				= Resources::Load<Texture>(L"BOSS01_APPEAR_EFFECT", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\APPEAR\\BOSS01_APPEAR_EFFECT.png");
+			std::shared_ptr<Material> spriteMaterial = std::make_shared<Material>();
+			spriteMaterial->SetShader(spriteShader);
+			spriteMaterial->SetTexture(texture);
+			spriteMaterial->SetRenderingMode(eRenderingMode::Transparent);
+			Resources::Insert(L"SpriteMaterial_AppearEffect", spriteMaterial);
+		}
+
 
 #pragma endregion
 	}

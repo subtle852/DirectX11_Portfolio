@@ -28,21 +28,41 @@ namespace ya
 
 	void Boss01Script::Initialize()
 	{
+#pragma region 등장 이펙트
+		{
+			mAppearEffect = object::Instantiate<GameObject>(Vector3(8.1f, 0.0f, 30.f)
+				, Vector3::One * 3
+				, eLayerType::Enemy);
+			MeshRenderer* mr = mAppearEffect->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteMaterial_AppearEffect"));
+			std::shared_ptr<Texture> texture
+				= Resources::Load<Texture>(L"BOSS01_APPEAR_EFFECT", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\APPEAR\\BOSS01_APPEAR_EFFECT.png");
+			mAppearEffect->GetComponent<Transform>()->SetScale((Vector3(texture.get()->GetImageRatioOfWidth() * 2.0f,
+				texture.get()->GetImageRatioOfHeight() * 2.0f, 0.0f))
+				* 8.0f);
+			mAppearEffect->SetState(GameObject::eState::Paused);
+
+		}
+#pragma endregion
+
 #pragma region 그림자
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 그림자
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		mShadow = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 40.f)
-			, Vector3::One * 3
-			, eLayerType::BG);
-		MeshRenderer* mr = mShadow->AddComponent<MeshRenderer>();
-		mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-		mr->SetMaterial(Resources::Find<Material>(L"SpriteMaterial_Shadow"));
-		std::shared_ptr<Texture> texture
-			= Resources::Load<Texture>(L"SHADOW", L"..\\Resources\\TEXTURE\\RAMONA\\Shadow.png");
-		mShadow->GetComponent<Transform>()->SetScale((Vector3(texture.get()->GetImageRatioOfWidth() * 2.0f,
-			texture.get()->GetImageRatioOfHeight() * 2.0f, 0.0f))
-			* 1.0f);
+		{
+			mShadow = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 40.f)
+				, Vector3::One * 3
+				, eLayerType::BG);
+			MeshRenderer* mr = mShadow->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteMaterial_Shadow"));
+			std::shared_ptr<Texture> texture
+				= Resources::Load<Texture>(L"SHADOW", L"..\\Resources\\TEXTURE\\RAMONA\\Shadow.png");
+			mShadow->GetComponent<Transform>()->SetScale((Vector3(texture.get()->GetImageRatioOfWidth() * 2.0f,
+				texture.get()->GetImageRatioOfHeight() * 2.0f, 0.0f))
+				* 1.0f);
+		}
 #pragma endregion
 
 #pragma region 애니메이션
@@ -55,6 +75,11 @@ namespace ya
 		Animator* at = this->GetOwner()->GetComponent<Animator>();
 		at->Create(L"R_APPEAR", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(3744.0f / 26.0f, 144.0f), 26);//, Vector2::Zero, 0.05f);
 		at->Create(L"L_APPEAR", atlas, enums::eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(3744.0f / 26.0f, 144.0f), 26);
+
+		atlas
+			= Resources::Load<Texture>(L"BOSS01_APPEAR_WAIT", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\APPEAR\\BOSS01_APPEAR_WAIT.png");
+		at->Create(L"R_APPEAR_WAIT", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(432.0f / 3.0f, 144.0f), 3);
+		at->Create(L"L_APPEAR_WAIT", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(432.0f / 3.0f, 144.0f), 3);
 
 		atlas
 			= Resources::Load<Texture>(L"BOSS01_DISAPPEAR", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\DISAPPEAR\\BOSS01_DISAPPEAR.png");
@@ -78,13 +103,16 @@ namespace ya
 
 		atlas
 			= Resources::Load<Texture>(L"BOSS01_DOWNED", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\BASIC\\BOSS01_DOWNED.png");
-		at->Create(L"R_DOWNED", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(576.0f / 4.0f, 144.0f), 4);
-		at->Create(L"L_DOWNED", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(576.0f / 4.0f, 144.0f), 4);
+		at->Create(L"R_DOWNED", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(576.0f / 4.0f, 144.0f), 4, Vector2::Zero, 0.8f);
+		at->Create(L"L_DOWNED", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(576.0f / 4.0f, 144.0f), 4, Vector2::Zero, 0.8f);
 
 		atlas
 			= Resources::Load<Texture>(L"BOSS01_GETUP", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\BASIC\\BOSS01_GETUP.png");
-		at->Create(L"R_GETUP", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(1584.0f / 11.0f, 144.0f), 1);
-		at->Create(L"L_GETUP", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(1584.0f / 11.0f, 144.0f), 11);
+		at->Create(L"R_GETUP", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(1584.0f / 11.0f, 144.0f), 11);
+
+		atlas
+			= Resources::Load<Texture>(L"BOSS01_GETUP_L", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\BASIC\\BOSS01_GETUP_L.png");
+		at->Create(L"L_GETUP", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(1584.0f / 11.0f, 144.0f), 11);
 
 		atlas
 			= Resources::Load<Texture>(L"BOSS01_GUARD", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\BASIC\\BOSS01_GUARD.png");
@@ -113,8 +141,8 @@ namespace ya
 
 		atlas
 			= Resources::Load<Texture>(L"BOSS01_ATTACK_FIRE", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\ATTACK\\BOSS01_ATTACK_FIRE.png");
-		at->Create(L"R_ATTACK_FIRE", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(3024.0f / 14.0f, 216.0f), 14);
-		at->Create(L"L_ATTACK_FIRE", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(3024.0f / 14.0f, 216.0f), 14);
+		at->Create(L"R_ATTACK_FIRE", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(3024.0f / 14.0f, 216.0f), 14, Vector2::Zero, 0.08f);
+		at->Create(L"L_ATTACK_FIRE", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(3024.0f / 14.0f, 216.0f), 14, Vector2::Zero, 0.08f);
 
 		atlas
 			= Resources::Load<Texture>(L"BOSS01_ATTACK_DOWNKICK", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\ATTACK\\BOSS01_ATTACK_DOWNKICK.png");
@@ -126,10 +154,15 @@ namespace ya
 		at->Create(L"R_ATTACK_SUPER_STR", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(1008.0f / 7.0f, 432.0f), 7);
 		at->Create(L"L_ATTACK_SUPER_STR", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(1008.0f / 7.0f, 432.0f), 7);
 
+		//atlas
+		//	= Resources::Load<Texture>(L"BOSS01_ATTACK_SUPER_ING", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\ATTACK\\BOSS01_ATTACK_SUPER_ING.png");
+		//at->Create(L"R_ATTACK_SUPER_ING", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(864.0f / 6.0f, 432.0f), 6);
+		//at->Create(L"L_ATTACK_SUPER_ING", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(864.0f / 6.0f, 432.0f), 6);
+
 		atlas
-			= Resources::Load<Texture>(L"BOSS01_ATTACK_SUPER_ING", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\ATTACK\\BOSS01_ATTACK_SUPER_ING.png");
-		at->Create(L"R_ATTACK_SUPER_ING", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(864.0f / 6.0f, 432.0f), 6);
-		at->Create(L"L_ATTACK_SUPER_ING", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(864.0f / 6.0f, 432.0f), 6);
+			= Resources::Load<Texture>(L"BOSS01_ATTACK_SUPER_ING", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\ATTACK\\BOSS01_ATTACK_SUPER_ING_s.png");
+		at->Create(L"R_ATTACK_SUPER_ING", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(864.0f / 6.0f, 144.0f), 6);
+		at->Create(L"L_ATTACK_SUPER_ING", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(864.0f / 6.0f, 144.0f), 6);
 
 		atlas
 			= Resources::Load<Texture>(L"BOSS01_ATTACK_SUPER_END", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\ATTACK\\BOSS01_ATTACK_SUPER_END.png");
@@ -165,8 +198,8 @@ namespace ya
 
 		at = GetOwner()->GetComponent<Animator>();
 
-		//at->CompleteEvent(L"L_Attacked1") = std::bind(&Boss01Script::Attacked1Complete, this);
-		//at->CompleteEvent(L"R_Attacked1") = std::bind(&Boss01Script::Attacked1Complete, this);
+		at->CompleteEvent(L"L_APPEAR") = std::bind(&Boss01Script::AppearComplete, this);
+		at->CompleteEvent(L"R_APPEAR") = std::bind(&Boss01Script::AppearComplete, this);
 
 		at->CompleteEvent(L"L_DAMAGE_STUN") = std::bind(&Boss01Script::DamageStunComplete, this);
 		at->CompleteEvent(L"R_DAMAGE_STUN") = std::bind(&Boss01Script::DamageStunComplete, this);
@@ -190,8 +223,8 @@ namespace ya
 		at->CompleteEvent(L"L_ATTACK_DOWNKICK") = std::bind(&Boss01Script::CombatComplete, this);
 		at->CompleteEvent(L"R_ATTACK_DOWNKICK") = std::bind(&Boss01Script::CombatComplete, this);
 
-		//at->CompleteEvent(L"L_ATTACK_SUPER_STR") = std::bind(&Boss01Script::CombatComplete, this);
-		//at->CompleteEvent(L"R_ATTACK_SUPER_STR") = std::bind(&Boss01Script::CombatComplete, this);
+		at->CompleteEvent(L"L_ATTACK_SUPER_STR") = std::bind(&Boss01Script::SuperStrComplete, this);
+		at->CompleteEvent(L"R_ATTACK_SUPER_STR") = std::bind(&Boss01Script::SuperStrComplete, this);
 		//at->CompleteEvent(L"L_ATTACK_SUPER_ING") = std::bind(&Boss01Script::CombatComplete, this);
 		//at->CompleteEvent(L"R_ATTACK_SUPER_ING") = std::bind(&Boss01Script::CombatComplete, this);
 		//at->CompleteEvent(L"L_ATTACK_SUPER_END") = std::bind(&Boss01Script::CombatComplete, this);
@@ -276,6 +309,12 @@ namespace ya
 				break;
 			case eBoss01State::R_Appear:
 				R_appear();
+				break;
+			case eBoss01State::L_AppearWait:
+				L_appearWait();
+				break;
+			case eBoss01State::R_AppearWait:
+				R_appearWait();
 				break;
 			case eBoss01State::L_DisAppear:
 				L_disAppear();
@@ -547,223 +586,362 @@ namespace ya
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// AI
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 		if (mPhase == 0)
 		{
-			// 공격을 당하고 있을 때는 아래의 상태 변화가 있으면 안됨
-			// 추후 공격을 당하는 변수들 합쳐서 함수로 대체 예정
-			if (mIsDamageStun == false && mIsDamageKnockBack == false && mIsDamageKnockDown == false && mIsDamageDown == false
-				&& mBodyCd->GetState() == eColliderState::NotColliding
-				&& mIsDowned == false
-				&& mIsGetup == false)
+			if (mLevelofPhase0 == 0)
 			{
-				/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-																// 탐지거리 내 플레이어 O
-				/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				if (IsPlayerInDetectionRange())// 탐지거리 내 플레이어 O
+				// 등장 애니메
+				ChangeState(eBoss01State::L_Appear);
+			}
+			else if (mLevelofPhase0 == 1)
+			{
+				// 등장 배경 띄우기
+				mAppearEffect->SetState(GameObject::eState::Active);
+
+				// 대기 애니메
+				ChangeState(eBoss01State::L_AppearWait);
+
+				if (mAppearEffect->GetState() == GameObject::eState::Active)
 				{
-					if (mDetected == false)// 처음 감지했을 때만 들어오는 조건문
+					mLevelofPhase0 = 2;
+				}
+			}
+			else if (mLevelofPhase0 == 2)
+			{
+				// 등장 배경 이동
+				Transform* appearEffecttr = mAppearEffect->GetComponent<Transform>();
+				Vector3 appearEffectpos = appearEffecttr->GetPosition();
+
+				appearEffectpos.x -= 4.0f * Time::DeltaTime();
+
+				appearEffecttr->SetPosition(appearEffectpos);
+
+				if (appearEffectpos.x < -8.0f)
+				{
+					// Idle 애니메
+					ChangeState(eBoss01State::L_Idle);
+
+					mAppearEffect->SetState(GameObject::eState::Dead);
+
+					mLevelofPhase0 = 3;
+				}
+			}
+			else if (mLevelofPhase0 == 3)
+			{
+				mPhase = 1;
+			}
+
+		}
+		if (mPhase == 1)
+		{
+			if (mLevelofPhase1 == 0)
+			{
+				float percent = static_cast<float>(mHp) / static_cast<float>(mMaxHp) * 100;
+				if (percent <= 98.0f)// 70퍼
+				{
+					mPhase = 2;
+				}
+
+				// 페이즈 1 AI
+
+				// 공격을 당하고 있을 때는 아래의 상태 변화가 있으면 안됨
+				// 추후 공격을 당하는 변수들 합쳐서 함수로 대체 예정
+				if (mIsDamageStun == false && mIsDamageKnockBack == false && mIsDamageKnockDown == false && mIsDamageDown == false
+					&& mBodyCd->GetState() == eColliderState::NotColliding
+					&& mIsDowned == false
+					&& mIsGetup == false)
+				{
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+																	// 탐지거리 내 플레이어 O
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					if (IsPlayerInDetectionRange())// 탐지거리 내 플레이어 O
 					{
-						// 플레이어 쪽 방향으로 설정 해줘야 함
-						if (mPlayerPos.x < mPos.x)
+						if (mDetected == false)// 처음 감지했을 때만 들어오는 조건문
 						{
-							mDetected = true;
-							mDirection = eDirection::L;
-							ChangeState(eBoss01State::L_Idle);
-						}
-						else
-						{
-							mDetected = true;
-
-							mDirection = eDirection::R;
-							ChangeState(eBoss01State::R_Idle);
-						}
-
-						// 달려갈지 대기할지 랜덤 설정
-						if (mRandWaitOrRun == -100)
-						{
-							std::mt19937 mt(rd());
-							std::uniform_int_distribution<int> dist(0, 1);
-							mRandWaitOrRun = dist(mt);
-
-							// 디버깅용
-							//mRandWaitOrRun = 1;// Wait
-							//mRandWaitOrRun = 0;// Run
-						}
-					}
-
-					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-														// 탐지거리 내 플레이어 O 전투거리 내 플레이어 O
-					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-					if (IsPlayerInCombatRange())
-					{
-						if (mIsDamageStun == false && mIsDamageKnockBack == false && mIsDamageKnockDown == false && mIsDamageDown == false
-							&& mIsDowned == false && mIsGetup == false
-							&& mIsAttackPunch == false && mIsAttackJumpPunchStr == false && mIsAttackJumpPunchIng == false
-							&& mIsAttackKick == false && mIsAttackFire == false
-							&& mIsAttackDownKick == false
-							&& mIsGuard == false)
-							// Combat 조건
-						{
-							// 처음 감지했을 때만 들어오는 조건문
-							// 플레이어 쪽 방향 쳐다보기
-							if (mIsCombat == false)
+							// 플레이어 쪽 방향으로 설정 해줘야 함
+							if (mPlayerPos.x < mPos.x)
 							{
-								if (mPlayerPos.x < mPos.x)
-								{
-									mDirection = eDirection::L;
-									ChangeState(eBoss01State::L_Idle);
-								}
-								else
-								{
-									mDirection = eDirection::R;
-									ChangeState(eBoss01State::R_Idle);
-								}
-
-								// Combat 관련 변수 초기화 ex. 2.0f
-								// 사실상 mCombatTimer 사용하지 않고
-								// Combat에서 랜덤 행동
-								mCombatTimer = 0.0f;
-							}
-
-							Combat();
-						}
-					}
-
-					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-														// 탐지거리 내 플레이어 O 전투거리 내 플레이어 X
-					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-					else
-					{
-						mDetected = true;// 플레이어 쪽 방향으로 설정 해주기 위해 처음 Detect 되는 상태로 전환
-						mIsCombat = false;
-
-						//mCombatTimer = 0.0f;
-
-						// 달려오는 경우
-						if (mRandWaitOrRun == 0)
-						{
-							// 몬스터와 플레이어 사이의 거리 계산
-							Vector3 direction = mPlayerPos - mPos;
-							direction.Normalize();
-
-							// 플레이어와 몬스터 사이의 거리가 너무 작으면 멈추기
-							if (fabs(direction.x) < 0.05f)
-							{
-								if (mDirection == eDirection::L)
-									ChangeState(eBoss01State::L_Idle);
-								else
-									ChangeState(eBoss01State::R_Idle);
-							}
-							else
-							{
-								// 몬스터가 플레이어를 향해 이동하도록 설정
-								if (direction.x < 0 && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
-								{
-									mDirection = eDirection::L;
-									ChangeState(eBoss01State::L_Run);
-
-									mDirectionInt = -1;
-									Transform* tr = this->GetOwner()->GetComponent<Transform>();
-									Vector3 pos = tr->GetPosition();
-									pos += direction * mRunSpeed * Time::DeltaTime();
-									tr->SetPosition(pos);
-								}
-								else if (direction.x > 0 && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
-								{
-									mDirection = eDirection::R;
-									ChangeState(eBoss01State::R_Run);
-
-									mDirectionInt = +1;
-									Transform* tr = this->GetOwner()->GetComponent<Transform>();
-									Vector3 pos = tr->GetPosition();
-									pos += direction * mRunSpeed * Time::DeltaTime();
-									tr->SetPosition(pos);
-								}
-							}
-						}
-
-						// 대기하는 경우
-						else// (mRandWaitOrRun == +1)
-						{
-							if (mPlayerPos.x + 0.15f < mPos.x && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
-							{
+								mDetected = true;
 								mDirection = eDirection::L;
 								ChangeState(eBoss01State::L_Idle);
 							}
-							else if (mPos.x < mPlayerPos.x - 0.15f && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
+							else
 							{
+								mDetected = true;
+
 								mDirection = eDirection::R;
 								ChangeState(eBoss01State::R_Idle);
 							}
+
+							// 달려갈지 대기할지 랜덤 설정
+							if (mRandWaitOrRun == -100)
+							{
+								std::mt19937 mt(rd());
+								std::uniform_int_distribution<int> dist(0, 1);
+								mRandWaitOrRun = dist(mt);
+
+								// 디버깅용
+								//mRandWaitOrRun = 1;// Wait
+								//mRandWaitOrRun = 0;// Run
+							}
 						}
 
+						/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 탐지거리 내 플레이어 O 전투거리 내 플레이어 O
+						/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+						if (IsPlayerInCombatRange())
+						{
+							if (mIsDamageStun == false && mIsDamageKnockBack == false && mIsDamageKnockDown == false && mIsDamageDown == false
+								&& mIsDowned == false && mIsGetup == false
+								&& mIsAttackPunch == false && mIsAttackJumpPunchStr == false && mIsAttackJumpPunchIng == false
+								&& mIsAttackKick == false && mIsAttackFire == false
+								&& mIsAttackDownKick == false
+								&& mIsGuard == false)
+								// Combat 조건
+							{
+								// 처음 감지했을 때만 들어오는 조건문
+								// 플레이어 쪽 방향 쳐다보기
+								if (mIsCombat == false)
+								{
+									if (mPlayerPos.x < mPos.x)
+									{
+										mDirection = eDirection::L;
+										ChangeState(eBoss01State::L_Idle);
+									}
+									else
+									{
+										mDirection = eDirection::R;
+										ChangeState(eBoss01State::R_Idle);
+									}
+
+									// Combat 관련 변수 초기화 ex. 2.0f
+									// 사실상 mCombatTimer 사용하지 않고
+									// Combat에서 랜덤 행동
+									mCombatTimer = 0.0f;
+								}
+
+								Combat();
+							}
+						}
+
+						/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 탐지거리 내 플레이어 O 전투거리 내 플레이어 X
+						/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+						else
+						{
+							mDetected = true;// 플레이어 쪽 방향으로 설정 해주기 위해 처음 Detect 되는 상태로 전환
+							mIsCombat = false;
+
+							//mCombatTimer = 0.0f;
+
+							// 달려오는 경우
+							if (mRandWaitOrRun == 0)
+							{
+								// 몬스터와 플레이어 사이의 거리 계산
+								Vector3 direction = mPlayerPos - mPos;
+								direction.Normalize();
+
+								// 플레이어와 몬스터 사이의 거리가 너무 작으면 멈추기
+								if (fabs(direction.x) < 0.05f)
+								{
+									if (mDirection == eDirection::L)
+										ChangeState(eBoss01State::L_Idle);
+									else
+										ChangeState(eBoss01State::R_Idle);
+								}
+								else
+								{
+									// 몬스터가 플레이어를 향해 이동하도록 설정
+									if (direction.x < 0 && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
+									{
+										mDirection = eDirection::L;
+										ChangeState(eBoss01State::L_Run);
+
+										mDirectionInt = -1;
+										Transform* tr = this->GetOwner()->GetComponent<Transform>();
+										Vector3 pos = tr->GetPosition();
+										pos += direction * mRunSpeed * Time::DeltaTime();
+										tr->SetPosition(pos);
+									}
+									else if (direction.x > 0 && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
+									{
+										mDirection = eDirection::R;
+										ChangeState(eBoss01State::R_Run);
+
+										mDirectionInt = +1;
+										Transform* tr = this->GetOwner()->GetComponent<Transform>();
+										Vector3 pos = tr->GetPosition();
+										pos += direction * mRunSpeed * Time::DeltaTime();
+										tr->SetPosition(pos);
+									}
+								}
+							}
+
+							// 대기하는 경우
+							else// (mRandWaitOrRun == +1)
+							{
+								if (mPlayerPos.x + 0.15f < mPos.x && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
+								{
+									mDirection = eDirection::L;
+									ChangeState(eBoss01State::L_Idle);
+								}
+								else if (mPos.x < mPlayerPos.x - 0.15f && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
+								{
+									mDirection = eDirection::R;
+									ChangeState(eBoss01State::R_Idle);
+								}
+							}
+
+						}
 					}
-				}
 
-				/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-														// 탐지거리 내 플레이어 X && 전투거리 내 플레이어 X
-				/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				else
-				{
-					// 초기화
-					mDetected = false;
-					mRandWaitOrRun = -100;
-
-
-					// 이동 타이머 감소
-					mMoveTimer -= Time::DeltaTime();
-
-					if (mMoveTimer <= 0.0f)
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 탐지거리 내 플레이어 X && 전투거리 내 플레이어 X
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					else
 					{
-						std::mt19937 mt(rd());
-						std::uniform_int_distribution<int> dist(0, 1);
+						// 초기화
+						mDetected = false;
+						mRandWaitOrRun = -100;
 
-						// 랜덤하게 이동 방향 변경
-						if (dist(mt) == 0)
+
+						// 이동 타이머 감소
+						mMoveTimer -= Time::DeltaTime();
+
+						if (mMoveTimer <= 0.0f)
+						{
+							std::mt19937 mt(rd());
+							std::uniform_int_distribution<int> dist(0, 1);
+
+							// 랜덤하게 이동 방향 변경
+							if (dist(mt) == 0)
+							{
+								mDirection = eDirection::L;
+								mDirectionInt = -1;
+							}
+							else
+							{
+								mDirection = eDirection::R;
+								mDirectionInt = +1;
+							} // -1 또는 +1로 랜덤하게 설정
+
+							// 타이머 초기화
+							mMoveTimer = mMoveInterval;
+						}
+
+						// 랜덤 이동 로직
+						float moveDistance = GetRandomMoveDistance();
+						Transform* tr = this->GetOwner()->GetComponent<Transform>();
+						Vector3 pos = tr->GetPosition();
+						pos.x += mDirectionInt * moveDistance * Time::DeltaTime();
+						tr->SetPosition(pos);
+
+						if (mDirectionInt == -1)
 						{
 							mDirection = eDirection::L;
-							mDirectionInt = -1;
+							ChangeState(eBoss01State::L_Walk);
 						}
 						else
 						{
 							mDirection = eDirection::R;
-							mDirectionInt = +1;
-						} // -1 또는 +1로 랜덤하게 설정
-
-						// 타이머 초기화
-						mMoveTimer = mMoveInterval;
-					}
-
-					// 랜덤 이동 로직
-					float moveDistance = GetRandomMoveDistance();
-					Transform* tr = this->GetOwner()->GetComponent<Transform>();
-					Vector3 pos = tr->GetPosition();
-					pos.x += mDirectionInt * moveDistance * Time::DeltaTime();
-					tr->SetPosition(pos);
-
-					if (mDirectionInt == -1)
-					{
-						mDirection = eDirection::L;
-						ChangeState(eBoss01State::L_Walk);
-					}
-					else
-					{
-						mDirection = eDirection::R;
-						ChangeState(eBoss01State::R_Walk);
+							ChangeState(eBoss01State::R_Walk);
+						}
 					}
 				}
 			}
-		}
 
-		else if (mPhase == 1)
-		{
+			else if (mLevelofPhase1 == 1)
+			{
 
+			}
 		}
 
 		else if (mPhase == 2)
 		{
+			if (mLevelofPhase2 == 0)
+			{
+				// 바꾸기 전 상태 준비
+				// 콜라이더 끄기
+				if(mBodyCd->GetActivation() == enums::eColliderActivation::Active)
+				{
+					mBodyCd->SetActivation(enums::eColliderActivation::InActive);
+				}
 
+				// 위치 이동
+				Transform* tr = this->GetOwner()->GetComponent<Transform>();
+				Vector3 currentPosition = tr->GetPosition();
+
+				const Vector3 targetPosition = Vector3{ 2.2f, 0.0f, 0.0f };// 목표 지점
+				const float moveDistance = 10.0f;// 간접 속도
+				const float minDistanceToStop = 0.01f;// 목표지점 근접
+
+				Vector3 direction = targetPosition - currentPosition;// 이동 방향
+				if (direction.Length() > minDistanceToStop)// 이동 진행
+				{
+					direction.Normalize();
+
+					Vector3 movement = direction * moveDistance * Time::DeltaTime();// 이동량
+
+					Vector3 newPosition = currentPosition + movement;
+					tr->SetPosition(newPosition);
+
+					// 애니메
+					Vector3 directionToTarget = targetPosition - currentPosition;
+					if (0.0f < directionToTarget.x)// cur - target
+					{
+						mDirection = eDirection::R;
+						ChangeState(eBoss01State::R_Run);
+					}
+					else
+					{
+						mDirection = eDirection::L;
+						ChangeState(eBoss01State::L_Run);
+					}
+				}
+				else// 이동 중단
+				{
+					// 이동을 중단하는 로직
+					mLevelofPhase2 = 1;
+				}
+			}
+
+			else if (mLevelofPhase2 == 1)
+			{
+				ChangeState(eBoss01State::L_AttackSuperStr);
+			}
+
+			else if (mLevelofPhase2 == 2)
+			{
+				// 기존 Scale 333에서 1.5배 확장
+				Transform* tr = this->GetOwner()->GetComponent<Transform>();
+				Vector3 size = tr->GetScale();
+				if (size.x <= 3.0f * 1.5f || size.y <= 3.0f * 1.5f)
+				{
+					size.x *= 1.5f;
+					size.y *= 1.5f;
+					tr->SetScale(size);
+				}
+
+				ChangeState(eBoss01State::L_AttackSuperIng);
+			}
+		}
+
+		else if (mPhase == 3)
+		{
+			if (mLevelofPhase3 == 0)
+			{
+
+			}
+
+			else if (mLevelofPhase3 == 1)
+			{
+
+			}
+
+			else if (mLevelofPhase3 == 2)
+			{
+
+			}
 		}
 
 		else
@@ -795,8 +973,7 @@ namespace ya
 		}
 
 		// mSkillCd 활성화 비활성화 조건
-		if (mIsAttackPunch || mIsAttackJumpPunchIng || mIsAttackKick || mIsAttackFire || mIsAttackDownKick
-			|| mIsAttackSuperIng)
+		if (mIsAttackPunch || mIsAttackJumpPunchIng || mIsAttackKick || mIsAttackFire || mIsAttackDownKick)
 		{
 			mSkillCd->SetActivation(eColliderActivation::Active);
 		}
@@ -851,13 +1028,13 @@ namespace ya
 			{
 				Rigidbody* rb = this->GetOwner()->GetComponent<Rigidbody>();
 				rb->SetGround(true);
-				rb->AddForce(Vector2(100.4f, 0.0f));
+				rb->AddForce(Vector2(-100.4f, 0.0f));
 			}
 			else
 			{
 				Rigidbody* rb = this->GetOwner()->GetComponent<Rigidbody>();
 				rb->SetGround(true);
-				rb->AddForce(Vector2(-100.4f, 0.0f));
+				rb->AddForce(Vector2(100.4f, 0.0f));
 			}
 
 			mIsDamageKnockBack = true;
@@ -1164,6 +1341,17 @@ namespace ya
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 														// 이벤트
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	void Boss01Script::AppearComplete()
+	{
+		mLevelofPhase0 = 1;
+	}
+
+	void Boss01Script::SuperStrComplete()
+	{
+		mLevelofPhase2 = 2;
+	}
+
 	void Boss01Script::CombatComplete()
 	{
 		mIsAttackPunch = false;
@@ -1298,6 +1486,16 @@ namespace ya
 	{
 		Animator* at = this->GetOwner()->GetComponent<Animator>();
 		at->PlayAnimation(L"R_APPEAR", true);
+	}
+	void Boss01Script::L_appearWait()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"L_APPEAR_WAIT", true);
+	}
+	void Boss01Script::R_appearWait()
+	{
+		Animator* at = this->GetOwner()->GetComponent<Animator>();
+		at->PlayAnimation(L"R_APPEAR_WAIT", true);
 	}
 	void Boss01Script::L_disAppear()
 	{
