@@ -17,9 +17,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CommonInclude.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaAnimation.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaAnimator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)yaAudioClip.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)yaAudioListener.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)yaAudioSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaCamera.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaCollider2D.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaCollisionManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)yaFmod.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaGameObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaApplication.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaComponent.h" />
@@ -53,9 +57,13 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)yaAnimation.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaAnimator.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)yaAudioClip.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)yaAudioListener.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)yaAudioSource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaCamera.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaCollider2D.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaCollisionManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)yaFmod.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaGameObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaApplication.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaComponent.cpp" />

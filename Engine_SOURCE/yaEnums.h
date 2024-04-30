@@ -16,6 +16,8 @@ namespace ya::enums
 		Script,
 		Light,
 		Camera,
+		AudioListener,
+		AudioSource,
 		End,
 	};
 
@@ -49,6 +51,7 @@ namespace ya::enums
 		Material,
 		Mesh,
 		Animation,
+		AudioClip,
 		End,
 	};
 

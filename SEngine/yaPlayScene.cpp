@@ -16,6 +16,10 @@
 #include "yaLight.h"
 #include "yaSceneManager.h"
 
+#include "yaAudioListener.h"
+#include "yaAudioClip.h"
+#include "yaAudioSource.h"
+
 #include "yaGridScript.h"
 #include "yaCamera.h"
 #include "yaCameraScript.h"
@@ -131,6 +135,10 @@ namespace ya
 			rb->SetMass(1.0f);
 				
 			mRamona->AddComponent<RamonaScript>();
+
+			AudioSource* as = mRamona->AddComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"TestSound", L"..\\Resources\\Sound\\0.mp3"));
+			as->Play();
 		}
 
 		// 몬스터
@@ -271,6 +279,8 @@ namespace ya
 
 			renderer::cameras.push_back(cameraComp);// Main Camera 렌더러에 추가
 			renderer::mainCamera = cameraComp;
+
+			camera->AddComponent<AudioListener>();
 		}
 
 		// UI Camera

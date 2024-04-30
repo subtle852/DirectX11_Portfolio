@@ -205,6 +205,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)yaRigidbody.h">
       <Filter>GameObject\Component\Rigidbody</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)yaAudioClip.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)yaAudioListener.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)yaAudioSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)yaFmod.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)yaMath.cpp">
@@ -295,6 +299,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)yaRigidbody.cpp">
       <Filter>GameObject\Component\Rigidbody</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)yaAudioClip.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)yaAudioListener.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)yaAudioSource.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)yaFmod.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)yaMath.inl">
