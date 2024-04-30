@@ -109,7 +109,7 @@ namespace ya
 		}
 
 	private:
-		//// 이벤트 함수
+		// 이벤트 함수
 		void CombatComplete();
 		void GuardComplete();
 		void Attacked1Complete();
@@ -118,17 +118,16 @@ namespace ya
 		void DownedComplete();
 		void GetUpComplete();
 
+		// 감지 함수
 		bool IsPlayerInDetectionRange()// 플레이어 인식 감지 함수: 대기 상태로 돌입 조건
 		{
 			if (mIsPlayerDead == true)
 				return false;
 
-			// 적과 플레이어 사이의 거리 계산
 			float distanceX = mPlayerPos.x - mPos.x;
 			float distanceY = mPlayerPos.y - mPos.y;
 			float distance = std::sqrt(distanceX * distanceX + distanceY * distanceY);
 
-			// 플레이어가 감지 범위 내에 있는지 확인
 			return distance <= mDetectionRange;
 		}
 		bool IsPlayerInCombatRange()// 플레이어 전투 감지 함수: 전투 상태로 돌입 조건
@@ -136,16 +135,13 @@ namespace ya
 			if (mIsPlayerDead == true)
 				return false;
 
-			// 적과 플레이어 사이의 거리 계산
 			float distanceX = mPlayerPos.x - mPos.x;
 			float distanceY = mPlayerPos.y - mPos.y;
 			float distance = std::sqrt(distanceX * distanceX + distanceY * distanceY);
 
-			// 플레이어가 감지 범위 내에 있는지 확인
 			return distance <= mCombatRange;
 		}
-		// 랜덤 거리 추출 함수
-		float GetRandomMoveDistance() 
+		float GetRandomMoveDistance()// 랜덤 거리 추출 함수
 		{
 			return baseMoveDistance + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / maxMoveRange));
 		}
@@ -207,7 +203,7 @@ namespace ya
 		void SetEffectFlashing(float tick, float duration, Vector4 color);
 
 	private:
-		// 어빌리티
+		// 속성
 		int mHp = 100;
 
 		// 주요 상태
@@ -240,7 +236,7 @@ namespace ya
 
 		// AI 이동 방향 변경을 위한 타이머 변수
 		float mMoveTimer = 0.0f;
-		const float mMoveInterval = 2.0f; // 2초마다 랜덤으로 방향 변경
+		const float mMoveInterval = 2.0f;// 2초마다 랜덤으로 방향 변경
 
 		// AI 전투 변경을 위한 타이머 변수
 		float mCombatTimer = 2.0f;
@@ -286,13 +282,9 @@ namespace ya
 
 		bool mIsDowned = false;
 		bool mIsDead = false;
-
 		float mDeadTime = 3.0f;
 
 		int  mAttackedDamage = 20;
-
-		//bool mIsFlying = false;
-		//bool mIsRaiding = false;
 
 		// Shadow
 		GameObject* mShadow = nullptr;

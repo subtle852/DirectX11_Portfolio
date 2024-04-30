@@ -391,24 +391,31 @@ namespace ya
 	void RamonaScript::Update()
 	{
 		#pragma region µð¹ö±×
+		{
+			//Transform* playerTr = GetOwner()->GetComponent<Transform>();
+			//Vector3 playerPos = playerTr->GetPosition();
+			//std::wstring str1 = std::to_wstring(playerPos.x);
+			//std::wstring str2 = std::to_wstring(playerPos.y);
+			//ya::DebugLog::PrintDebugLog(L"x: " + str1 + L" y: " + str2);
 
-		//std::wstring str = std::to_wstring(mIsStun);
-		//std::wstring str2 = std::to_wstring(mIsKnockDown);
-		//ya::DebugLog::PrintDebugLog(L"mIsStun: " + str + L" mIsKnockDown: " + str2);
+			//std::wstring str = std::to_wstring(mIsStun);
+			//std::wstring str2 = std::to_wstring(mIsKnockDown);
+			//ya::DebugLog::PrintDebugLog(L"mIsStun: " + str + L" mIsKnockDown: " + str2);
 
-		//std::wstring str = std::to_wstring(mAttribute.mHeart);
-		//std::wstring str1 = std::to_wstring(mAttribute.mHp);
-		//std::wstring str2 = std::to_wstring(mAttribute.mSp);
-		//ya::DebugLog::PrintDebugLog(L"mHeart: " + str + L" mHp: " + str1 + L" mSp: " + str2);
+			//std::wstring str = std::to_wstring(mAttribute.mHeart);
+			//std::wstring str1 = std::to_wstring(mAttribute.mHp);
+			//std::wstring str2 = std::to_wstring(mAttribute.mSp);
+			//ya::DebugLog::PrintDebugLog(L"mHeart: " + str + L" mHp: " + str1 + L" mSp: " + str2);
 
-		//std::wstring str;
-		//std::wstring message;
-		//for (size_t i = 0; i < mAttackState.size(); ++i) 
-		//{
-		//	str = std::to_wstring(static_cast<int>(mAttackState[i]));
-		//	message += L"AttackState[" + std::to_wstring(i) + L"]: " + str + L" ";
-		//}
-		//ya::DebugLog::PrintDebugLog(message);
+			//std::wstring str;
+			//std::wstring message;
+			//for (size_t i = 0; i < mAttackState.size(); ++i) 
+			//{
+			//	str = std::to_wstring(static_cast<int>(mAttackState[i]));
+			//	message += L"AttackState[" + std::to_wstring(i) + L"]: " + str + L" ";
+			//}
+			//ya::DebugLog::PrintDebugLog(message);
+		}
 
 		#pragma endregion
 

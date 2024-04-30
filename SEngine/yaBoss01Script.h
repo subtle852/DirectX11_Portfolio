@@ -129,6 +129,7 @@ namespace ya
 		//// 이벤트 함수
 		void AppearComplete();
 		void SuperStrComplete();
+		void SuperEndComplete();
 		void CombatComplete();
 		void GuardComplete();
 		void DamageStunComplete();
@@ -136,19 +137,18 @@ namespace ya
 		void DamageDownComplete();
 		void DownedComplete();
 		void GetUpComplete();
+		void DisAppearComplete();
 
-		// 감지 조건 함수 
+		// 감지 함수 
 		bool IsPlayerInDetectionRange()// 플레이어 인식 감지 함수: 대기 상태로 돌입 조건
 		{
 			if (mIsPlayerDead == true)
 				return false;
 
-			// 적과 플레이어 사이의 거리 계산
 			float distanceX = mPlayerPos.x - mPos.x;
 			float distanceY = mPlayerPos.y - mPos.y;
 			float distance = std::sqrt(distanceX * distanceX + distanceY * distanceY);
 
-			// 플레이어가 감지 범위 내에 있는지 확인
 			return distance <= mDetectionRange;
 		}
 		bool IsPlayerInCombatRange()// 플레이어 전투 감지 함수: 전투 상태로 돌입 조건
@@ -156,16 +156,13 @@ namespace ya
 			if (mIsPlayerDead == true)
 				return false;
 
-			// 적과 플레이어 사이의 거리 계산
 			float distanceX = mPlayerPos.x - mPos.x;
 			float distanceY = mPlayerPos.y - mPos.y;
 			float distance = std::sqrt(distanceX * distanceX + distanceY * distanceY);
 
-			// 플레이어가 감지 범위 내에 있는지 확인
 			return distance <= mCombatRange;
 		}
-		// 랜덤 거리 추출 함수
-		float GetRandomMoveDistance()
+		float GetRandomMoveDistance()// 랜덤 거리 추출 함수
 		{
 			return baseMoveDistance + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / maxMoveRange));
 		}
@@ -249,7 +246,7 @@ namespace ya
 
 		Vector3 mPos;
 
-		// Player 상태 (PlayScene의 static 변수를 업데이트 계속 해줌)
+		// Player 상태 (Boss01Scene의 static 변수를 업데이트 계속 해줌)
 		Vector3 mPlayerPos;
 		eDirection mPlayerDir;
 		ePlayerState mPlayerPreState;
@@ -270,7 +267,7 @@ namespace ya
 
 		// AI 이동 방향 변경을 위한 타이머 변수
 		float mMoveTimer = 0.0f;
-		const float mMoveInterval = 2.0f; // 2초마다 랜덤으로 방향 변경
+		const float mMoveInterval = 2.0f;// 2초마다 랜덤으로 방향 변경
 
 		// AI 전투 변경을 위한 타이머 변수
 		float mCombatTimer = 2.0f;
@@ -299,6 +296,10 @@ namespace ya
 		unsigned int mLevelofPhase1 = 0;
 		unsigned int mLevelofPhase2 = 0;
 		unsigned int mLevelofPhase3 = 0;
+
+		const float mToPhase02HpPercent = 70.0f;
+		const float mToPhase04HpPercent = 50.0f;
+		const float mToPhase05HpPercent = 0.0f;
 
 		bool mIsAppear = false;
 		bool mIsDisAppear = false;
@@ -334,6 +335,22 @@ namespace ya
 
 		// 등장 화면
 		GameObject* mAppearEffect = nullptr;
+
+		// Minion
+		GameObject* mMinion01 = nullptr;
+		GameObject* mMinion02 = nullptr;
+		GameObject* mMinion03 = nullptr;
+
+		GameObject* mMinion04 = nullptr;
+		GameObject* mMinion05 = nullptr;
+
+		// Minion 콜라이더
+		Collider2D* mMinion01BodyCd = nullptr;
+		Collider2D* mMinion01SkillCd = nullptr;
+		Collider2D* mMinion02BodyCd = nullptr;
+		Collider2D* mMinion02SkillCd = nullptr;
+		Collider2D* mMinion03BodyCd = nullptr;
+		Collider2D* mMinion03SkillCd = nullptr;
 
 		// Shadow
 		GameObject* mShadow = nullptr;

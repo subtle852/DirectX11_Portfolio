@@ -1,5 +1,4 @@
 #pragma once
-//#include "yaScript.h"
 #include <yaScript.h>
 
 namespace ya

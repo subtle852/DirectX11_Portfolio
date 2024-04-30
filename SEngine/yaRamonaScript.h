@@ -45,26 +45,21 @@ namespace ya
 	private:
 		//// 이벤트 함수
 		void EvadeComplete();
-
 		void NormalAttackComplete();
 		void KickComplete();
-
 		void WeaponAttackComplete();
 		void JumpAttackComplete();
 		void RunAttackComplete();
-
 		void FireBallStart();
 		void SuperStart();
 		void FireBallComplete();
 		void SuperComplete();
-
 		void StunComplete();
 		void KnockDownComplete();
 		void DownedStart();
 		void DownedComplete();
 		void GetUpComplete();
 		void ReviveComplete();
-
 		void AttackedStart();
 
 		//// 조건 함수
@@ -200,7 +195,7 @@ namespace ya
 		bool mIsGuard = false;
 		bool mIsEvade = false;
 
-		// 콤보 공격
+		// 일반 콤보 공격
 		bool mIsNormalAttack1 = false;
 		bool mIsNormalAttack2 = false;
 		bool mIsNormalAttack3 = false;
@@ -208,7 +203,7 @@ namespace ya
 		bool mCanNormalAttack3 = false;
 		float mNormalAttack2Time = 0.0f;// NormalAttack2 실행 시간 측정
 
-		// 콤보 공격 제외한 나머지 공격
+		// 일반 콤보 공격 제외한 나머지 공격
 		bool mIsKickAttack = false;
 		bool mIsRoundKickAttack = false;
 		bool mIsBehindKickAttack = false;
@@ -227,13 +222,13 @@ namespace ya
 
 		bool mIsFireBall = false;
 		bool mIsSuper = false;
-		const int mFireBallSp = 30;
-		const int mSuperSp = 50;
+		const int mFireBallSp = 30;// FireBall 사용시 필요한 Sp
+		const int mSuperSp = 50;// Super 사용시 필요한 Sp
 
 		bool mIsReviveAttack = false;
 		float mReviveAttackTime = 0.5f;
 
-		// Under Attack
+		// Damage
 		bool mIsStun = false;
 		bool mIsKnockDown = false;
 		bool mIsDowned = false;
@@ -254,7 +249,7 @@ namespace ya
 		int mIsCollidingFirst = 0;
 
 		// 플레이어 기준 적의 방향(왼쪽, 오른쪽)을 체크
-		int mEnemyDirectionFromPlayer = 1;// -1 (왼쪽) 플레이어 +1 (오른쪽)
+		int mEnemyDirectionFromPlayer = +1;// -1 (왼쪽) 플레이어 +1 (오른쪽)
 
 		// Shadow
 		GameObject* mShadow = nullptr;

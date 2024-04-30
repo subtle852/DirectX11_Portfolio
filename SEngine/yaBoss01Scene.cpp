@@ -1,20 +1,40 @@
 #include "yaBoss01Scene.h"
-#include "yaObject.h"
-#include "yaGameObject.h"
-#include "yaTransform.h"
-#include "yaMeshRenderer.h"
-#include "yaResources.h"
+
 #include "yaMesh.h"
 #include "yaRenderer.h"
-#include "yaCameraScript.h"
-#include "yaCamera.h"
+#include "yaMeshRenderer.h"
+#include "yaResources.h"
+
+#include "yaTransform.h"
 #include "yaInput.h"
-#include "yaSceneManager.h"
 #include "yaTime.h"
+#include "yaObject.h"
+#include "yaCollider2D.h"
+#include "yaCollisionManager.h"
+#include "yaRigidbody.h"
+#include "yaAnimator.h"
 #include "yaLight.h"
+#include "yaSceneManager.h"
+
+#include "yaGridScript.h"
+#include "yaCamera.h"
+#include "yaCameraScript.h"
+
+#include "yaRamonaScript.h"
+#include "yaLukeScript.h"
+#include "yaBoss01Script.h"
+
+#include "..\\Editor_Window\\yaDebugLog.h"
 
 namespace ya
 {
+	GameObject* Boss01Scene::mRamona = nullptr;
+	Vector3 Boss01Scene::mRamonaPos = Vector3::Zero;
+	eDirection Boss01Scene::mRamonaDir = eDirection::R;
+	ePlayerState Boss01Scene::mRamonaState = ePlayerState::R_Idle;
+	bool Boss01Scene::mRamonaDead = false;
+
+
 	Boss01Scene::Boss01Scene()
 	{
 	}
@@ -23,6 +43,12 @@ namespace ya
 	}
 	void Boss01Scene::Initialize()
 	{
+		// CollisionLayer
+		CollisionManager::SetLayer(eLayerType::Player, eLayerType::Enemy, true);
+		CollisionManager::SetLayer(eLayerType::Player, eLayerType::Camera, true);
+		CollisionManager::SetLayer(eLayerType::Enemy, eLayerType::Camera, true);
+		//CollisionManager::SetLayer(eLayerType::Enemy, eLayerType::Enemy, true);
+
 		{
 			std::shared_ptr<Texture> texture
 				= Resources::Load<Texture>(L"BG_STAGE01_BOSS01", L"..\\Resources\\SCENE\\STAGE01\\BG_STAGE01_BOSS01.png");
@@ -50,6 +76,56 @@ namespace ya
 			MeshRenderer* mr = mUI_STAGE01_STATE->AddComponent<MeshRenderer>();
 			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
 			mr->SetMaterial(Resources::Find<Material>(L"SpriteMaterial_UI_STAGE01_STATE"));
+
+			Collider2D* cd = mUI_STAGE01_STATE->AddComponent<Collider2D>();
+			cd->SetCenter(Vector2(0.0f, 0.0f));
+		}
+
+		{
+			mRamona
+				= object::Instantiate<GameObject>(Vector3(-2.0f, 0.0f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Player);
+			mRamona->SetName(L"Ramona");
+
+			MeshRenderer* mr = mRamona->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Ramona_Idle", L"..\\Resources\\TEXTURE\\RAMONA\\Idle.png");
+			Animator* at = mRamona->AddComponent<Animator>();
+			at->Create(L"Ramona_temp", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(0.0f, 0.0f), 6);
+			at->PlayAnimation(L"Ramona_temp", true);
+
+			Rigidbody* rb = mRamona->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mRamona->AddComponent<RamonaScript>();
+		}
+		{
+			mBoss01
+				= object::Instantiate<GameObject>(Vector3(2.0f, -1.2f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mBoss01->SetName(L"Boss01");
+
+			MeshRenderer* mr = mBoss01->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"BASIC_BOSS01_IDLE01", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\BASIC\\BOSS01_IDLE.png");
+			Animator* at = mBoss01->AddComponent<Animator>();
+			at->Create(L"Boss01_temp01", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(864.0f / 6.0f, 144.0f), 6);
+			at->PlayAnimation(L"Boss01_temp01", true);
+
+			Rigidbody* rb = mBoss01->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mBoss01->AddComponent<Boss01Script>();
 		}
 
 		// Light
@@ -84,6 +160,19 @@ namespace ya
 
 	void Boss01Scene::Update()
 	{
+		if (IsPlayerExist())
+		{
+			Transform* tr = mRamona->GetComponent<Transform>();
+			Vector3 pos = tr->GetPosition();
+			mRamonaPos = pos;
+
+			mRamonaDir = mRamona->GetComponent<RamonaScript>()->GetDirection();
+
+			mRamonaState = mRamona->GetComponent<RamonaScript>()->GetState();
+
+			mRamonaDead = mRamona->GetComponent<RamonaScript>()->IsDead();
+		}
+
 		if (Input::GetKeyDown(eKeyCode::ENTER))
 		{
 			SceneManager::LoadScene(L"EndingScene");

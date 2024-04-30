@@ -60,6 +60,9 @@
     <ClCompile Include="yaRamonaScript.cpp">
       <Filter>Contents\Script\PLAYER\Ramona</Filter>
     </ClCompile>
+    <ClCompile Include="yaMinionScript.cpp">
+      <Filter>Contents\Script\BOSS\STAGE01</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
@@ -123,6 +126,9 @@
     </ClInclude>
     <ClInclude Include="yaRamonaScript.h">
       <Filter>Contents\Script\PLAYER\Ramona</Filter>
+    </ClInclude>
+    <ClInclude Include="yaMinionScript.h">
+      <Filter>Contents\Script\BOSS\STAGE01</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

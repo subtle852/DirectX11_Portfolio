@@ -65,6 +65,7 @@ namespace ya
 			//player->AddComponent<CameraScript>();
 		}
 
+		// STAGE 01 - UI
 		{
 			std::shared_ptr<Texture> texture
 				= Resources::Load<Texture>(L"UI_STAGE01_STATE", L"..\\Resources\\SCENE\\STAGE01\\UI_STAGE01_STATE.png");
@@ -107,7 +108,7 @@ namespace ya
 			//}
 		}
 
-		// 애니메이션
+		// 플레이어
 		{
 			mRamona
 				= object::Instantiate<GameObject>(Vector3(-2.0f, 0.0f, 40.f)
@@ -131,100 +132,102 @@ namespace ya
 				
 			mRamona->AddComponent<RamonaScript>();
 		}
-		//{
-		//	mLuke01
-		//		= object::Instantiate<GameObject>(Vector3(2.0f, -1.2f, 40.f)
-		//			, Vector3::One * 3
-		//			, eLayerType::Enemy);
-		//	mLuke01->SetName(L"Luke01");
 
-		//	MeshRenderer* mr = mLuke01->AddComponent<MeshRenderer>();
-		//	mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-		//	mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-		//	std::shared_ptr<Texture> atlas
-		//		= Resources::Load<Texture>(L"Basic_Luke_Idle01", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-		//	Animator* at = mLuke01->AddComponent<Animator>();
-		//	at->Create(L"Luke_temp01", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-		//	at->PlayAnimation(L"Luke_temp01", true);
-		//	
-		//	Rigidbody* rb = mLuke01->AddComponent<Rigidbody>();
-		//	rb->SetGround(true);
-		//	rb->SetMass(1.0f);
-
-		//	mLuke01->AddComponent<LukeScript>();
-		//}
-		//{
-		//	mLuke02
-		//		= object::Instantiate<GameObject>(Vector3(1.5f, 0.5f, 40.f)
-		//			, Vector3::One * 3
-		//			, eLayerType::Enemy);
-		//	mLuke02->SetName(L"Luke02");
-
-		//	MeshRenderer* mr = mLuke02->AddComponent<MeshRenderer>();
-		//	mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-		//	mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-		//	std::shared_ptr<Texture> atlas
-		//		= Resources::Load<Texture>(L"Basic_Luke_Idle02", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-		//	Animator* at = mLuke02->AddComponent<Animator>();
-		//	at->Create(L"Luke_temp02", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-		//	at->PlayAnimation(L"Luke_temp02", true);
-
-		//	Rigidbody* rb = mLuke02->AddComponent<Rigidbody>();
-		//	rb->SetGround(true);
-		//	rb->SetMass(1.0f);
-
-		//	mLuke02->AddComponent<LukeScript>();
-		//}
-		//{
-		//	mLuke03
-		//		= object::Instantiate<GameObject>(Vector3(1.7f, -0.5f, 40.f)
-		//			, Vector3::One * 3
-		//			, eLayerType::Enemy);
-		//	mLuke03->SetName(L"Luke03");
-
-		//	MeshRenderer* mr = mLuke03->AddComponent<MeshRenderer>();
-		//	mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-		//	mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-		//	std::shared_ptr<Texture> atlas
-		//		= Resources::Load<Texture>(L"Basic_Luke_Idle03", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-		//	Animator* at = mLuke03->AddComponent<Animator>();
-		//	at->Create(L"Luke_temp03", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-		//	at->PlayAnimation(L"Luke_temp03", true);
-
-		//	Rigidbody* rb = mLuke03->AddComponent<Rigidbody>();
-		//	rb->SetGround(true);
-		//	rb->SetMass(1.0f);
-
-		//	mLuke03->AddComponent<LukeScript>();
-		//}
-
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// 몬스터
 		{
-			mBoss01
+			mLuke01
 				= object::Instantiate<GameObject>(Vector3(2.0f, -1.2f, 40.f)
 					, Vector3::One * 3
 					, eLayerType::Enemy);
-			mBoss01->SetName(L"Boss01");
+			mLuke01->SetName(L"Luke01");
 
-			MeshRenderer* mr = mBoss01->AddComponent<MeshRenderer>();
+			MeshRenderer* mr = mLuke01->AddComponent<MeshRenderer>();
 			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
 			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
 
 			std::shared_ptr<Texture> atlas
-				= Resources::Load<Texture>(L"BASIC_BOSS01_IDLE01", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\BASIC\\BOSS01_IDLE.png");
-			Animator* at = mBoss01->AddComponent<Animator>();
-			at->Create(L"Boss01_temp01", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(864.0f / 6.0f, 144.0f), 6);
-			at->PlayAnimation(L"Boss01_temp01", true);
-
-			Rigidbody* rb = mBoss01->AddComponent<Rigidbody>();
+				= Resources::Load<Texture>(L"Basic_Luke_Idle01", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke01->AddComponent<Animator>();
+			at->Create(L"Luke_temp01", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp01", true);
+			
+			Rigidbody* rb = mLuke01->AddComponent<Rigidbody>();
 			rb->SetGround(true);
 			rb->SetMass(1.0f);
 
-			mBoss01->AddComponent<Boss01Script>();
+			mLuke01->AddComponent<LukeScript>();
 		}
+		{
+			mLuke02
+				= object::Instantiate<GameObject>(Vector3(1.5f, 0.5f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mLuke02->SetName(L"Luke02");
+
+			MeshRenderer* mr = mLuke02->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle02", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke02->AddComponent<Animator>();
+			at->Create(L"Luke_temp02", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp02", true);
+
+			Rigidbody* rb = mLuke02->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mLuke02->AddComponent<LukeScript>();
+		}
+		{
+			mLuke03
+				= object::Instantiate<GameObject>(Vector3(1.7f, -0.5f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mLuke03->SetName(L"Luke03");
+
+			MeshRenderer* mr = mLuke03->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle03", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke03->AddComponent<Animator>();
+			at->Create(L"Luke_temp03", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp03", true);
+
+			Rigidbody* rb = mLuke03->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mLuke03->AddComponent<LukeScript>();
+		}
+
+
+		//{
+		//	mBoss01
+		//		= object::Instantiate<GameObject>(Vector3(2.0f, -1.2f, 40.f)
+		//			, Vector3::One * 3
+		//			, eLayerType::Enemy);
+		//	mBoss01->SetName(L"Boss01");
+
+		//	MeshRenderer* mr = mBoss01->AddComponent<MeshRenderer>();
+		//	mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+		//	mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+		//	std::shared_ptr<Texture> atlas
+		//		= Resources::Load<Texture>(L"BASIC_BOSS01_IDLE01", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\BASIC\\BOSS01_IDLE.png");
+		//	Animator* at = mBoss01->AddComponent<Animator>();
+		//	at->Create(L"Boss01_temp01", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(864.0f / 6.0f, 144.0f), 6);
+		//	at->PlayAnimation(L"Boss01_temp01", true);
+
+		//	Rigidbody* rb = mBoss01->AddComponent<Rigidbody>();
+		//	rb->SetGround(true);
+		//	rb->SetMass(1.0f);
+
+		//	mBoss01->AddComponent<Boss01Script>();
+		//}
 
 		// Light
 		{
@@ -288,9 +291,7 @@ namespace ya
 	{
 		//Transform* tr = mBG_PLAY_01->GetComponent<Transform>();
 		//Vector3 pos = tr->GetPosition();
-
 		//pos.x -= 1.0f * Time::DeltaTime();
-
 		//tr->SetPosition(pos);
 
 		if (IsPlayerExist())
@@ -298,15 +299,11 @@ namespace ya
 			Transform* tr = mRamona->GetComponent<Transform>();
 			Vector3 pos = tr->GetPosition();
 			mRamonaPos = pos;
-
 			mRamonaDir = mRamona->GetComponent<RamonaScript>()->GetDirection();
-
 			mRamonaState = mRamona->GetComponent<RamonaScript>()->GetState();
-
 			mRamonaDead = mRamona->GetComponent<RamonaScript>()->IsDead();
 
-
-			{
+		/*	{
 				std::wstring str = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHeart());
 				std::wstring str1 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHp());
 				std::wstring str2 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetSp());
@@ -338,10 +335,8 @@ namespace ya
 
 				ya::DebugLog::PrintDebugLog(L"Heart: " + str + L" Hp: " + str1 + L" Sp: " + str2 + L" Coin: " + str3
 					+ L" || Enemy01Hp: " + str4 + L" || Enemy02Hp: " + str5 + L" || Enemy03Hp: " + str6 + L" || Boss01Hp: " + str7);
-			}
+			}*/
 		}
-
-
 
 		if (Input::GetKeyDown(eKeyCode::ENTER))
 		{

@@ -9,6 +9,7 @@
 #include "yaRamonaScript.h"
 #include "yaLukeScript.h"
 #include "yaBoss01Script.h"
+#include "yaMinionScript.h"
 #include "yaRigidbody.h"
 
 namespace ya
@@ -156,35 +157,59 @@ namespace ya
 			}
 			else if (mLeftCd->GetState() == eColliderState::IsColliding)
 			{
+				if (dynamic_cast<PlayerScript*>(other->GetOwner()->GetComponent<PlayerScript>()))
+				{
+					obPos.x += 0.005f;
+					obTr->SetPosition(obPos);
+				}
 				if (dynamic_cast<LukeScript*>(other->GetOwner()->GetComponent<LukeScript>()))
 				{
 					if (ob->GetComponent<LukeScript>()->IsWait())
 						ob->GetComponent<LukeScript>()->ChangeWalkDirectionNState(eDirection::R);
+
+					obPos.x += 0.005f;
+					obTr->SetPosition(obPos);
 				}
 				else if (dynamic_cast<Boss01Script*>(other->GetOwner()->GetComponent<Boss01Script>()))
 				{
 					if (ob->GetComponent<Boss01Script>()->IsWait())
 						ob->GetComponent<Boss01Script>()->ChangeWalkDirectionNState(eDirection::R);
-				}
 
-				obPos.x += 0.005f;
-				obTr->SetPosition(obPos);
+					obPos.x += 0.005f;
+					obTr->SetPosition(obPos);
+				}
+				else if (dynamic_cast<MinionScript*>(other->GetOwner()->GetComponent<MinionScript>()))
+				{
+
+				}
 			}
 			else if (mRightCd->GetState() == eColliderState::IsColliding)
 			{
+				if (dynamic_cast<PlayerScript*>(other->GetOwner()->GetComponent<PlayerScript>()))
+				{
+					obPos.x -= 0.005f;
+					obTr->SetPosition(obPos);
+				}
 				if (dynamic_cast<LukeScript*>(other->GetOwner()->GetComponent<LukeScript>()))
 				{
 					if (ob->GetComponent<LukeScript>()->IsWait())
 						ob->GetComponent<LukeScript>()->ChangeWalkDirectionNState(eDirection::L);
+
+					obPos.x -= 0.005f;
+					obTr->SetPosition(obPos);
 				}
 				else if (dynamic_cast<Boss01Script*>(other->GetOwner()->GetComponent<Boss01Script>()))
 				{
 					if (ob->GetComponent<Boss01Script>()->IsWait())
 						ob->GetComponent<Boss01Script>()->ChangeWalkDirectionNState(eDirection::L);
-				}
 
-				obPos.x -= 0.005f;
-				obTr->SetPosition(obPos);
+					obPos.x -= 0.005f;
+					obTr->SetPosition(obPos);
+				}
+				else if (dynamic_cast<MinionScript*>(other->GetOwner()->GetComponent<MinionScript>()))
+				{
+
+				}
 			}
 		}
 	}

@@ -159,6 +159,11 @@ namespace ya
 		at->CompleteEvent(L"L_Attacked4") = std::bind(&LukeScript::Attacked1Complete, this);
 		at->CompleteEvent(L"R_Attacked4") = std::bind(&LukeScript::Attacked1Complete, this);
 
+		at->CompleteEvent(L"L_Attacked3") = std::bind(&LukeScript::Attacked3Complete, this);
+		at->CompleteEvent(L"R_Attacked3") = std::bind(&LukeScript::Attacked3Complete, this);
+		at->CompleteEvent(L"L_Attacked4") = std::bind(&LukeScript::Attacked4Complete, this);
+		at->CompleteEvent(L"R_Attacked4") = std::bind(&LukeScript::Attacked4Complete, this);
+
 		at->CompleteEvent(L"L_ArmAttack") = std::bind(&LukeScript::CombatComplete, this);
 		at->CompleteEvent(L"R_ArmAttack") = std::bind(&LukeScript::CombatComplete, this);
 		at->CompleteEvent(L"L_KickAttack") = std::bind(&LukeScript::CombatComplete, this);
@@ -170,12 +175,6 @@ namespace ya
 
 		at->CompleteEvent(L"L_Guard") = std::bind(&LukeScript::GuardComplete, this);
 		at->CompleteEvent(L"R_Guard") = std::bind(&LukeScript::GuardComplete, this);
-
-		at->CompleteEvent(L"L_Attacked3") = std::bind(&LukeScript::Attacked3Complete, this);
-		at->CompleteEvent(L"R_Attacked3") = std::bind(&LukeScript::Attacked3Complete, this);
-
-		at->CompleteEvent(L"L_Attacked4") = std::bind(&LukeScript::Attacked4Complete, this);
-		at->CompleteEvent(L"R_Attacked4") = std::bind(&LukeScript::Attacked4Complete, this);
 
 		at->CompleteEvent(L"L_Downed") = std::bind(&LukeScript::DownedComplete, this);
 		at->CompleteEvent(L"R_Downed") = std::bind(&LukeScript::DownedComplete, this);

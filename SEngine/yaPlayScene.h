@@ -26,13 +26,11 @@ namespace ya
 
 			return false;
 		}
-
 		static bool IsPlayerDead()
 		{
 			if (mRamona != nullptr)
 				return mRamonaDead;
 		}
-
 		static Vector3 GetPlayerPosition()
 		{
 			if(mRamona != nullptr)
@@ -63,7 +61,7 @@ namespace ya
 		GameObject* mLuke02 = nullptr;
 		GameObject* mLuke03 = nullptr;
 
-		GameObject* mBoss01 = nullptr;
+		//GameObject* mBoss01 = nullptr;
 
 
 		// static Vector3 mTargetPos;

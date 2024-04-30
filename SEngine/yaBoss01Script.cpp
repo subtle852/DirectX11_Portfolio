@@ -7,8 +7,10 @@
 #include "yaAnimator.h"
 #include "yaResources.h"
 #include "yaPlayScene.h"
+#include "yaBoss01Scene.h"
 #include "yaCollider2D.h"
 #include "yaRamonaScript.h"
+#include "yaMinionScript.h"
 #include "yaRigidbody.h"
 #include "yaObject.h"
 #include "yaMeshRenderer.h"
@@ -28,7 +30,91 @@ namespace ya
 
 	void Boss01Script::Initialize()
 	{
+#pragma region Minion
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// Minion
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		{
+			mMinion01 = object::Instantiate<GameObject>(Vector3(3.2f, 0.0f, 40.f)
+				, Vector3::One * 3
+				, eLayerType::Enemy);
+			mMinion01->SetName(L"Minion01");
+
+			MeshRenderer* mr = mMinion01->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"BASIC_MINION01_IDLE", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\MINION\\MINION_IDLE.png");
+			Animator* at = mMinion01->AddComponent<Animator>();
+			at->Create(L"Minion01_temp01", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(720.0f / 5.0f, 144.0f), 5);
+			at->PlayAnimation(L"Minion01_temp01", true);
+
+			Rigidbody* rb = mMinion01->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mMinion01->AddComponent<MinionScript>();
+			mMinion01->GetComponent<MinionScript>()->SetInitRadian(0.0f);
+
+			mMinion01->SetState(GameObject::eState::Paused);
+		}
+		{
+			mMinion02 = object::Instantiate<GameObject>(Vector3(1.7f, 0.48f, 40.f)
+				, Vector3::One * 3
+				, eLayerType::Enemy);
+			mMinion02->SetName(L"Minion02");
+
+			MeshRenderer* mr = mMinion02->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"BASIC_MINION02_IDLE", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\MINION\\MINION_IDLE.png");
+			Animator* at = mMinion02->AddComponent<Animator>();
+			at->Create(L"Minion02_temp01", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(720.0f / 5.0f, 144.0f), 5);
+			at->PlayAnimation(L"Minion02_temp01", true);
+
+			Rigidbody* rb = mMinion02->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mMinion02->AddComponent<MinionScript>();
+			mMinion02->GetComponent<MinionScript>()->SetInitRadian(2.0943f);
+
+			mMinion02->SetState(GameObject::eState::Paused);
+		}
+		{
+			mMinion03 = object::Instantiate<GameObject>(Vector3(1.8f, -0.43f, 40.f)
+				, Vector3::One * 3
+				, eLayerType::Enemy);
+			mMinion03->SetName(L"Minion03");
+
+			MeshRenderer* mr = mMinion03->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"BASIC_MINION03_IDLE", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\MINION\\MINION_IDLE.png");
+			Animator* at = mMinion03->AddComponent<Animator>();
+			at->Create(L"Minion03_temp01", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(720.0f / 5.0f, 144.0f), 5);
+			at->PlayAnimation(L"Minion03_temp01", true);
+
+			Rigidbody* rb = mMinion03->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mMinion03->AddComponent<MinionScript>();
+			mMinion03->GetComponent<MinionScript>()->SetInitRadian(4.1887f);
+
+			mMinion03->SetState(GameObject::eState::Paused);
+		}
+#pragma endregion
+
 #pragma region 등장 이펙트
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+																	// AppearEffect
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		{
 			mAppearEffect = object::Instantiate<GameObject>(Vector3(8.1f, 0.0f, 30.f)
 				, Vector3::One * 3
@@ -48,7 +134,7 @@ namespace ya
 
 #pragma region 그림자
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-															// 그림자
+																	// 그림자
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		{
 			mShadow = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 40.f)
@@ -74,7 +160,7 @@ namespace ya
 			= Resources::Load<Texture>(L"BOSS01_APPEAR", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\APPEAR\\BOSS01_APPEAR.png");
 		Animator* at = this->GetOwner()->GetComponent<Animator>();
 		at->Create(L"R_APPEAR", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(3744.0f / 26.0f, 144.0f), 26);//, Vector2::Zero, 0.05f);
-		at->Create(L"L_APPEAR", atlas, enums::eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(3744.0f / 26.0f, 144.0f), 26);
+		at->Create(L"L_APPEAR", atlas, enums::eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(3744.0f / 26.0f, 144.0f), 26);// duration 커지면 느려짐, duration 작으면 빨라짐
 
 		atlas
 			= Resources::Load<Texture>(L"BOSS01_APPEAR_WAIT", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\APPEAR\\BOSS01_APPEAR_WAIT.png");
@@ -166,8 +252,8 @@ namespace ya
 
 		atlas
 			= Resources::Load<Texture>(L"BOSS01_ATTACK_SUPER_END", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\ATTACK\\BOSS01_ATTACK_SUPER_END.png");
-		at->Create(L"R_ATTACK_SUPER_END", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(720.0f / 5.0f, 432.0f), 5);
-		at->Create(L"L_ATTACK_SUPER_END", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(720.0f / 5.0f, 432.0f), 5);
+		at->Create(L"R_ATTACK_SUPER_END", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(720.0f / 5.0f, 432.0f), 5, Vector2::Zero, 0.14f);
+		at->Create(L"L_ATTACK_SUPER_END", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(720.0f / 5.0f, 432.0f), 5, Vector2::Zero, 0.14f);
 
 		atlas
 			= Resources::Load<Texture>(L"BOSS01_DAMAGE_STUN", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\DAMAGE\\BOSS01_DAMAGE_STUN.png");
@@ -227,8 +313,8 @@ namespace ya
 		at->CompleteEvent(L"R_ATTACK_SUPER_STR") = std::bind(&Boss01Script::SuperStrComplete, this);
 		//at->CompleteEvent(L"L_ATTACK_SUPER_ING") = std::bind(&Boss01Script::CombatComplete, this);
 		//at->CompleteEvent(L"R_ATTACK_SUPER_ING") = std::bind(&Boss01Script::CombatComplete, this);
-		//at->CompleteEvent(L"L_ATTACK_SUPER_END") = std::bind(&Boss01Script::CombatComplete, this);
-		//at->CompleteEvent(L"R_ATTACK_SUPER_END") = std::bind(&Boss01Script::CombatComplete, this);
+		at->CompleteEvent(L"L_ATTACK_SUPER_END") = std::bind(&Boss01Script::SuperEndComplete, this);
+		at->CompleteEvent(L"R_ATTACK_SUPER_END") = std::bind(&Boss01Script::SuperEndComplete, this);
 
 		at->CompleteEvent(L"L_GUARD") = std::bind(&Boss01Script::GuardComplete, this);
 		at->CompleteEvent(L"R_GUARD") = std::bind(&Boss01Script::GuardComplete, this);
@@ -245,6 +331,8 @@ namespace ya
 		at->CompleteEvent(L"L_GETUP") = std::bind(&Boss01Script::GetUpComplete, this);
 		at->CompleteEvent(L"R_GETUP") = std::bind(&Boss01Script::GetUpComplete, this);
 
+		at->CompleteEvent(L"L_DISAPPEAR") = std::bind(&Boss01Script::DisAppearComplete, this);
+		at->CompleteEvent(L"R_DISAPPEAR") = std::bind(&Boss01Script::DisAppearComplete, this);
 
 #pragma endregion
 
@@ -264,7 +352,7 @@ namespace ya
 
 #pragma endregion
 
-#pragma region 초기화
+#pragma region 초기화 (ex. 초기 방향)
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 초기화 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -290,6 +378,15 @@ namespace ya
 	void Boss01Script::Update()
 	{
 #pragma region 디버그
+
+		//std::wstring str = std::to_wstring(mPhase);
+		//ya::DebugLog::PrintDebugLog(L"mPhase: " + str);
+
+		//std::wstring str1 = std::to_wstring(mMinion01->GetComponent<MinionScript>()->GetHp());
+		//std::wstring str2 = std::to_wstring(mMinion02->GetComponent<MinionScript>()->GetHp());
+		//std::wstring str3 = std::to_wstring(mMinion03->GetComponent<MinionScript>()->GetHp());
+		//ya::DebugLog::PrintDebugLog(L"mHp: " + str1 + L" mHp: " + str2 + L" mHp: " + str3);
+
 		//std::wstring str = std::to_wstring(mHp);
 		//ya::DebugLog::PrintDebugLog(L"mHp: " + str);
 
@@ -462,11 +559,17 @@ namespace ya
 		mPos = pos;
 
 		// 플레이어 위치, 방향 업데이트
-		if (PlayScene::IsPlayerExist())
+		//if (PlayScene::IsPlayerExist())
+		//{
+		//	mIsPlayerDead = PlayScene::IsPlayerDead();
+		//	mPlayerPos = PlayScene::GetPlayerPosition();
+		//	mPlayerDir = PlayScene::GetPlayerDirection();
+		//}
+		if (Boss01Scene::IsPlayerExist())
 		{
-			mIsPlayerDead = PlayScene::IsPlayerDead();
-			mPlayerPos = PlayScene::GetPlayerPosition();
-			mPlayerDir = PlayScene::GetPlayerDirection();
+			mIsPlayerDead = Boss01Scene::IsPlayerDead();
+			mPlayerPos = Boss01Scene::GetPlayerPosition();
+			mPlayerDir = Boss01Scene::GetPlayerDirection();
 		}
 
 		// 죽는 경우 사라지기 전까지 타임
@@ -586,6 +689,10 @@ namespace ya
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// AI
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+													// 페이즈 0 (등장)
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		if (mPhase == 0)
 		{
 			if (mLevelofPhase0 == 0)
@@ -632,12 +739,16 @@ namespace ya
 			}
 
 		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+														// 페이즈 1 (보스 탐지)
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		if (mPhase == 1)
 		{
 			if (mLevelofPhase1 == 0)
 			{
-				float percent = static_cast<float>(mHp) / static_cast<float>(mMaxHp) * 100;
-				if (percent <= 98.0f)// 70퍼
+				float hpPercent = static_cast<float>(mHp) / static_cast<float>(mMaxHp) * 100;
+				if (hpPercent <= mToPhase02HpPercent)// 70퍼
 				{
 					mPhase = 2;
 				}
@@ -677,7 +788,7 @@ namespace ya
 							if (mRandWaitOrRun == -100)
 							{
 								std::mt19937 mt(rd());
-								std::uniform_int_distribution<int> dist(0, 1);
+								std::uniform_int_distribution<int> dist(0, 2);
 								mRandWaitOrRun = dist(mt);
 
 								// 디버깅용
@@ -735,7 +846,7 @@ namespace ya
 							//mCombatTimer = 0.0f;
 
 							// 달려오는 경우
-							if (mRandWaitOrRun == 0)
+							if (mRandWaitOrRun == 0 || mRandWaitOrRun == 1)
 							{
 								// 몬스터와 플레이어 사이의 거리 계산
 								Vector3 direction = mPlayerPos - mPos;
@@ -855,7 +966,9 @@ namespace ya
 
 			}
 		}
-
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+														// 페이즈 2 (부하 빙빙)
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		else if (mPhase == 2)
 		{
 			if (mLevelofPhase2 == 0)
@@ -872,10 +985,11 @@ namespace ya
 				Vector3 currentPosition = tr->GetPosition();
 
 				const Vector3 targetPosition = Vector3{ 2.2f, 0.0f, 0.0f };// 목표 지점
-				const float moveDistance = 10.0f;// 간접 속도
+				const float moveDistance = 0.8f;// 간접 속도
 				const float minDistanceToStop = 0.01f;// 목표지점 근접
 
 				Vector3 direction = targetPosition - currentPosition;// 이동 방향
+				direction.z = 0.0f;
 				if (direction.Length() > minDistanceToStop)// 이동 진행
 				{
 					direction.Normalize();
@@ -883,6 +997,7 @@ namespace ya
 					Vector3 movement = direction * moveDistance * Time::DeltaTime();// 이동량
 
 					Vector3 newPosition = currentPosition + movement;
+					newPosition.z = currentPosition.z;
 					tr->SetPosition(newPosition);
 
 					// 애니메
@@ -923,14 +1038,270 @@ namespace ya
 				}
 
 				ChangeState(eBoss01State::L_AttackSuperIng);
+
+				if (mMinion01->GetState() == GameObject::eState::Paused && mMinion01->GetComponent<MinionScript>()->GetPhase() == (unsigned int)0
+					&& mMinion02->GetState() == GameObject::eState::Paused && mMinion02->GetComponent<MinionScript>()->GetPhase() == (unsigned int)0
+					&& mMinion03->GetState() == GameObject::eState::Paused && mMinion03->GetComponent<MinionScript>()->GetPhase() == (unsigned int)0)
+				{
+					mMinion01->SetState(GameObject::eState::Active);
+					mMinion02->SetState(GameObject::eState::Active);
+					mMinion03->SetState(GameObject::eState::Active);
+
+					mMinion01->GetComponent<MinionScript>()->SetPhase((unsigned int)1);
+					mMinion02->GetComponent<MinionScript>()->SetPhase((unsigned int)1);
+					mMinion03->GetComponent<MinionScript>()->SetPhase((unsigned int)1);
+				}
+
+				if (mMinion01->GetComponent<MinionScript>()->GetHp() <= 0
+					&& mMinion02->GetComponent<MinionScript>()->GetHp() <= 0
+					&& mMinion03->GetComponent<MinionScript>()->GetHp() <= 0)
+				{
+					if (mMinion01->GetState() == GameObject::eState::Paused
+						&& mMinion02->GetState() == GameObject::eState::Paused
+						&& mMinion03->GetState() == GameObject::eState::Paused)
+					{
+						// 기존 Scale 333에서 1.5배 축소
+						Transform* tr = this->GetOwner()->GetComponent<Transform>();
+						Vector3 size = tr->GetScale();
+						if (size.x != 3.0f || size.y != 3.0f)
+						{
+							size.x = 3.0f;
+							size.y = 3.0f;
+							tr->SetScale(size);
+						}
+
+						ChangeState(eBoss01State::L_AttackSuperEnd);
+
+						// 콜라이더 켜기
+						if (mBodyCd->GetActivation() == enums::eColliderActivation::InActive)
+						{
+							mBodyCd->SetActivation(enums::eColliderActivation::Active);
+						}
+					}
+				}
 			}
 		}
 
-		else if (mPhase == 3)
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+										// 페이즈 3 (보스 탐지) + 4 (부하 던지기로 안에 조건문 내부에 포함)
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		else if (mPhase == 3 || mPhase == 4)
 		{
 			if (mLevelofPhase3 == 0)
 			{
+				float hpPercent = static_cast<float>(mHp) / static_cast<float>(mMaxHp) * 100;
+				if (hpPercent <= mToPhase04HpPercent)// 50퍼
+				{
+					mPhase = 4;
+				}
 
+				// 페이즈 3 AI
+
+				// 공격을 당하고 있을 때는 아래의 상태 변화가 있으면 안됨
+				// 추후 공격을 당하는 변수들 합쳐서 함수로 대체 예정
+				if (mIsDamageStun == false && mIsDamageKnockBack == false && mIsDamageKnockDown == false && mIsDamageDown == false
+					&& mBodyCd->GetState() == eColliderState::NotColliding
+					&& mIsDowned == false
+					&& mIsGetup == false)
+				{
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+																	// 탐지거리 내 플레이어 O
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					if (IsPlayerInDetectionRange())// 탐지거리 내 플레이어 O
+					{
+						if (mDetected == false)// 처음 감지했을 때만 들어오는 조건문
+						{
+							// 플레이어 쪽 방향으로 설정 해줘야 함
+							if (mPlayerPos.x < mPos.x)
+							{
+								mDetected = true;
+								mDirection = eDirection::L;
+								ChangeState(eBoss01State::L_Idle);
+							}
+							else
+							{
+								mDetected = true;
+
+								mDirection = eDirection::R;
+								ChangeState(eBoss01State::R_Idle);
+							}
+
+							// 달려갈지 대기할지 랜덤 설정
+							if (mRandWaitOrRun == -100)
+							{
+								std::mt19937 mt(rd());
+								std::uniform_int_distribution<int> dist(0, 2);
+								mRandWaitOrRun = dist(mt);
+
+								// 디버깅용
+								//mRandWaitOrRun = 1;// Wait
+								//mRandWaitOrRun = 0;// Run
+							}
+						}
+
+						/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 탐지거리 내 플레이어 O 전투거리 내 플레이어 O
+						/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+						if (IsPlayerInCombatRange())
+						{
+							if (mIsDamageStun == false && mIsDamageKnockBack == false && mIsDamageKnockDown == false && mIsDamageDown == false
+								&& mIsDowned == false && mIsGetup == false
+								&& mIsAttackPunch == false && mIsAttackJumpPunchStr == false && mIsAttackJumpPunchIng == false
+								&& mIsAttackKick == false && mIsAttackFire == false
+								&& mIsAttackDownKick == false
+								&& mIsGuard == false)
+								// Combat 조건
+							{
+								// 처음 감지했을 때만 들어오는 조건문
+								// 플레이어 쪽 방향 쳐다보기
+								if (mIsCombat == false)
+								{
+									if (mPlayerPos.x < mPos.x)
+									{
+										mDirection = eDirection::L;
+										ChangeState(eBoss01State::L_Idle);
+									}
+									else
+									{
+										mDirection = eDirection::R;
+										ChangeState(eBoss01State::R_Idle);
+									}
+
+									// Combat 관련 변수 초기화 ex. 2.0f
+									// 사실상 mCombatTimer 사용하지 않고
+									// Combat에서 랜덤 행동
+									mCombatTimer = 0.0f;
+								}
+
+								Combat();
+							}
+						}
+
+						/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 탐지거리 내 플레이어 O 전투거리 내 플레이어 X
+						/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+						else
+						{
+							mDetected = true;// 플레이어 쪽 방향으로 설정 해주기 위해 처음 Detect 되는 상태로 전환
+							mIsCombat = false;
+
+							//mCombatTimer = 0.0f;
+
+							// 달려오는 경우
+							if (mRandWaitOrRun == 0 || mRandWaitOrRun == 1)
+							{
+								// 몬스터와 플레이어 사이의 거리 계산
+								Vector3 direction = mPlayerPos - mPos;
+								direction.Normalize();
+
+								// 플레이어와 몬스터 사이의 거리가 너무 작으면 멈추기
+								if (fabs(direction.x) < 0.05f)
+								{
+									if (mDirection == eDirection::L)
+										ChangeState(eBoss01State::L_Idle);
+									else
+										ChangeState(eBoss01State::R_Idle);
+								}
+								else
+								{
+									// 몬스터가 플레이어를 향해 이동하도록 설정
+									if (direction.x < 0 && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
+									{
+										mDirection = eDirection::L;
+										ChangeState(eBoss01State::L_Run);
+
+										mDirectionInt = -1;
+										Transform* tr = this->GetOwner()->GetComponent<Transform>();
+										Vector3 pos = tr->GetPosition();
+										pos += direction * mRunSpeed * Time::DeltaTime();
+										tr->SetPosition(pos);
+									}
+									else if (direction.x > 0 && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
+									{
+										mDirection = eDirection::R;
+										ChangeState(eBoss01State::R_Run);
+
+										mDirectionInt = +1;
+										Transform* tr = this->GetOwner()->GetComponent<Transform>();
+										Vector3 pos = tr->GetPosition();
+										pos += direction * mRunSpeed * Time::DeltaTime();
+										tr->SetPosition(pos);
+									}
+								}
+							}
+
+							// 대기하는 경우
+							else// (mRandWaitOrRun == +1)
+							{
+								if (mPlayerPos.x + 0.15f < mPos.x && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
+								{
+									mDirection = eDirection::L;
+									ChangeState(eBoss01State::L_Idle);
+								}
+								else if (mPos.x < mPlayerPos.x - 0.15f && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
+								{
+									mDirection = eDirection::R;
+									ChangeState(eBoss01State::R_Idle);
+								}
+							}
+
+						}
+					}
+
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+															// 탐지거리 내 플레이어 X && 전투거리 내 플레이어 X
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					else
+					{
+						// 초기화
+						mDetected = false;
+						mRandWaitOrRun = -100;
+
+
+						// 이동 타이머 감소
+						mMoveTimer -= Time::DeltaTime();
+
+						if (mMoveTimer <= 0.0f)
+						{
+							std::mt19937 mt(rd());
+							std::uniform_int_distribution<int> dist(0, 1);
+
+							// 랜덤하게 이동 방향 변경
+							if (dist(mt) == 0)
+							{
+								mDirection = eDirection::L;
+								mDirectionInt = -1;
+							}
+							else
+							{
+								mDirection = eDirection::R;
+								mDirectionInt = +1;
+							} // -1 또는 +1로 랜덤하게 설정
+
+							// 타이머 초기화
+							mMoveTimer = mMoveInterval;
+						}
+
+						// 랜덤 이동 로직
+						float moveDistance = GetRandomMoveDistance();
+						Transform* tr = this->GetOwner()->GetComponent<Transform>();
+						Vector3 pos = tr->GetPosition();
+						pos.x += mDirectionInt * moveDistance * Time::DeltaTime();
+						tr->SetPosition(pos);
+
+						if (mDirectionInt == -1)
+						{
+							mDirection = eDirection::L;
+							ChangeState(eBoss01State::L_Walk);
+						}
+						else
+						{
+							mDirection = eDirection::R;
+							ChangeState(eBoss01State::R_Walk);
+						}
+					}
+				}
 			}
 
 			else if (mLevelofPhase3 == 1)
@@ -942,13 +1313,71 @@ namespace ya
 			{
 
 			}
+
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+											// 페이즈 4 (부하 던지기) + 페이즈 3 내부에 있으며, 보스 탐지
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+			if (mPhase == 4)
+			{
+				if (mMinion01->GetState() == GameObject::eState::Paused && mMinion01->GetComponent<MinionScript>()->GetPhase() == (unsigned int)2
+					&& mMinion02->GetState() == GameObject::eState::Paused && mMinion02->GetComponent<MinionScript>()->GetPhase() == (unsigned int)2)
+				{
+					mMinion01->SetState(GameObject::eState::Active);
+					mMinion02->SetState(GameObject::eState::Active);
+
+					Transform* minion01tr = mMinion01->GetComponent<Transform>();
+					minion01tr->SetPosition(Vector3(2.0f, 1.0f, minion01tr->GetPosition().z));
+
+					Transform* minion02tr = mMinion02->GetComponent<Transform>();
+					minion02tr->SetPosition(Vector3(-2.0f, 1.0f, minion02tr->GetPosition().z));
+
+					mMinion01->GetComponent<MinionScript>()->SetPhase((unsigned int)3);
+					mMinion01->GetComponent<MinionScript>()->SetLevelPhase3((unsigned int)0);
+					mMinion02->GetComponent<MinionScript>()->SetPhase((unsigned int)3);
+					mMinion02->GetComponent<MinionScript>()->SetLevelPhase3((unsigned int)3);
+				}
+
+				float hpPercent = static_cast<float>(mHp) / static_cast<float>(mMaxHp) * 100;
+				if (hpPercent <= mToPhase05HpPercent)// 0퍼
+				{
+					mPhase = 5;
+				}
+			}
 		}
 
-		else
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+														// 페이즈 5 (종료)
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		else if (mPhase == 5)// 보스 체력 0되면 5페이즈 전환 해줘야 함
 		{
+			// 부하 지워주는 부하의 4페이즈 호출
+			mMinion01->GetComponent<MinionScript>()->SetPhase((unsigned int)4);
+			mMinion02->GetComponent<MinionScript>()->SetPhase((unsigned int)4);
+			//mMinion03->GetComponent<MinionScript>()->SetPhase((unsigned int)4);// 이미 Paused된 상태
+
+			// 부하 지워지면, 본인도 지우기
+			if (mMinion01->GetState() == GameObject::eState::Paused
+				&& mMinion02->GetState() == GameObject::eState::Paused)
+			{
+				// 본인 애니메
+				if (mDirection == eDirection::L)// 혹은 플레이어 위치와 비교
+				{
+					ChangeState(eBoss01State::L_DisAppear);
+				}
+				else
+				{
+					ChangeState(eBoss01State::R_DisAppear);
+				}
+			}
 
 		}
 
+		// 디버깅 용
+		if (Input::GetKey(eKeyCode::I))
+		{
+			mPhase = 5;
+		}
 
 #pragma endregion
 
@@ -973,7 +1402,8 @@ namespace ya
 		}
 
 		// mSkillCd 활성화 비활성화 조건
-		if (mIsAttackPunch || mIsAttackJumpPunchIng || mIsAttackKick || mIsAttackFire || mIsAttackDownKick)
+		if (mIsAttackPunch || mIsAttackJumpPunchIng || mIsAttackKick || mIsAttackFire || mIsAttackDownKick 
+			|| mLevelofPhase2 == 1)
 		{
 			mSkillCd->SetActivation(eColliderActivation::Active);
 		}
@@ -1203,128 +1633,154 @@ namespace ya
 
 	void Boss01Script::OnCollisionStay(Collider2D* other)
 	{
-		if (dynamic_cast<PlayerScript*>(other->GetOwner()->GetComponent<PlayerScript>()))
-			//if (other->GetOwner()->GetName() == L"Ramona")
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+																// 페이즈 0
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		if (mPhase == 0)
 		{
-			if (other->GetOwner()->GetComponent<RamonaScript>()->IsDead() == true)
-				return;
 
-			if (this->GetOwner()->GetComponent<Collider2D>()->IsBody() == true && other->IsBody() == true)
-				return;
+		}
 
-			if (mCurState == eBoss01State::L_Guard || mCurState == eBoss01State::R_Guard
-				|| mIsAttackPunch || mIsAttackJumpPunchIng || mIsAttackKick || mIsAttackFire || mIsAttackDownKick)
-				return;
-
-			if (mBodyCd->GetState() == eColliderState::IsColliding)
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+																// 페이즈 2 
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		else if (mPhase == 2)
+		{
+			if (dynamic_cast<PlayerScript*>(other->GetOwner()->GetComponent<PlayerScript>()))
 			{
-				mRandWaitOrRun = 0;
+				if (other->GetOwner()->GetComponent<RamonaScript>()->IsDead() == true)
+					return;
 
-				std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
-					, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
-					, mPlayerAttackState.begin());
+			}
+		}
 
-				if (mIsCollidingFirst == 0
-					&& mIsDamageStun == false && mIsDamageKnockBack == false && mIsDamageKnockDown == false && mIsDamageDown == false
-					&& mIsDowned == false
-					&& mIsGetup == false
-					&& mIsAttackPunch == false && mIsAttackJumpPunchIng == false && mIsAttackKick == false && mIsAttackFire == false && mIsAttackDownKick == false && mIsGuard == false
-					&& mPlayerAttackState[17] == false)
-					// 처음 충돌
-					// + 충돌 조건(다운되어있는데 갑자기 공격을 받았다고 해서 Guard나 Idle로 바뀌지 않기 위한 조건)
-					// 추후 충돌 조건은 따로 정리할 예정
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+														// 페이즈 1  3  4
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		else if (mPhase == 1 || mPhase == 3 || mPhase == 4)
+		{
+			if (dynamic_cast<PlayerScript*>(other->GetOwner()->GetComponent<PlayerScript>()))
+			{
+				if (other->GetOwner()->GetComponent<RamonaScript>()->IsDead() == true)
+					return;
+
+				if (this->GetOwner()->GetComponent<Collider2D>()->IsBody() == true && other->IsBody() == true)
+					return;
+
+				if (mCurState == eBoss01State::L_Guard || mCurState == eBoss01State::R_Guard
+					|| mIsAttackPunch || mIsAttackJumpPunchIng || mIsAttackKick || mIsAttackFire || mIsAttackDownKick)
+					return;
+
+				if (mBodyCd->GetState() == eColliderState::IsColliding)
 				{
-					// 방어 스킬 사용할지 안할지 랜덤으로 실행
-					std::mt19937 mt(rd());
-					std::uniform_int_distribution<int> dist(0, 4);
-					int randGuard = dist(mt);
+					mRandWaitOrRun = 0;
 
-					if (randGuard == 0)// 가드 사용
-					{
-						if (mPlayerPos.x < mPos.x)
-						{
-							mDirection = eDirection::L;
-							ChangeState(eBoss01State::L_Guard);
-
-							mIsCollidingFirst = 1;
-						}
-						else
-						{
-							mDirection = eDirection::R;
-							ChangeState(eBoss01State::R_Guard);
-
-							mIsCollidingFirst = 1;
-						}
-					}
-					else// 가드 미사용 == Attacked
-					{
-						other->GetOwner()->GetComponent<RamonaScript>()->AddSp(10);
-						mHp -= mAttackedDamage;
-
-						std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
-							, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
-							, mPlayerAttackState.begin());
-
-						SetAttackedState();
-						mIsCollidingFirst = 1;
-					}
-				}
-				else if (mIsCollidingFirst == 0 && mIsDowned == true// Downed 공격을 당하는 조건문
-					&& mIsDamageStun == false && mIsDamageKnockBack == false && mIsDamageKnockDown == false && mIsDamageDown == false
-					&& mIsGetup == false
-					&& mIsAttackPunch == false && mIsAttackJumpPunchIng == false && mIsAttackKick == false && mIsAttackFire == false && mIsAttackDownKick == false && mIsGuard == false
-					&& mPlayerAttackState[17] == false)
-				{
-					if (mCanDamageDown == true)
-					{
-						//mHp -= mAttackedDamage;
-
-						std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
-							, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
-							, mPlayerAttackState.begin());
-
-						SetAttackedState();
-						mIsCollidingFirst = 1;
-					}
-				}
-				else if (mIsCollidingFirst == 0 && mPlayerAttackState[17])
-				{
 					std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
 						, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
 						, mPlayerAttackState.begin());
 
-					SetAttackedState();
-					mIsCollidingFirst = 1;
+					if (mIsCollidingFirst == 0
+						&& mIsDamageStun == false && mIsDamageKnockBack == false && mIsDamageKnockDown == false && mIsDamageDown == false
+						&& mIsDowned == false
+						&& mIsGetup == false
+						&& mIsAttackPunch == false && mIsAttackJumpPunchIng == false && mIsAttackKick == false && mIsAttackFire == false && mIsAttackDownKick == false && mIsGuard == false
+						&& mPlayerAttackState[17] == false)
+						// 처음 충돌
+						// + 충돌 조건(다운되어있는데 갑자기 공격을 받았다고 해서 Guard나 Idle로 바뀌지 않기 위한 조건)
+						// 추후 충돌 조건은 따로 정리할 예정
+					{
+						// 방어 스킬 사용할지 안할지 랜덤으로 실행
+						std::mt19937 mt(rd());
+						std::uniform_int_distribution<int> dist(0, 4);
+						int randGuard = dist(mt);
+
+						if (randGuard == 0)// 가드 사용
+						{
+							if (mPlayerPos.x < mPos.x)
+							{
+								mDirection = eDirection::L;
+								ChangeState(eBoss01State::L_Guard);
+
+								mIsCollidingFirst = 1;
+							}
+							else
+							{
+								mDirection = eDirection::R;
+								ChangeState(eBoss01State::R_Guard);
+
+								mIsCollidingFirst = 1;
+							}
+						}
+						else// 가드 미사용 == Attacked
+						{
+							other->GetOwner()->GetComponent<RamonaScript>()->AddSp(10);
+							mHp -= mAttackedDamage;
+
+							std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
+								, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
+								, mPlayerAttackState.begin());
+
+							SetAttackedState();
+							mIsCollidingFirst = 1;
+						}
+					}
+					else if (mIsCollidingFirst == 0 && mIsDowned == true// Downed 공격을 당하는 조건문
+						&& mIsDamageStun == false && mIsDamageKnockBack == false && mIsDamageKnockDown == false && mIsDamageDown == false
+						&& mIsGetup == false
+						&& mIsAttackPunch == false && mIsAttackJumpPunchIng == false && mIsAttackKick == false && mIsAttackFire == false && mIsAttackDownKick == false && mIsGuard == false
+						&& mPlayerAttackState[17] == false)
+					{
+						if (mCanDamageDown == true)
+						{
+							//mHp -= mAttackedDamage;
+
+							std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
+								, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
+								, mPlayerAttackState.begin());
+
+							SetAttackedState();
+							mIsCollidingFirst = 1;
+						}
+					}
+					else if (mIsCollidingFirst == 0 && mPlayerAttackState[17])
+					{
+						std::copy(other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().begin()
+							, other->GetOwner()->GetComponent<RamonaScript>()->GetAttackState().end()
+							, mPlayerAttackState.begin());
+
+						SetAttackedState();
+						mIsCollidingFirst = 1;
+					}
 				}
 			}
-		}
 
-		if (dynamic_cast<EnemyScript*>(other->GetOwner()->GetComponent<EnemyScript>()))
-		{
-			if (this->GetOwner()->GetComponent<Collider2D>()->IsBody() == true && other->IsBody() == true)
+			if (dynamic_cast<EnemyScript*>(other->GetOwner()->GetComponent<EnemyScript>()))
 			{
-				if (mBodyCd->GetState() == eColliderState::IsColliding)
+				if (this->GetOwner()->GetComponent<Collider2D>()->IsBody() == true && other->IsBody() == true)
 				{
-					if (mIsDowned || mIsGetup || mIsWalk || mIsRun)
-						return;
+					if (mBodyCd->GetState() == eColliderState::IsColliding)
+					{
+						if (mIsDowned || mIsGetup || mIsWalk || mIsRun)
+							return;
 
-					//Transform* obTr = other->GetOwner()->GetComponent<Transform>();
-					//Vector3 obPos = obTr->GetPosition();
+						//Transform* obTr = other->GetOwner()->GetComponent<Transform>();
+						//Vector3 obPos = obTr->GetPosition();
 
-					//float displacement = other->GetOwner()->GetComponent<Transform>()->GetPosition().x
-					//	- this->GetOwner()->GetComponent<Transform>()->GetPosition().x;
-					//if (displacement > 0)
-					//{
-					//	obPos.x += 0.001f;
-					//	obTr->SetPosition(obPos);
-					//}
-					//else
-					//{
-					//	obPos.x -= 0.001f;
-					//	obTr->SetPosition(obPos);
-					//}
+						//float displacement = other->GetOwner()->GetComponent<Transform>()->GetPosition().x
+						//	- this->GetOwner()->GetComponent<Transform>()->GetPosition().x;
+						//if (displacement > 0)
+						//{
+						//	obPos.x += 0.001f;
+						//	obTr->SetPosition(obPos);
+						//}
+						//else
+						//{
+						//	obPos.x -= 0.001f;
+						//	obTr->SetPosition(obPos);
+						//}
 
-					mRandWaitOrRun = 1;
+						mRandWaitOrRun = 1;
+					}
 				}
 			}
 		}
@@ -1352,6 +1808,11 @@ namespace ya
 		mLevelofPhase2 = 2;
 	}
 
+	void Boss01Script::SuperEndComplete()
+	{
+		mPhase = 3;
+	}
+
 	void Boss01Script::CombatComplete()
 	{
 		mIsAttackPunch = false;
@@ -1374,7 +1835,7 @@ namespace ya
 	void Boss01Script::GuardComplete()
 	{
 		//막으려 하는 해당 스킬의 duration이 다르기 때문에 duration 까지 가드를 유지하기 위한 부분
-		ePlayerState playerState = PlayScene::GetPlayerState();
+		ePlayerState playerState = Boss01Scene::GetPlayerState();
 		if (playerState == ePlayerState::L_Idle || playerState == ePlayerState::R_Idle
 			|| playerState == ePlayerState::L_Walk || playerState == ePlayerState::R_Walk
 			|| playerState == ePlayerState::L_Jump || playerState == ePlayerState::R_Jump
@@ -1468,6 +1929,18 @@ namespace ya
 			ChangeState(eBoss01State::L_Idle);
 		else
 			ChangeState(eBoss01State::R_Idle);
+	}
+
+	void Boss01Script::DisAppearComplete()
+	{
+		// 끝
+		// 종료
+		// 마무리
+		// 삭제
+		// 죽음
+		mIsDead = true;
+		mShadow->SetState(GameObject::eState::Paused);
+		this->GetOwner()->SetState(GameObject::eState::Paused);
 	}
 
 #pragma endregion

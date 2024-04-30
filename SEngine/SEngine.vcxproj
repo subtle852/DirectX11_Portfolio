@@ -160,6 +160,7 @@
     <ClInclude Include="yaGridScript.h" />
     <ClInclude Include="yaLukeScript.h" />
     <ClInclude Include="yaMainScene.h" />
+    <ClInclude Include="yaMinionScript.h" />
     <ClInclude Include="yaMiniScript.h" />
     <ClInclude Include="yaPlayer.h" />
     <ClInclude Include="yaPlayerScript.h" />
@@ -183,6 +184,7 @@
     <ClCompile Include="yaLukeScript.cpp" />
     <ClCompile Include="yaMainScene.cpp" />
     <ClCompile Include="SEngine.cpp" />
+    <ClCompile Include="yaMinionScript.cpp" />
     <ClCompile Include="yaMiniScript.cpp" />
     <ClCompile Include="yaPlayer.cpp" />
     <ClCompile Include="yaPlayerScript.cpp" />

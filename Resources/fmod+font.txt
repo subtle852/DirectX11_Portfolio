@@ -1,0 +1,15 @@
+Fmod
+
+Fmod 및 FontWrapper
+dll들은 해당 debug 폴더에 복붙
+
+AudioSource는 캐릭터에
+AudioListener는 카메라에 
+
+Play는 캐릭터 내부 동작에 따라
+
+
+FontWrapper
+Initialize에서 글자체 수정 가능
+
+Time::Render에서 작성
