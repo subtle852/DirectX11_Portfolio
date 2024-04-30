@@ -24,6 +24,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)yaCollider2D.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaCollisionManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaFmod.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)yaFontWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaGameObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaApplication.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaComponent.h" />
@@ -64,6 +65,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)yaCollider2D.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaCollisionManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaFmod.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)yaFontWrapper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaGameObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaApplication.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaComponent.cpp" />

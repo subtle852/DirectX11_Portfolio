@@ -1,5 +1,6 @@
 #include "yaTime.h"
 #include "yaApplication.h"
+#include "yaFontWrapper.h"
 
 extern ya::Application application;
 
@@ -35,6 +36,8 @@ namespace ya
 	{
 		mSecond += mDeltaTime;
 
+		wchar_t szFloat[50] = L"BIN";
+		
 		if (mSecond > 1.0f)
 		{
 			HWND hWnd = application.GetHwnd();
@@ -48,5 +51,7 @@ namespace ya
 			//TextOut(hdc, 0, 0, szFloat, 20);
 			mSecond = 0.0f;
 		}
+
+		FontWrapper::DrawFont(szFloat, 10.f, 30.f, 20, FONT_RGBA(255, 0, 255, 255));
 	}
 }

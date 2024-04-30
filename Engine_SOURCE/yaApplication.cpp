@@ -5,6 +5,7 @@
 #include "yaSceneManager.h"
 #include "yaCollisionManager.h"
 #include "yaFmod.h"
+#include "yaFontWrapper.h"
 
 namespace ya
 {
@@ -35,6 +36,7 @@ namespace ya
 		Time::Initiailize();
 		Input::Initialize();
 		Fmod::Initialize();
+		FontWrapper::Initialize();
 
 		renderer::Initialize();
 		SceneManager::Initialize();
@@ -55,14 +57,18 @@ namespace ya
 
 	void Application::Render()
 	{
-		Time::Render();
+		//Time::Render();
 
 		graphicDevice->ClearTarget();
 		graphicDevice->UpdateViewPort();
 		
+		//Time::Render();
+
 		//SceneManager::Render();// 이 방식이 아닌 Renderer를 통해 Camera를 Render
 		renderer::Render();// 위 방식이 아닌 Renderer를 통해 Camera를 Render
 		//graphicDevice->Draw();
+
+		Time::Render();
 	}
 
 	void Application::Destroy()

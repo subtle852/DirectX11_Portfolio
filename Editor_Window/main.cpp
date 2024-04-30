@@ -8,6 +8,7 @@
 #include "..\Engine_SOURCE\yaRenderer.h"
 #include "..\Engine_SOURCE\yaResources.h"
 #include "..\Engine_SOURCE\yaFmod.h"
+#include "..\Engine_SOURCE\yaFontWrapper.h"
 
 #include "SEngine/LoadScenes.h"
 
@@ -100,6 +101,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     renderer::Release();
     ya::SceneManager::Release();
     ya::Fmod::Release();
+    ya::FontWrapper::Release();
     gui::Editor::Release();
 
     return (int) msg.wParam;
