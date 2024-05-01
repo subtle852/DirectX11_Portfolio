@@ -63,6 +63,7 @@ namespace ya
 		if (Input::GetKeyDown(eKeyCode::ENTER))
 		{
 			SceneManager::LoadScene(L"Title02Scene");
+			//SceneManager::LoadScene(L"SelectScene");
 		}
 
 		Scene::Update();

@@ -17,6 +17,10 @@
 #include "yaBoss01Script.h"
 #include "..\\Editor_Window\\yaDebugLog.h"
 
+#include "yaAudioListener.h"
+#include "yaAudioClip.h"
+#include "yaAudioSource.h"
+
 namespace ya
 {
 	RamonaScript::RamonaScript()
@@ -270,6 +274,12 @@ namespace ya
 		at->CompleteEvent(L"L_Evade") = std::bind(&RamonaScript::EvadeComplete, this);
 		at->CompleteEvent(L"R_Evade") = std::bind(&RamonaScript::EvadeComplete, this);
 
+		at->StartEvent(L"L_NormalAttack1") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_NormalAttack1") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"L_NormalAttack2") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_NormalAttack2") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"L_NormalAttack3") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_NormalAttack3") = std::bind(&RamonaScript::AttackStart, this);
 		at->CompleteEvent(L"L_NormalAttack1") = std::bind(&RamonaScript::NormalAttackComplete, this);
 		at->CompleteEvent(L"R_NormalAttack1") = std::bind(&RamonaScript::NormalAttackComplete, this);
 		at->CompleteEvent(L"L_NormalAttack2") = std::bind(&RamonaScript::NormalAttackComplete, this);
@@ -277,6 +287,12 @@ namespace ya
 		at->CompleteEvent(L"L_NormalAttack3") = std::bind(&RamonaScript::NormalAttackComplete, this);
 		at->CompleteEvent(L"R_NormalAttack3") = std::bind(&RamonaScript::NormalAttackComplete, this);
 
+		at->StartEvent(L"L_Kick") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_Kick") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"L_RoundKick") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_RoundKick") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"L_BehindKick") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_BehindKick") = std::bind(&RamonaScript::AttackStart, this);
 		at->CompleteEvent(L"L_Kick") = std::bind(&RamonaScript::KickComplete, this);
 		at->CompleteEvent(L"R_Kick") = std::bind(&RamonaScript::KickComplete, this);
 		at->CompleteEvent(L"L_RoundKick") = std::bind(&RamonaScript::KickComplete, this);
@@ -284,6 +300,14 @@ namespace ya
 		at->CompleteEvent(L"L_BehindKick") = std::bind(&RamonaScript::KickComplete, this);
 		at->CompleteEvent(L"R_BehindKick") = std::bind(&RamonaScript::KickComplete, this);
 
+		at->StartEvent(L"L_WeaponNormalAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_WeaponNormalAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"L_WeaponDownAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_WeaponDownAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"L_WeaponSideAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_WeaponSideAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"L_WeaponStabAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_WeaponStabAttack") = std::bind(&RamonaScript::AttackStart, this);
 		at->CompleteEvent(L"L_WeaponNormalAttack") = std::bind(&RamonaScript::WeaponAttackComplete, this);
 		at->CompleteEvent(L"R_WeaponNormalAttack") = std::bind(&RamonaScript::WeaponAttackComplete, this);
 		at->CompleteEvent(L"L_WeaponDownAttack") = std::bind(&RamonaScript::WeaponAttackComplete, this);
@@ -293,6 +317,12 @@ namespace ya
 		at->CompleteEvent(L"L_WeaponStabAttack") = std::bind(&RamonaScript::WeaponAttackComplete, this);
 		at->CompleteEvent(L"R_WeaponStabAttack") = std::bind(&RamonaScript::WeaponAttackComplete, this);
 
+		at->StartEvent(L"L_JumpDownAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_JumpDownAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"L_JumpSlideAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_JumpSlideAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"L_RunJumpAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_RunJumpAttack") = std::bind(&RamonaScript::AttackStart, this);
 		at->CompleteEvent(L"L_JumpDownAttack") = std::bind(&RamonaScript::JumpAttackComplete, this);
 		at->CompleteEvent(L"R_JumpDownAttack") = std::bind(&RamonaScript::JumpAttackComplete, this);
 		at->CompleteEvent(L"L_JumpSlideAttack") = std::bind(&RamonaScript::JumpAttackComplete, this);
@@ -300,6 +330,10 @@ namespace ya
 		at->CompleteEvent(L"L_RunJumpAttack") = std::bind(&RamonaScript::JumpAttackComplete, this);
 		at->CompleteEvent(L"R_RunJumpAttack") = std::bind(&RamonaScript::JumpAttackComplete, this);
 
+		at->StartEvent(L"L_RunWeaponAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_RunWeaponAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"L_RunSlideAttack") = std::bind(&RamonaScript::AttackStart, this);
+		at->StartEvent(L"R_RunSlideAttack") = std::bind(&RamonaScript::AttackStart, this);
 		at->CompleteEvent(L"L_RunWeaponAttack") = std::bind(&RamonaScript::RunAttackComplete, this);
 		at->CompleteEvent(L"R_RunWeaponAttack") = std::bind(&RamonaScript::RunAttackComplete, this);
 		at->CompleteEvent(L"L_RunSlideAttack") = std::bind(&RamonaScript::RunAttackComplete, this);
@@ -386,6 +420,34 @@ namespace ya
 		mAllCd->SetActivation(eColliderActivation::InActive);
 
 		#pragma endregion
+
+		// 사운드
+		{
+			mPunch01Sound = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			AudioSource* as = mPunch01Sound->AddComponent<AudioSource>();
+
+			mPunch02Sound = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			as = mPunch02Sound->AddComponent<AudioSource>();
+
+			mPunch03Sound = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			as = mPunch03Sound->AddComponent<AudioSource>();
+
+			mPunch04Sound = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			as = mPunch04Sound->AddComponent<AudioSource>();
+
+			mSwing01Sound = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			as = mSwing01Sound->AddComponent<AudioSource>();
+		}
 }
 
 	void RamonaScript::Update()
@@ -2486,11 +2548,23 @@ namespace ya
 	void RamonaScript::FireBallStart()
 	{
 		mAttribute.mSp -= mFireBallSp;
+
+		{
+			AudioSource* as = mSwing01Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"swing01", L"..\\Resources\\Sound\\BATTLE\\swing01.mp3"));
+			as->Play();
+		}
 	}
 
 	void RamonaScript::SuperStart()
 	{
 		mAttribute.mSp -= mSuperSp;
+
+		{
+			AudioSource* as = mSwing01Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"swing01", L"..\\Resources\\Sound\\BATTLE\\swing01.mp3"));
+			as->Play();
+		}
 	}
 
 	void RamonaScript::FireBallComplete()
@@ -2626,9 +2700,49 @@ namespace ya
 
 	void RamonaScript::AttackedStart()
 	{
+		// mAttackState[0] = mIsArm;
+		// mAttackState[1] = mIsKick;
+		// mAttackState[2] = mIsSideKick;
+		// mAttackState[3] = mIsUpper;
+		if (mEnemyAttackState[0])
+		{
+			if (mEnemyAttackState[9])// 보스와 전투 중
+			{
+				AudioSource* as = mPunch03Sound->GetComponent<AudioSource>();
+				as->SetClip(Resources::Load<AudioClip>(L"punch03", L"..\\Resources\\Sound\\BATTLE\\punch03.mp3"));
+				as->Play();
+			}
+			else// 일반몹과 전투 중
+			{
+				AudioSource* as = mPunch04Sound->GetComponent<AudioSource>();
+				as->SetClip(Resources::Load<AudioClip>(L"punch04", L"..\\Resources\\Sound\\BATTLE\\punch04.mp3"));
+				as->Play();
+			}
+		}
+		else if (mEnemyAttackState[3])
+		{
+			AudioSource* as = mPunch02Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"punch02", L"..\\Resources\\Sound\\BATTLE\\punch02.mp3"));
+			as->Play();
+		}
+		else
+		{
+			AudioSource* as = mPunch01Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"punch01", L"..\\Resources\\Sound\\BATTLE\\punch01.mp3"));
+			as->Play();
+		}
 
 		mAttribute.mHp -= mAttackedDamage;
 
+	}
+
+	void RamonaScript::AttackStart()
+	{
+		{
+			AudioSource* as = mSwing01Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"swing01", L"..\\Resources\\Sound\\BATTLE\\swing01.mp3"));
+			as->Play();
+		}
 	}
 
 	#pragma endregion

@@ -320,7 +320,8 @@ namespace ya
 			// 충돌 시, Damage 애니메 (OnColiisionStay 내부에서 호출)
 
 			// 충돌 중이지 않는 경우 충돌관련 초기화
-			if (mBodyCd->GetState() == enums::eColliderState::NotColliding)
+			//if (mBodyCd->GetState() == enums::eColliderState::NotColliding)//
+			if(mCurState == eMinionState::L_Idle || mCurState == eMinionState::R_Idle)
 			{
 				mIsDamage = false;
 				mIsCollidingFirst = 0;

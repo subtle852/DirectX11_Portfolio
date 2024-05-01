@@ -9,6 +9,10 @@
 #include "yaSceneManager.h"
 #include "yaTime.h"
 #include "yaLight.h"
+#include "yaAudioListener.h"
+#include "yaAudioClip.h"
+#include "yaAudioSource.h"
+#include "yaObject.h"
 
 namespace ya
 {
@@ -82,12 +86,23 @@ namespace ya
 
 		// Light
 		{
-			GameObject* light = new GameObject();
-			light->SetName(L"Light1");
-			AddGameObject(eLayerType::Light, light);
-			Light* lightComp = light->AddComponent<Light>();
+			mDirectionalLight = new GameObject();
+			mDirectionalLight->SetName(L"Light1");
+			AddGameObject(eLayerType::Light, mDirectionalLight);
+			Light* lightComp = mDirectionalLight->AddComponent<Light>();
 			lightComp->SetType(eLightType::Directional);
+			lightComp->SetColor(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+		}
+		{
+			mPointLight = new GameObject();
+			mPointLight->SetName(L"Light2");
+			AddGameObject(eLayerType::Light, mPointLight);
+			Light* lightComp = mPointLight->AddComponent<Light>();
+			Transform* tr = mPointLight->GetComponent<Transform>();
+			tr->SetPosition(Vector3(0.0f, 0.0f, tr->GetPosition().z));
+			lightComp->SetType(eLightType::Point);
 			lightComp->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			lightComp->SetRadius(0.0f);
 		}
 
 		//Main Camera
@@ -96,13 +111,85 @@ namespace ya
 		camera->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
 		Camera* cameraComp = camera->AddComponent<Camera>();
 		//camera->AddComponent<CameraScript>();
+
+		camera->AddComponent<AudioListener>();
+		{
+			mBgm = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			AudioSource* as = mBgm->AddComponent<AudioSource>();
+		}
+		{
+			mEffect = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			AudioSource* as = mEffect->AddComponent<AudioSource>();
+		} 
+		{
+			mEnter = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			AudioSource* as = mEnter->AddComponent<AudioSource>();
+		}
 	}
 
 	void MainScene::Update()
 	{
+		if (mEnterLight == true)// 들어올 때
+		{
+			Light* pointlightComp = mPointLight->GetComponent<Light>();
+
+			totalTimeEnter += Time::DeltaTime();
+			float speed = std::log(totalTimeEnter + 1) * mMaxRadius / std::log(duration + 1);
+			mCurrentRadius += speed * Time::DeltaTime();
+
+			if (mCurrentRadius > mMaxRadius)
+			{
+				mCurrentRadius = mMaxRadius;
+
+				pointlightComp->SetColor(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+
+				Light* directionallightComp = mDirectionalLight->GetComponent<Light>();
+				directionallightComp->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+				mEnterLight = false;
+			}
+
+			pointlightComp->SetRadius(mCurrentRadius);
+		}
+
+		if (mExitLight == true)// 나갈 때
+		{
+			Light* directionallightComp = mDirectionalLight->GetComponent<Light>();
+			directionallightComp->SetColor(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+
+			Light* pointlightComp = mPointLight->GetComponent<Light>();
+			pointlightComp->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			//Transform* tr = mPointLight->GetComponent<Transform>();
+			//tr->SetPosition(Vector3(0.0f, 0.0f, tr->GetPosition().z));
+
+			totalTimeExit += Time::DeltaTime();
+			float speed = std::log(totalTimeExit + 1) * mCurrentRadius / std::log(duration + 1);
+			mCurrentRadius -= speed * Time::DeltaTime();
+
+			if (mCurrentRadius < mMinRadius)
+			{
+				mCurrentRadius = mMinRadius;
+				mExitLight = false;
+				SceneManager::LoadScene(L"SelectScene");
+			}
+
+			pointlightComp->SetRadius(mCurrentRadius);
+		}
+
 		if (Input::GetKeyDown(eKeyCode::ENTER))
 		{
-			SceneManager::LoadScene(L"SelectScene");
+			mExitLight = true;
+
+			AudioSource* as = mEnter->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"MAIN_ENTER", L"..\\Resources\\Sound\\MAIN\\MAIN_ENTER.mp3"));
+			as->Play();
+			as->SetVolume(50.0f);
 		}
 		if (Input::GetKeyDown(eKeyCode::ESC))
 		{
@@ -147,11 +234,21 @@ namespace ya
 		{
 			if (mMenuNumber != static_cast<int>(MenuNumber::StoryMode))
 				mMenuNumber--;
+
+			AudioSource* as = mEffect->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"MAIN_EFFECT", L"..\\Resources\\Sound\\MAIN\\MAIN_EFFECT.mp3"));
+			as->Play();
+			as->SetVolume(50.0f);
 		}
 		if (Input::GetKeyDown(eKeyCode::S) || Input::GetKeyDown(eKeyCode::DOWN))
 		{
 			if (mMenuNumber != static_cast<int>(MenuNumber::ExitGame))
 				mMenuNumber++;
+
+			AudioSource* as = mEffect->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"MAIN_EFFECT", L"..\\Resources\\Sound\\MAIN\\MAIN_EFFECT.mp3"));
+			as->Play();
+			as->SetVolume(50.0f);
 		}
 
 		// 메뉴 넘버에 따른 메뉴 바 위치 수정
@@ -207,11 +304,25 @@ namespace ya
 
 	void MainScene::OnEnter()
 	{
+		mEnterLight = true;
+
 		mMenuNumber = 0;
+
+		AudioSource* as = mBgm->GetComponent<AudioSource>();
+		as->SetClip(Resources::Load<AudioClip>(L"MAIN_BGM", L"..\\Resources\\Sound\\MAIN\\MAIN_BGM.mp3"));
+		as->Play();
+		//as->SetVolume(50.0f);
 	}
 
 	void MainScene::OnExit()
 	{
+		AudioSource* as = mBgm->GetComponent<AudioSource>();
+		as->Stop();
 
+		as = mEffect->GetComponent<AudioSource>();
+		as->Stop();
+
+		as = mEnter->GetComponent<AudioSource>();
+		as->Stop();
 	}
 }

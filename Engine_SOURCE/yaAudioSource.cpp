@@ -44,10 +44,15 @@ namespace ya
 	}
 	void AudioSource::Stop()
 	{
+		if(mAudioClip != nullptr)
 		mAudioClip->Stop();
 	}
 	void AudioSource::SetLoop(bool loop)
 	{
 		mAudioClip->SetLoop(loop);
+	}
+	void AudioSource::SetVolume(float volume)
+	{
+		mAudioClip->SetVolume(volume);
 	}
 }

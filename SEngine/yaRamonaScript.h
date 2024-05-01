@@ -34,13 +34,24 @@ namespace ya
 		int GetHp() { return mAttribute.mHp; }
 		int GetSp() { return mAttribute.mSp; }
 		int GetCoin() { return mAttribute.mCoin; }
+		void SetHeart(int heart) { mAttribute.mHeart = heart; }
+		void SetHp(int hp) { mAttribute.mHp = hp; }
+		void SetSp(int sp) { mAttribute.mSp = sp; }
+		void SetCoin(int coin) { mAttribute.mCoin = coin; }
 
 		bool IsDead() { return mIsDead; }
 		bool IsJump() { return mIsJump; }
 		bool IsDJump() { return mIsDJump; }
 		
 		void TakeDamage(int damage) { mAttribute.mHp -= damage; }
-		void AddSp(int sp) { mAttribute.mSp += sp; }
+		void AddSp(int sp) 
+		{ 
+			mAttribute.mSp += sp;
+			if (mAttribute.mSp >= 100)
+			{
+				mAttribute.mSp = 100;
+			}
+		}
 
 	private:
 		//// 이벤트 함수
@@ -50,8 +61,8 @@ namespace ya
 		void WeaponAttackComplete();
 		void JumpAttackComplete();
 		void RunAttackComplete();
-		void FireBallStart();
-		void SuperStart();
+		void FireBallStart();//
+		void SuperStart();//
 		void FireBallComplete();
 		void SuperComplete();
 		void StunComplete();
@@ -61,6 +72,7 @@ namespace ya
 		void GetUpComplete();
 		void ReviveComplete();
 		void AttackedStart();
+		void AttackStart();
 
 		//// 조건 함수
 		// 다른 애니메이션 진행중인데 좌우상하 키가 눌린다고 해서 
@@ -270,6 +282,14 @@ namespace ya
 		// Attack Effect
 		//GameObject* mAttackEffect = nullptr;
 		//double mAttackEffectTime = 0.0f;
+
+		// 사운드
+		GameObject* mPunch01Sound = nullptr;
+		GameObject* mPunch02Sound = nullptr;
+		GameObject* mPunch03Sound = nullptr;
+		GameObject* mPunch04Sound = nullptr;
+		GameObject* mSwing01Sound = nullptr;
+
 
 		// 적 공격 스킬 상태를 담고 있는 bool 배열
 		std::vector<bool> mEnemyAttackState;

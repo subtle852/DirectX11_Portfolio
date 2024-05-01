@@ -100,6 +100,9 @@
     <Filter Include="GameObject\Component\Rigidbody">
       <UniqueIdentifier>{27f4dc78-5937-4c45-9f72-a46fc176ce61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource\Audio">
+      <UniqueIdentifier>{28ceccdf-df82-4006-9550-821987438cda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CommonInclude.h">
@@ -205,11 +208,17 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)yaRigidbody.h">
       <Filter>GameObject\Component\Rigidbody</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)yaAudioClip.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)yaAudioListener.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)yaAudioSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaFmod.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)yaFontWrapper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)yaAudioClip.h">
+      <Filter>Resource\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)yaAudioListener.h">
+      <Filter>Resource\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)yaAudioSource.h">
+      <Filter>Resource\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)yaMath.cpp">
@@ -300,11 +309,17 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)yaRigidbody.cpp">
       <Filter>GameObject\Component\Rigidbody</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)yaAudioClip.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)yaAudioListener.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)yaAudioSource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaFmod.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)yaFontWrapper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)yaAudioClip.cpp">
+      <Filter>Resource\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)yaAudioListener.cpp">
+      <Filter>Resource\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)yaAudioSource.cpp">
+      <Filter>Resource\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)yaMath.inl">

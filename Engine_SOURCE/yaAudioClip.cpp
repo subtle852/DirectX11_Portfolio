@@ -51,7 +51,20 @@ namespace ya
 		FMOD_VECTOR fmodPos(pos.x, pos.y, pos.z);
 		FMOD_VECTOR fmodVel(vel.x, vel.y, vel.z);
 
-		mChannel->set3DAttributes(&fmodPos, &fmodVel);
+		//mChannel->set3DAttributes(&fmodPos, &fmodVel);
+	}
+
+	float AudioClip::GetVolume()
+	{
+		float volume;
+		mChannel->getVolume(&volume);
+
+		return volume;
+	}
+
+	void AudioClip::SetVolume(float volume)
+	{
+		mChannel->setVolume(volume);
 	}
 
 

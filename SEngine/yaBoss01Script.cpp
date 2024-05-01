@@ -16,6 +16,10 @@
 #include "yaMeshRenderer.h"
 #include "..\\Editor_Window\\yaDebugLog.h"
 
+#include "yaAudioListener.h"
+#include "yaAudioClip.h"
+#include "yaAudioSource.h"
+
 namespace ya
 {
 	Boss01Script::Boss01Script()
@@ -287,6 +291,14 @@ namespace ya
 		at->CompleteEvent(L"L_APPEAR") = std::bind(&Boss01Script::AppearComplete, this);
 		at->CompleteEvent(L"R_APPEAR") = std::bind(&Boss01Script::AppearComplete, this);
 
+		at->StartEvent(L"L_DAMAGE_STUN") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"R_DAMAGE_STUN") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"L_DAMAGE_KNOCKBACK") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"R_DAMAGE_KNOCKBACK") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"L_DAMAGE_KNOCKDOWN") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"R_DAMAGE_KNOCKDOWN") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"L_DAMAGE_DOWN") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"R_DAMAGE_DOWN") = std::bind(&Boss01Script::DamageStart, this);
 		at->CompleteEvent(L"L_DAMAGE_STUN") = std::bind(&Boss01Script::DamageStunComplete, this);
 		at->CompleteEvent(L"R_DAMAGE_STUN") = std::bind(&Boss01Script::DamageStunComplete, this);
 		at->CompleteEvent(L"L_DAMAGE_KNOCKBACK") = std::bind(&Boss01Script::DamageStunComplete, this);
@@ -296,6 +308,16 @@ namespace ya
 		at->CompleteEvent(L"L_DAMAGE_DOWN") = std::bind(&Boss01Script::DamageStunComplete, this);
 		at->CompleteEvent(L"R_DAMAGE_DOWN") = std::bind(&Boss01Script::DamageStunComplete, this);
 
+		at->StartEvent(L"L_ATTACK_PUNCH") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"R_ATTACK_PUNCH") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"L_ATTACK_JUMPPUNCH_ING") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"L_ATTACK_JUMPPUNCH_ING") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"L_ATTACK_KICK") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"R_ATTACK_KICK") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"L_ATTACK_FIRE") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"R_ATTACK_FIRE") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"L_ATTACK_DOWNKICK") = std::bind(&Boss01Script::DamageStart, this);
+		at->StartEvent(L"R_ATTACK_DOWNKICK") = std::bind(&Boss01Script::DamageStart, this);
 		at->CompleteEvent(L"L_ATTACK_PUNCH") = std::bind(&Boss01Script::CombatComplete, this);
 		at->CompleteEvent(L"R_ATTACK_PUNCH") = std::bind(&Boss01Script::CombatComplete, this);
 		at->CompleteEvent(L"L_ATTACK_JUMPPUNCH_STR") = std::bind(&Boss01Script::CombatComplete, this);
@@ -372,6 +394,24 @@ namespace ya
 		}
 
 #pragma endregion
+
+		// 사운드
+		{
+			mPunch01Sound = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			AudioSource* as = mPunch01Sound->AddComponent<AudioSource>();
+
+			mPunch02Sound = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			as = mPunch02Sound->AddComponent<AudioSource>();
+
+			mSwing01Sound = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			as = mSwing01Sound->AddComponent<AudioSource>();
+		}
 
 	}
 
@@ -1616,6 +1656,10 @@ namespace ya
 		mAttackState[3] = mIsAttackFire;
 		mAttackState[4] = mIsAttackDownKick;
 		mAttackState[5] = mIsAttackSuperIng;
+		
+		mAttackState[9] = 1;// 보스와 전투중이란 것을 전달
+
+
 
 #pragma endregion
 
@@ -1941,6 +1985,31 @@ namespace ya
 		mIsDead = true;
 		mShadow->SetState(GameObject::eState::Paused);
 		this->GetOwner()->SetState(GameObject::eState::Paused);
+	}
+
+	void Boss01Script::AttackStart()
+	{
+		{
+			AudioSource* as = mSwing01Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"swing01", L"..\\Resources\\Sound\\BATTLE\\swing01.mp3"));
+			as->Play();
+		}
+	}
+
+	void Boss01Script::DamageStart()
+	{
+		if (mIsDamageKnockDown == true)
+		{
+			AudioSource* as = mPunch02Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"punch02", L"..\\Resources\\Sound\\BATTLE\\punch02.mp3"));
+			as->Play();
+		}
+		else
+		{
+			AudioSource* as = mPunch01Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"punch01", L"..\\Resources\\Sound\\BATTLE\\punch01.mp3"));
+			as->Play();
+		}
 	}
 
 #pragma endregion

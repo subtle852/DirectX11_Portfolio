@@ -28,6 +28,12 @@
 #include "yaLukeScript.h"
 #include "yaBoss01Script.h"
 
+#include "yaBoss01Scene.h"
+
+#include "yaAudioListener.h"
+#include "yaAudioClip.h"
+#include "yaAudioSource.h"
+
 #include "..\\Editor_Window\\yaDebugLog.h"
 
 namespace ya
@@ -38,6 +44,9 @@ namespace ya
 	ePlayerState PlayScene::mRamonaState = ePlayerState::R_Idle;
 	bool PlayScene::mRamonaDead = false;
 
+	int PlayScene::mHeart = 1000;
+	int PlayScene::mHp = 1000;
+	int PlayScene::mSp = 1000;
 
 	PlayScene::PlayScene()
 	{
@@ -136,9 +145,9 @@ namespace ya
 				
 			mRamona->AddComponent<RamonaScript>();
 
-			AudioSource* as = mRamona->AddComponent<AudioSource>();
-			as->SetClip(Resources::Load<AudioClip>(L"TestSound", L"..\\Resources\\Sound\\0.mp3"));
-			as->Play();
+			//AudioSource* as = mRamona->AddComponent<AudioSource>();
+			//as->SetClip(Resources::Load<AudioClip>(L"TestSound", L"..\\Resources\\Sound\\0.mp3"));
+			//as->Play();
 		}
 
 		// 몬스터
@@ -239,23 +248,24 @@ namespace ya
 
 		// Light
 		{
-			GameObject* light = new GameObject();
-			light->SetName(L"Light1");
-			AddGameObject(eLayerType::Light, light);
-			Light* lightComp = light->AddComponent<Light>();
+			mDirectionalLight = new GameObject();
+			mDirectionalLight->SetName(L"Light1");
+			AddGameObject(eLayerType::Light, mDirectionalLight);
+			Light* lightComp = mDirectionalLight->AddComponent<Light>();
 			lightComp->SetType(eLightType::Directional);
 			lightComp->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 		}
-
-		//{
-		//	GameObject* light = new GameObject();
-		//	light->SetName(L"Light2");
-		//	AddGameObject(eLayerType::Light, light);
-		//	Light* lightComp = light->AddComponent<Light>();
-		//	lightComp->SetType(eLightType::Point);
-		//	lightComp->SetColor(Vector4(0.5f, 0.5f, 1.0f, 1.0f));
-		//	lightComp->SetRadius(3.0f);
-		//}
+		{
+			mPointLight = new GameObject();
+			mPointLight->SetName(L"Light2");
+			AddGameObject(eLayerType::Light, mPointLight);
+			Light* lightComp = mPointLight->AddComponent<Light>();
+			Transform* tr = mPointLight->GetComponent<Transform>();
+			tr->SetPosition(Vector3(0.0f, 0.0f, tr->GetPosition().z));
+			lightComp->SetType(eLightType::Point);
+			lightComp->SetColor(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+			lightComp->SetRadius(0.0f);
+		}
 
 		// Main Camera
 		Camera* cameraComp = nullptr;
@@ -295,6 +305,13 @@ namespace ya
 			cameraComp->TurnLayerMask(eLayerType::Enemy, false);
 			//camera->AddComponent<CameraScript>();
 		}
+
+		{
+			mBgm = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			AudioSource* as = mBgm->AddComponent<AudioSource>();
+		}
 	}
 
 	void PlayScene::Update()
@@ -312,6 +329,13 @@ namespace ya
 			mRamonaDir = mRamona->GetComponent<RamonaScript>()->GetDirection();
 			mRamonaState = mRamona->GetComponent<RamonaScript>()->GetState();
 			mRamonaDead = mRamona->GetComponent<RamonaScript>()->IsDead();
+
+			if (mHeart != 1000)
+			{
+				mHeart = mRamona->GetComponent<RamonaScript>()->GetHeart();
+				mHp = mRamona->GetComponent<RamonaScript>()->GetHp();
+				mSp = mRamona->GetComponent<RamonaScript>()->GetSp();
+			}
 
 		/*	{
 				std::wstring str = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHeart());
@@ -348,9 +372,73 @@ namespace ya
 			}*/
 		}
 
+		if (mEnterLight == true)// 들어올 때
+		{
+			Light* directionallightComp = mDirectionalLight->GetComponent<Light>();
+
+			totalTimeEnter += Time::DeltaTime();
+			float speed = std::log(totalTimeEnter + 1) * mMaxValue / std::log(duration + 1);
+			mCurrentValue += speed * Time::DeltaTime();
+
+			if (mCurrentValue > mMaxValue)
+			{
+				mCurrentValue = mMaxValue;
+
+				directionallightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
+				
+				{
+					mHeart = mRamona->GetComponent<RamonaScript>()->GetHeart();
+					mHp = mRamona->GetComponent<RamonaScript>()->GetHp();
+					mSp = mRamona->GetComponent<RamonaScript>()->GetSp();
+				}
+
+				mEnterLight = false;
+			}
+
+			directionallightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
+		}
+		if (mExitLight == true)// 나갈 때
+		{
+			// 플레이어 체력 전달
+			if(mHeart != 1000)
+			{
+				Boss01Scene::mAttributeTmp[0] = mHeart;
+				Boss01Scene::mAttributeTmp[1] = mHp;
+				Boss01Scene::mAttributeTmp[2] = mSp;
+
+				mHp = 1000;
+				mSp = 1000;
+				mHeart = 1000;
+			}
+
+			Light* directionallightComp = mDirectionalLight->GetComponent<Light>();
+
+			totalTimeExit += Time::DeltaTime();
+			float speed = std::log(totalTimeExit + 1) * mCurrentValue / std::log(duration + 1);
+			mCurrentValue -= speed * Time::DeltaTime();
+
+			if (mCurrentValue <= mMinValue)
+			{
+				mCurrentValue = mMinValue;
+
+				directionallightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
+				
+				mExitLight = false;
+				SceneManager::LoadScene(L"Boss01Scene");
+			}
+
+			directionallightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
+		}
+
 		if (Input::GetKeyDown(eKeyCode::ENTER))
 		{
-			SceneManager::LoadScene(L"ShopScene");
+			mExitLight = true;
+
+			// 씬 넘어갈 때 틀 브금있다면, 여기에서
+			//AudioSource* as = mEnter->GetComponent<AudioSource>();
+			//as->SetClip(Resources::Load<AudioClip>(L"MAIN_ENTER", L"..\\Resources\\Sound\\MAIN\\MAIN_ENTER.mp3"));
+			//as->Play();
+			//as->SetVolume(50.0f);
 		}
 
 
@@ -382,11 +470,17 @@ namespace ya
 
 	void PlayScene::OnEnter()
 	{
+		mEnterLight = true;
 
+		AudioSource* as = mBgm->GetComponent<AudioSource>();
+		as->SetClip(Resources::Load<AudioClip>(L"STAGE01_BGM", L"..\\Resources\\Sound\\STAGE01\\STAGE01_BGM.mp3"));
+		as->Play();
+		//as->SetVolume(30.0f);
 	}
 
 	void PlayScene::OnExit()
 	{
-
+		AudioSource* as = mBgm->GetComponent<AudioSource>();
+		as->Stop();
 	}
 }

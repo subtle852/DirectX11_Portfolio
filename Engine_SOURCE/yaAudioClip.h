@@ -21,11 +21,13 @@ namespace ya
 		~AudioClip();
 
 		virtual HRESULT Load(const std::wstring& path) override;
-
+		
 		void Play();
 		void Stop();
 		void Set3DAttributes(const Vector3 pos, const Vector3 vel);
 		void SetLoop(bool loop) { mbLoop = loop; }
+		float GetVolume();
+		void SetVolume(float volume);
 
 	private:
 		FMOD::Sound* mSound;

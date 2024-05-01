@@ -24,6 +24,12 @@
 #include "yaLukeScript.h"
 #include "yaBoss01Script.h"
 
+#include "yaPlayScene.h"
+
+#include "yaAudioListener.h"
+#include "yaAudioClip.h"
+#include "yaAudioSource.h"
+
 #include "..\\Editor_Window\\yaDebugLog.h"
 
 namespace ya
@@ -33,6 +39,12 @@ namespace ya
 	eDirection Boss01Scene::mRamonaDir = eDirection::R;
 	ePlayerState Boss01Scene::mRamonaState = ePlayerState::R_Idle;
 	bool Boss01Scene::mRamonaDead = false;
+
+	int Boss01Scene::mHeart = 1000;
+	int Boss01Scene::mHp = 1000;
+	int Boss01Scene::mSp = 1000;
+
+	int Boss01Scene::mAttributeTmp[3] = {0, };
 
 
 	Boss01Scene::Boss01Scene()
@@ -130,12 +142,23 @@ namespace ya
 
 		// Light
 		{
-			GameObject* light = new GameObject();
-			light->SetName(L"Light1");
-			AddGameObject(eLayerType::Light, light);
-			Light* lightComp = light->AddComponent<Light>();
+			mDirectionalLight = new GameObject();
+			mDirectionalLight->SetName(L"Light1");
+			AddGameObject(eLayerType::Light, mDirectionalLight);
+			Light* lightComp = mDirectionalLight->AddComponent<Light>();
 			lightComp->SetType(eLightType::Directional);
 			lightComp->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+		}
+		{
+			mPointLight = new GameObject();
+			mPointLight->SetName(L"Light2");
+			AddGameObject(eLayerType::Light, mPointLight);
+			Light* lightComp = mPointLight->AddComponent<Light>();
+			Transform* tr = mPointLight->GetComponent<Transform>();
+			tr->SetPosition(Vector3(0.0f, 0.0f, tr->GetPosition().z));
+			lightComp->SetType(eLightType::Point);
+			lightComp->SetColor(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+			lightComp->SetRadius(1.0f);
 		}
 
 		//Main Camera
@@ -146,6 +169,8 @@ namespace ya
 		cameraComp->TurnLayerMask(eLayerType::UI, false);
 		camera->AddComponent<CameraScript>();
 
+		camera->AddComponent<AudioListener>();
+
 		// UI Camera
 		{
 			GameObject* camera = new GameObject();
@@ -155,6 +180,13 @@ namespace ya
 			Camera* cameraComp = camera->AddComponent<Camera>();
 			cameraComp->TurnLayerMask(eLayerType::BG, false);// Player를 안보이게 설정
 			//camera->AddComponent<CameraScript>();
+		}
+
+		{
+			mBgm = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			AudioSource* as = mBgm->AddComponent<AudioSource>();
 		}
 	}
 
@@ -171,12 +203,117 @@ namespace ya
 			mRamonaState = mRamona->GetComponent<RamonaScript>()->GetState();
 
 			mRamonaDead = mRamona->GetComponent<RamonaScript>()->IsDead();
+
+			if(Boss01Scene::mHeart != 1000)
+			{
+				// 서로 연동
+				Boss01Scene::mHeart = mRamona->GetComponent<RamonaScript>()->GetHeart();
+				Boss01Scene::mHp = mRamona->GetComponent<RamonaScript>()->GetHp();
+				Boss01Scene::mSp = mRamona->GetComponent<RamonaScript>()->GetSp();
+
+				PlayScene::mHeart = Boss01Scene::mHeart;
+				PlayScene::mHp = Boss01Scene::mHp;
+				PlayScene::mSp = Boss01Scene::mSp;
+			}
+		}
+
+		if (mEnterLight == true)// 들어올 때
+		{
+			Light* directionallightComp = mDirectionalLight->GetComponent<Light>();
+
+			totalTimeEnter += Time::DeltaTime();
+			float speed = std::log(totalTimeEnter + 1) * mMaxValue / std::log(duration + 1);
+			mCurrentValue += speed * Time::DeltaTime();
+
+			if (mCurrentValue > mMaxValue)
+			{
+				// 플레이어 체력 전달 받음
+				{
+					Boss01Scene::mHeart = mAttributeTmp[0];
+					Boss01Scene::mHp = mAttributeTmp[1];
+					Boss01Scene::mSp = mAttributeTmp[2];
+
+					mRamona->GetComponent<RamonaScript>()->SetHeart(Boss01Scene::mHeart);
+					mRamona->GetComponent<RamonaScript>()->SetHp(Boss01Scene::mHp);
+					mRamona->GetComponent<RamonaScript>()->SetSp(Boss01Scene::mSp);
+				}
+
+				mCurrentValue = mMaxValue;
+
+				directionallightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
+
+				mEnterLight = false;
+			}
+
+			directionallightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
+		}
+		if (mExitLight == true)// 나갈 때
+		{
+
+			Light* directionallightComp = mDirectionalLight->GetComponent<Light>();
+			Light* pointlightComp = mPointLight->GetComponent<Light>();
+
+			totalTimeExit += Time::DeltaTime();
+			float speed = std::log(totalTimeExit + 1) * mCurrentValue / std::log(duration + 1);
+			mCurrentValue -= speed * Time::DeltaTime();
+
+			if (mCurrentValue <= mMinValue)
+			{
+				mCurrentValue = mMinValue;
+
+				directionallightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
+				pointlightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
+
+				mExitLight = false;
+				SceneManager::LoadScene(L"EndingScene");
+			}
+
+			directionallightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
+			pointlightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
 		}
 
 		if (Input::GetKeyDown(eKeyCode::ENTER))
 		{
-			SceneManager::LoadScene(L"EndingScene");
+			mExitLight = false;
+
+			// 필요하면,
+			//AudioSource* as = mEnter->GetComponent<AudioSource>();
+			//as->SetClip(Resources::Load<AudioClip>(L"SELECT_CHAR_ENTER", L"..\\Resources\\Sound\\SELECT_CHAR\\SELECT_CHAR_ENTER.mp3"));
+			//as->Play();
+			//as->SetVolume(10.0f);
 		}
+
+		if (mBgmPhase == 0 && mBoss01->GetComponent<Boss01Script>()->GetPhase() == 2)
+		{
+			AudioSource* as = mBgm->GetComponent<AudioSource>();
+			as->Stop();
+
+			as->SetClip(Resources::Load<AudioClip>(L"BOSS01_BGM02", L"..\\Resources\\Sound\\BOSS01\\BOSS01_BGM02.mp3"));
+			as->Play();
+
+			mBgmPhase = 1;
+		}
+		if (mBgmPhase == 1 && mBoss01->GetComponent<Boss01Script>()->GetPhase() == 3)
+		{
+			AudioSource* as = mBgm->GetComponent<AudioSource>();
+			as->Stop();
+
+			as->SetClip(Resources::Load<AudioClip>(L"BOSS01_BGM01", L"..\\Resources\\Sound\\BOSS01\\BOSS01_BGM01.mp3"));
+			as->Play();
+
+			mBgmPhase = 2;
+		}
+		if (mBgmPhase == 2 && mBoss01->GetComponent<Boss01Script>()->GetPhase() == 4)
+		{
+			AudioSource* as = mBgm->GetComponent<AudioSource>();
+			as->Stop();
+
+			as->SetClip(Resources::Load<AudioClip>(L"BOSS01_BGM03", L"..\\Resources\\Sound\\BOSS01\\BOSS01_BGM03.mp3"));
+			as->Play();
+
+			mBgmPhase = 3;
+		}
+
 
 		Scene::Update();
 	}
@@ -193,11 +330,17 @@ namespace ya
 
 	void Boss01Scene::OnEnter()
 	{
+		mEnterLight = true;
 
+		AudioSource* as = mBgm->GetComponent<AudioSource>();
+		as->SetClip(Resources::Load<AudioClip>(L"BOSS01_BGM01", L"..\\Resources\\Sound\\BOSS01\\BOSS01_BGM01.mp3"));
+		as->Play();
+		//as->SetVolume(30.0f);
 	}
 
 	void Boss01Scene::OnExit()
 	{
-
+		AudioSource* as = mBgm->GetComponent<AudioSource>();
+		as->Stop();
 	}
 }

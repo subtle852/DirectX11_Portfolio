@@ -1,6 +1,8 @@
 #include "yaTime.h"
 #include "yaApplication.h"
 #include "yaFontWrapper.h"
+#include "..\\SEngine\\yaPlayScene.h"
+#include "..\\SEngine\\yaBoss01Scene.h"
 
 extern ya::Application application;
 
@@ -36,8 +38,6 @@ namespace ya
 	{
 		mSecond += mDeltaTime;
 
-		wchar_t szFloat[50] = L"BIN";
-		
 		if (mSecond > 1.0f)
 		{
 			HWND hWnd = application.GetHwnd();
@@ -52,6 +52,44 @@ namespace ya
 			mSecond = 0.0f;
 		}
 
-		FontWrapper::DrawFont(szFloat, 10.f, 30.f, 20, FONT_RGBA(255, 0, 255, 255));
+		if (PlayScene::mHeart != 1000)// 불가능한 초기값인 경우, 씬 생성 안된 경우
+		{
+			std::wstring str0 = std::to_wstring(PlayScene::mHeart);
+			std::wstring str1 = std::to_wstring(PlayScene::mHp);
+			std::wstring str2 = std::to_wstring(PlayScene::mSp);
+
+			wchar_t szFloat[50] = L"BIN";
+			wcscpy_s(szFloat, str0.c_str());
+
+			wchar_t szFloat2[50] = L"BIN2";
+			wcscpy_s(szFloat2, str1.c_str());
+
+			wchar_t szFloat3[50] = L"BIN3";
+			wcscpy_s(szFloat3, str2.c_str());
+
+			FontWrapper::DrawFont(szFloat, 170.f, 22.f, 90, FONT_RGBA(0, 255, 27, 255));
+			FontWrapper::DrawFont(szFloat2, 280.f, 15.f, 50, FONT_RGBA(255, 185, 27, 255));
+			FontWrapper::DrawFont(szFloat3, 310.f, 60.f, 50, FONT_RGBA(33, 155, 255, 255));
+		}
+
+		if (Boss01Scene::mHeart != 1000)// 불가능한 초기값인 경우, 씬 생성 안된 경우
+		{
+			std::wstring str0 = std::to_wstring(Boss01Scene::mHeart);
+			std::wstring str1 = std::to_wstring(Boss01Scene::mHp);
+			std::wstring str2 = std::to_wstring(Boss01Scene::mSp);
+
+			wchar_t szFloat[50] = L"BIN";
+			wcscpy_s(szFloat, str0.c_str());
+
+			wchar_t szFloat2[50] = L"BIN2";
+			wcscpy_s(szFloat2, str1.c_str());
+
+			wchar_t szFloat3[50] = L"BIN3";
+			wcscpy_s(szFloat3, str2.c_str());
+
+			FontWrapper::DrawFont(szFloat, 170.f, 22.f, 90, FONT_RGBA(0, 255, 27, 255));
+			FontWrapper::DrawFont(szFloat2, 280.f, 15.f, 50, FONT_RGBA(255, 185, 27, 255));
+			FontWrapper::DrawFont(szFloat3, 310.f, 60.f, 50, FONT_RGBA(33, 155, 255, 255));
+		}
 	}
 }

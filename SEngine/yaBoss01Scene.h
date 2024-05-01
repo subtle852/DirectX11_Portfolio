@@ -56,5 +56,26 @@ namespace ya
 		static bool mRamonaDead;
 
 		GameObject* mBoss01 = nullptr;
+
+		GameObject* mDirectionalLight = nullptr;
+		GameObject* mPointLight = nullptr;
+		bool mEnterLight = false;
+		bool mExitLight = false;
+		float mMaxValue = 1.0f;// 최대값
+		float mMinValue = 0.05f;// 최소값
+		float mCurrentValue = 0.0f;// 현재값
+		float totalTimeEnter = 0.0f;// Enter 누적 시간
+		float totalTimeExit = 0.0f;// Exit 누적 시간
+		float duration = 3.0f;// 전체 소요 시간 (초)
+
+		GameObject* mBgm;
+		unsigned int mBgmPhase = 0;
+
+	public:
+		static int mHeart;
+		static int mHp;
+		static int mSp;
+
+		static int mAttributeTmp[3];
 	};
 }

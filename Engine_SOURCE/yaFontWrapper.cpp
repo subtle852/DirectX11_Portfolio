@@ -12,7 +12,7 @@ namespace ya
 			return false;
 
 		ID3D11Device* pDevice = graphics::GetDevice()->GetID3D11Device();
-		if (FAILED(mFW1Factory->CreateFontWrapper(pDevice, L"Arial", &mFontWrapper)))
+		if (FAILED(mFW1Factory->CreateFontWrapper(pDevice, L"TimesNewRoman", &mFontWrapper)))
 			return false;
 
 		return true;

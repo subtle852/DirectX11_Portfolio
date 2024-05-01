@@ -99,7 +99,7 @@ namespace ya
 
 	private:
 		// 속성
-		int mHp = 20;
+		int mHp = 40;
 
 		// 주요 상태
 		eMinionState mCurState = eMinionState::R_Idle;

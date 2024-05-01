@@ -97,6 +97,7 @@ namespace ya
 
 		// private 변수관련 함수
 		int GetHp() { return mHp; }
+		unsigned int GetPhase() { return mPhase; }
 		eDirection GetDirection() { return mDirection; }
 		void SetDirection(eDirection dir) { mDirection = dir; }
 		eBoss01State GetState() { return mCurState; }
@@ -138,6 +139,9 @@ namespace ya
 		void DownedComplete();
 		void GetUpComplete();
 		void DisAppearComplete();
+
+		void AttackStart();
+		void DamageStart();
 
 		// 감지 함수 
 		bool IsPlayerInDetectionRange()// 플레이어 인식 감지 함수: 대기 상태로 돌입 조건
@@ -367,6 +371,11 @@ namespace ya
 		float mFlashingCurTime = 0.0f;
 		float mFlashingMaxTime = 0.0f;
 		float mFlashingTickTime = 0.0f;
+
+		// 사운드
+		GameObject* mPunch01Sound = nullptr;
+		GameObject* mPunch02Sound = nullptr;
+		GameObject* mSwing01Sound = nullptr;
 
 		// 플레이어 공격 스킬 상태를 담고 있는 bool 배열
 		std::vector<bool> mPlayerAttackState;

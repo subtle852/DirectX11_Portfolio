@@ -14,6 +14,10 @@
 #include "yaMeshRenderer.h"
 #include "..\\Editor_Window\\yaDebugLog.h"
 
+#include "yaAudioListener.h"
+#include "yaAudioClip.h"
+#include "yaAudioSource.h"
+
 namespace ya
 {
 	LukeScript::LukeScript()
@@ -150,6 +154,14 @@ namespace ya
 
 		at = GetOwner()->GetComponent<Animator>();
 
+		at->StartEvent(L"L_Attacked1") = std::bind(&LukeScript::AttackedStart, this);
+		at->StartEvent(L"R_Attacked1") = std::bind(&LukeScript::AttackedStart, this);
+		at->StartEvent(L"L_Attacked2") = std::bind(&LukeScript::AttackedStart, this);
+		at->StartEvent(L"R_Attacked2") = std::bind(&LukeScript::AttackedStart, this);
+		at->StartEvent(L"L_Attacked3") = std::bind(&LukeScript::AttackedStart, this);
+		at->StartEvent(L"R_Attacked3") = std::bind(&LukeScript::AttackedStart, this);
+		at->StartEvent(L"L_Attacked4") = std::bind(&LukeScript::AttackedStart, this);
+		at->StartEvent(L"R_Attacked4") = std::bind(&LukeScript::AttackedStart, this);
 		at->CompleteEvent(L"L_Attacked1") = std::bind(&LukeScript::Attacked1Complete, this);
 		at->CompleteEvent(L"R_Attacked1") = std::bind(&LukeScript::Attacked1Complete, this);
 		at->CompleteEvent(L"L_Attacked2") = std::bind(&LukeScript::Attacked1Complete, this);
@@ -164,6 +176,14 @@ namespace ya
 		at->CompleteEvent(L"L_Attacked4") = std::bind(&LukeScript::Attacked4Complete, this);
 		at->CompleteEvent(L"R_Attacked4") = std::bind(&LukeScript::Attacked4Complete, this);
 
+		at->StartEvent(L"L_ArmAttack") = std::bind(&LukeScript::AttackStart, this);
+		at->StartEvent(L"R_ArmAttack") = std::bind(&LukeScript::AttackStart, this);
+		at->StartEvent(L"L_KickAttack") = std::bind(&LukeScript::AttackStart, this);
+		at->StartEvent(L"R_KickAttack") = std::bind(&LukeScript::AttackStart, this);
+		at->StartEvent(L"L_SideKickAttack") = std::bind(&LukeScript::AttackStart, this);
+		at->StartEvent(L"R_SideKickAttack") = std::bind(&LukeScript::AttackStart, this);
+		at->StartEvent(L"L_UpperAttack") = std::bind(&LukeScript::AttackStart, this);
+		at->StartEvent(L"R_UpperAttack") = std::bind(&LukeScript::AttackStart, this);
 		at->CompleteEvent(L"L_ArmAttack") = std::bind(&LukeScript::CombatComplete, this);
 		at->CompleteEvent(L"R_ArmAttack") = std::bind(&LukeScript::CombatComplete, this);
 		at->CompleteEvent(L"L_KickAttack") = std::bind(&LukeScript::CombatComplete, this);
@@ -221,6 +241,24 @@ namespace ya
 
 		#pragma endregion
 
+
+		// »ç¿îµå
+		{
+			mPunch01Sound = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			AudioSource* as = mPunch01Sound->AddComponent<AudioSource>();
+
+			mPunch02Sound = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			as = mPunch02Sound->AddComponent<AudioSource>();
+
+			mSwing01Sound = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			as = mSwing01Sound->AddComponent<AudioSource>();
+		}
 	}
 
 	void LukeScript::Update()
@@ -1191,6 +1229,44 @@ namespace ya
 			ChangeState(eLukeState::L_Idle);
 		else
 			ChangeState(eLukeState::R_Idle);
+	}
+	void LukeScript::AttackedStart()
+	{
+		if (mIsDowned == true)
+		{
+			AudioSource* as = mPunch01Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"punch01", L"..\\Resources\\Sound\\BATTLE\\punch01.mp3"));
+			as->Play();
+		}
+		else if (mPlayerAttackState[0] || mPlayerAttackState[1] || mPlayerAttackState[2] || mPlayerAttackState[4] || mPlayerAttackState[5])
+		{
+			AudioSource* as = mPunch01Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"punch01", L"..\\Resources\\Sound\\BATTLE\\punch01.mp3"));
+			as->Play();
+		}
+
+		else if (mPlayerAttackState[3] || mPlayerAttackState[6] || mPlayerAttackState[8] || mPlayerAttackState[9] || mPlayerAttackState[12] || mPlayerAttackState[13])
+		{
+			AudioSource* as = mPunch01Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"punch01", L"..\\Resources\\Sound\\BATTLE\\punch01.mp3"));
+			as->Play();
+		}
+
+		else if (mPlayerAttackState[10] || mPlayerAttackState[11] || mPlayerAttackState[14] || mPlayerAttackState[15] || mPlayerAttackState[16] || mPlayerAttackState[17])
+		{
+			AudioSource* as = mPunch02Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"punch02", L"..\\Resources\\Sound\\BATTLE\\punch02.mp3"));
+			as->Play();
+		}
+
+	}
+	void LukeScript::AttackStart()
+	{
+		{
+			AudioSource* as = mSwing01Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"swing01", L"..\\Resources\\Sound\\BATTLE\\swing01.mp3"));
+			as->Play();
+		}
 	}
 	#pragma endregion
 
