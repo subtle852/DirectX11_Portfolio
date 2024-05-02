@@ -67,7 +67,7 @@ namespace ya
 			std::shared_ptr<Texture> texture
 				= Resources::Load<Texture>(L"BG_STAGE01_01", L"..\\Resources\\SCENE\\STAGE01\\BG_STAGE01_01.png");
 
-			mBG_STAGE01_01 = object::Instantiate<GameObject>(Vector3(0.0f, -0.34f, 50.0f)
+			mBG_STAGE01_01 = object::Instantiate<GameObject>(Vector3(-16.0f, -0.34f, 50.0f)
 				, Vector3(texture.get()->GetImageRatioOfWidth(), texture.get()->GetImageRatioOfHeight(), 0.0f) * 272.0f
 				, eLayerType::BG);// Player로 설정
 			mBG_STAGE01_01->SetName(L"BG_STAGE01_01");
@@ -220,6 +220,190 @@ namespace ya
 
 			mLuke03->AddComponent<LukeScript>();
 		}
+		{
+			mLuke04
+				= object::Instantiate<GameObject>(Vector3(8.2f, 0.39f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mLuke04->SetName(L"Luke04");
+
+			MeshRenderer* mr = mLuke04->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle04", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke04->AddComponent<Animator>();
+			at->Create(L"Luke_temp04", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp04", true);
+
+			Rigidbody* rb = mLuke04->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mLuke04->AddComponent<LukeScript>();
+		}
+		{
+			mLuke05
+				= object::Instantiate<GameObject>(Vector3(9.2f, -0.07f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mLuke05->SetName(L"Luke05");
+
+			MeshRenderer* mr = mLuke05->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle05", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke05->AddComponent<Animator>();
+			at->Create(L"Luke_temp05", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp05", true);
+
+			Rigidbody* rb = mLuke05->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mLuke05->AddComponent<LukeScript>();
+		}
+		{
+			mLuke06
+				= object::Instantiate<GameObject>(Vector3(9.0f, -1.225f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mLuke06->SetName(L"Luke06");
+
+			MeshRenderer* mr = mLuke06->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle06", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke06->AddComponent<Animator>();
+			at->Create(L"Luke_temp06", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp06", true);
+
+			Rigidbody* rb = mLuke06->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mLuke06->AddComponent<LukeScript>();
+		}
+		{
+			mLuke07
+				= object::Instantiate<GameObject>(Vector3(13.87f, -0.05f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mLuke07->SetName(L"Luke07");
+
+			MeshRenderer* mr = mLuke07->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle07", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke07->AddComponent<Animator>();
+			at->Create(L"Luke_temp07", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp07", true);
+
+			Rigidbody* rb = mLuke07->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mLuke07->AddComponent<LukeScript>();
+		}
+		{
+			mLuke08
+				= object::Instantiate<GameObject>(Vector3(13.84f, -1.22f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mLuke08->SetName(L"Luke08");
+
+			MeshRenderer* mr = mLuke08->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle08", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke08->AddComponent<Animator>();
+			at->Create(L"Luke_temp08", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp08", true);
+
+			Rigidbody* rb = mLuke08->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mLuke08->AddComponent<LukeScript>();
+		}
+		{
+			mLuke09
+				= object::Instantiate<GameObject>(Vector3(26.58f, -1.12f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mLuke09->SetName(L"Luke09");
+
+			MeshRenderer* mr = mLuke09->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle09", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke09->AddComponent<Animator>();
+			at->Create(L"Luke_temp09", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp09", true);
+
+			Rigidbody* rb = mLuke09->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mLuke09->AddComponent<LukeScript>();
+		}
+		{
+			mLuke10
+				= object::Instantiate<GameObject>(Vector3(30.85f, -1.02f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mLuke10->SetName(L"Luke10");
+
+			MeshRenderer* mr = mLuke10->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle10", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke10->AddComponent<Animator>();
+			at->Create(L"Luke_temp10", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp10", true);
+
+			Rigidbody* rb = mLuke10->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mLuke10->AddComponent<LukeScript>();
+		}
+		{
+			mLuke11
+				= object::Instantiate<GameObject>(Vector3(33.03f, -1.26f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mLuke11->SetName(L"Luke11");
+
+			MeshRenderer* mr = mLuke11->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle11", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mLuke11->AddComponent<Animator>();
+			at->Create(L"Luke_temp11", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp11", true);
+
+			Rigidbody* rb = mLuke11->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mLuke11->AddComponent<LukeScript>();
+		}
 
 
 		//{
@@ -253,7 +437,8 @@ namespace ya
 			AddGameObject(eLayerType::Light, mDirectionalLight);
 			Light* lightComp = mDirectionalLight->AddComponent<Light>();
 			lightComp->SetType(eLightType::Directional);
-			lightComp->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			//lightComp->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			lightComp->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 		}
 		{
 			mPointLight = new GameObject();
@@ -271,14 +456,14 @@ namespace ya
 		Camera* cameraComp = nullptr;
 
 		{
-			GameObject* camera = new GameObject();
-			camera->SetName(L"MainCamera");
-			AddGameObject(eLayerType::Camera, camera);
-			camera->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
-			cameraComp = camera->AddComponent<Camera>();
+			mMainCamera = new GameObject();
+			mMainCamera->SetName(L"MainCamera");
+			AddGameObject(eLayerType::Camera, mMainCamera);
+			mMainCamera->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
+			cameraComp = mMainCamera->AddComponent<Camera>();
 			cameraComp->TurnLayerMask(eLayerType::UI, false);
-			camera->AddComponent<CameraScript>();
-			CameraScript* cameraScript = camera->GetComponent<CameraScript>();
+			mMainCamera->AddComponent<CameraScript>();
+			CameraScript* cameraScript = mMainCamera->GetComponent<CameraScript>();
 			//cameraScript->SetCameraSetting(eCameraSetting::Static);
 			//cameraScript->SetCameraSetting(eCameraSetting::Tracking, GetPlayerPosition());
 			//cameraScript->SetCameraSetting(eCameraSetting::SmoothingTransition, Vector3(2.0f, -1.2f, 40.f), 1.0f);
@@ -290,7 +475,7 @@ namespace ya
 			renderer::cameras.push_back(cameraComp);// Main Camera 렌더러에 추가
 			renderer::mainCamera = cameraComp;
 
-			camera->AddComponent<AudioListener>();
+			mMainCamera->AddComponent<AudioListener>();
 		}
 
 		// UI Camera
@@ -311,6 +496,12 @@ namespace ya
 				, Vector3::One
 				, eLayerType::UI);
 			AudioSource* as = mBgm->AddComponent<AudioSource>();
+		}
+		{
+			mExitSound = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			AudioSource* as = mExitSound->AddComponent<AudioSource>();
 		}
 	}
 
@@ -337,39 +528,129 @@ namespace ya
 				mSp = mRamona->GetComponent<RamonaScript>()->GetSp();
 			}
 
-		/*	{
-				std::wstring str = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHeart());
-				std::wstring str1 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetHp());
-				std::wstring str2 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetSp());
-				std::wstring str3 = std::to_wstring(mRamona->GetComponent<RamonaScript>()->GetCoin());
-				std::wstring str4;
-				std::wstring str5;
-				std::wstring str6;
-				std::wstring str7;
-				if (mLuke01 != nullptr)
+			{
+				std::wstring str = std::to_wstring(mRamona->GetComponent<Transform>()->GetPosition().x);
+				std::wstring str1 = std::to_wstring(mRamona->GetComponent<Transform>()->GetPosition().y);
+				//if (mLuke01 != nullptr)
+				//{
+				//	if (mLuke01->GetState() == GameObject::eState::Active)
+				//		str4 = std::to_wstring(mLuke01->GetComponent<LukeScript>()->GetHp());
+				//}
+				//if (mLuke02 != nullptr)
+				//{
+				//	if (mLuke02->GetState() == GameObject::eState::Active)
+				//		str5 = std::to_wstring(mLuke02->GetComponent<LukeScript>()->GetHp());
+				//}
+				//if (mLuke03 != nullptr)
+				//{
+				//	if (mLuke03->GetState() == GameObject::eState::Active)
+				//		str6 = std::to_wstring(mLuke03->GetComponent<LukeScript>()->GetHp());
+				//}
+
+				ya::DebugLog::PrintDebugLog(L"x: " + str + L" y: " + str1);
+			}
+			{
+				if (mPhase == 0 && GetPlayerPosition().x >= 2.5f)
 				{
-					if (mLuke01->GetState() == GameObject::eState::Active)
-						str4 = std::to_wstring(mLuke01->GetComponent<LukeScript>()->GetHp());
-				}
-				if (mLuke02 != nullptr)
-				{
-					if (mLuke02->GetState() == GameObject::eState::Active)
-						str5 = std::to_wstring(mLuke02->GetComponent<LukeScript>()->GetHp());
-				}
-				if (mLuke03 != nullptr)
-				{
-					if (mLuke03->GetState() == GameObject::eState::Active)
-						str6 = std::to_wstring(mLuke03->GetComponent<LukeScript>()->GetHp());
-				}
-				if (mBoss01 != nullptr)
-				{
-					if (mBoss01->GetState() == GameObject::eState::Active)
-						str7 = std::to_wstring(mBoss01->GetComponent<Boss01Script>()->GetHp());
+					//cameraScript->SetCameraSetting(eCameraSetting::Static);
+					//cameraScript->SetCameraSetting(eCameraSetting::Tracking, GetPlayerPosition());
+					mMainCamera->GetComponent<CameraScript>()->SetCameraSetting(eCameraSetting::SmoothingTransition
+						, Vector3(GetPlayerPosition().x, 0.0, 40.f), 7.0f);
+
+					if (abs(mMainCamera->GetComponent<Transform>()->GetPosition().x
+						- GetPlayerPosition().x) <= 0.01f)
+					{
+						mMainCamera->GetComponent<CameraScript>()->SetCameraSetting(eCameraSetting::Tracking, GetPlayerPosition());
+
+						mPhase = 1;
+					}
+					//cameraScript->SetCameraSetting(eCameraSetting::ShakeVertical, 5.0f, 20.0f, 0.1f);
+					//cameraScript->SetCameraSetting(eCameraSetting::ShakeHorizontal, 5.0f, 20.0f, 0.1f);
+					//cameraScript->SetCameraSetting(eCameraSetting::ShakeZoom, 5.0f, 0.1f, 5.0f);
+					//cameraScript->SetCameraSetting(eCameraSetting::ShakeCircle, 5.0f, 15.0f, 0.3f);
 				}
 
-				ya::DebugLog::PrintDebugLog(L"Heart: " + str + L" Hp: " + str1 + L" Sp: " + str2 + L" Coin: " + str3
-					+ L" || Enemy01Hp: " + str4 + L" || Enemy02Hp: " + str5 + L" || Enemy03Hp: " + str6 + L" || Boss01Hp: " + str7);
-			}*/
+				// 본인 등장하는 페이즈가 아닌 경우는 Paused 걸어두거나
+				// Script에서 플레이어와 x축 거리가 일정 간격 이하가 되면 Update 돌기(?)
+
+				if (mPhase == 1 && GetPlayerPosition().x >= 7.2f)
+				{
+					mMainCamera->GetComponent<CameraScript>()->SetCameraSetting(eCameraSetting::Static);
+					mPhase = 2;
+				}
+
+				if (mPhase == 2 && GetPlayerPosition().x >= 9.69f)
+				{
+					mMainCamera->GetComponent<CameraScript>()->SetCameraSetting(eCameraSetting::SmoothingTransition
+						, Vector3(14.0f, 0.0, 40.f), 7.0f);
+
+					if (mMainCamera->GetComponent<Transform>()->GetPosition().x >= 12.0f)
+					{
+						mMainCamera->GetComponent<CameraScript>()->SetCameraSetting(eCameraSetting::Static);
+
+						mPhase = 3;
+					}
+				}
+
+				if (mPhase == 3 && GetPlayerPosition().x >= 14.5f)
+				{
+					mMainCamera->GetComponent<CameraScript>()->SetCameraSetting(eCameraSetting::SmoothingTransition
+						, Vector3(GetPlayerPosition().x, 0.0, 40.f), 7.0f);
+
+					if (abs(mMainCamera->GetComponent<Transform>()->GetPosition().x
+						- GetPlayerPosition().x) <= 0.01f)
+					{
+						mPhase = 4;
+					}
+				}
+
+				if (mPhase == 4) 
+				{
+					mMainCamera->GetComponent<CameraScript>()->SetCameraSetting(eCameraSetting::Tracking, GetPlayerPosition());
+
+					if (GetPlayerPosition().x > 38.0f)
+					{
+						mMainCamera->GetComponent<CameraScript>()->SetCameraSetting(eCameraSetting::SmoothingTransition
+							, Vector3(48.0f, 0.0, 40.f), 7.0f);
+
+						if (mMainCamera->GetComponent<Transform>()->GetPosition().x >= 48.0f)
+						{
+							mPhase = 5;
+						}
+					}
+				}
+
+				if (mPhase == 5)
+				{
+					mPhase05Time -= Time::DeltaTime();
+					if (mPhase05Time <= 0.0f)
+					{
+						mMainCamera->GetComponent<CameraScript>()->SetCameraSetting(eCameraSetting::SmoothingTransition
+							, Vector3(GetPlayerPosition().x, 0.0, 40.f), 12.0f);
+
+						if (abs(mMainCamera->GetComponent<Transform>()->GetPosition().x
+							- GetPlayerPosition().x) <= 0.01f)
+						{
+							mPhase = 6;
+						}
+					}
+				}
+
+				if (mPhase == 6)
+				{
+					mMainCamera->GetComponent<CameraScript>()->SetCameraSetting(eCameraSetting::Tracking, GetPlayerPosition());
+
+					if (GetPlayerPosition().x >= 48.0f)
+					{
+						mPhase = 7;
+					}
+				}
+
+				if (mPhase == 7)
+				{
+					mMainCamera->GetComponent<CameraScript>()->SetCameraSetting(eCameraSetting::Static);
+				}
+			}
 		}
 
 		if (mEnterLight == true)// 들어올 때
@@ -424,7 +705,12 @@ namespace ya
 				directionallightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
 				
 				mExitLight = false;
-				SceneManager::LoadScene(L"Boss01Scene");
+
+				if (mRamonaDead == true)
+					SceneManager::LoadScene(L"MainScene");
+
+				else
+					SceneManager::LoadScene(L"Boss01Scene");
 			}
 
 			directionallightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
@@ -434,11 +720,28 @@ namespace ya
 		{
 			mExitLight = true;
 
-			// 씬 넘어갈 때 틀 브금있다면, 여기에서
-			//AudioSource* as = mEnter->GetComponent<AudioSource>();
-			//as->SetClip(Resources::Load<AudioClip>(L"MAIN_ENTER", L"..\\Resources\\Sound\\MAIN\\MAIN_ENTER.mp3"));
-			//as->Play();
-			//as->SetVolume(50.0f);
+			mBG_STAGE01_01->GetComponent<Transform>()->SetPosition(Vector3(-64.0f, 0.0f, 40.f));
+			mRamona->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, 40.f));
+			mMainCamera->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, -10.f));
+
+			if (mRamonaDead == true)
+			{
+				AudioSource* as = mBgm->GetComponent<AudioSource>();
+				as->Stop();
+
+				as = mExitSound->GetComponent<AudioSource>();
+				as->SetClip(Resources::Load<AudioClip>(L"STAGE01_LOSE", L"..\\Resources\\Sound\\STAGE01\\STAGE01_LOSE.mp3"));
+				as->Play();
+				//as->SetVolume(50.0f);
+			}
+			else
+			{
+				// 씬 넘어갈 때 틀 사운드
+				AudioSource* as = mExitSound->GetComponent<AudioSource>();
+				as->SetClip(Resources::Load<AudioClip>(L"STAGE01_EXIT", L"..\\Resources\\Sound\\STAGE01\\STAGE01_EXIT.mp3"));
+				as->Play();
+				//as->SetVolume(50.0f);
+			}
 		}
 
 

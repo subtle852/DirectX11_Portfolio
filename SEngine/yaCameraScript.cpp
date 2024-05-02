@@ -87,6 +87,21 @@ namespace ya
 			default:
 				break;
 		}
+
+		if (mCameraSetting != eCameraSetting::Static)
+		{
+			mUpperCd->SetActivation(eColliderActivation::InActive);
+			mLowerCd->SetActivation(eColliderActivation::InActive);
+			mLeftCd->SetActivation(eColliderActivation::InActive);
+			mRightCd->SetActivation(eColliderActivation::InActive);
+		}
+		else
+		{
+			mUpperCd->SetActivation(eColliderActivation::Active);
+			mLowerCd->SetActivation(eColliderActivation::Active);
+			mLeftCd->SetActivation(eColliderActivation::Active);
+			mRightCd->SetActivation(eColliderActivation::Active);
+		}
 	}
 
 	void CameraScript::OnCollisionEnter(Collider2D* other)
@@ -343,7 +358,7 @@ namespace ya
 		Transform* tr = GetOwner()->GetComponent<Transform>();
 		Vector3 pos = tr->GetPosition();
 		pos.x = targetPos.x;
-		pos.y = targetPos.y;
+		//pos.y = targetPos.y;
 
 		tr->SetPosition(pos);
 	}

@@ -161,32 +161,39 @@ namespace ya
 			lightComp->SetRadius(1.0f);
 		}
 
-		//Main Camera
-		GameObject* camera = new GameObject();
-		AddGameObject(eLayerType::Player, camera);
-		camera->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
-		Camera* cameraComp = camera->AddComponent<Camera>();
-		cameraComp->TurnLayerMask(eLayerType::UI, false);
-		camera->AddComponent<CameraScript>();
+		// OnEnter에서 생성
+		////Main Camera
+		//GameObject* camera = new GameObject();
+		//AddGameObject(eLayerType::Player, camera);
+		//camera->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
+		//Camera* cameraComp = camera->AddComponent<Camera>();
+		//cameraComp->TurnLayerMask(eLayerType::UI, false);
+		//camera->AddComponent<CameraScript>();
 
-		camera->AddComponent<AudioListener>();
+		//camera->AddComponent<AudioListener>();
 
-		// UI Camera
-		{
-			GameObject* camera = new GameObject();
-			camera->SetName(L"UICamera");
-			AddGameObject(eLayerType::Player, camera);
-			camera->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
-			Camera* cameraComp = camera->AddComponent<Camera>();
-			cameraComp->TurnLayerMask(eLayerType::BG, false);// Player를 안보이게 설정
-			//camera->AddComponent<CameraScript>();
-		}
+		//// UI Camera
+		//{
+		//	GameObject* camera = new GameObject();
+		//	camera->SetName(L"UICamera");
+		//	AddGameObject(eLayerType::Player, camera);
+		//	camera->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
+		//	Camera* cameraComp = camera->AddComponent<Camera>();
+		//	cameraComp->TurnLayerMask(eLayerType::BG, false);// Player를 안보이게 설정
+		//	//camera->AddComponent<CameraScript>();
+		//}
 
 		{
 			mBgm = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
 				, Vector3::One
 				, eLayerType::UI);
 			AudioSource* as = mBgm->AddComponent<AudioSource>();
+		}
+		{
+			mExitSound = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			AudioSource* as = mExitSound->AddComponent<AudioSource>();
 		}
 	}
 
@@ -251,7 +258,7 @@ namespace ya
 		{
 
 			Light* directionallightComp = mDirectionalLight->GetComponent<Light>();
-			Light* pointlightComp = mPointLight->GetComponent<Light>();
+			//Light* pointlightComp = mPointLight->GetComponent<Light>();
 
 			totalTimeExit += Time::DeltaTime();
 			float speed = std::log(totalTimeExit + 1) * mCurrentValue / std::log(duration + 1);
@@ -262,25 +269,54 @@ namespace ya
 				mCurrentValue = mMinValue;
 
 				directionallightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
-				pointlightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
+				//pointlightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
 
 				mExitLight = false;
-				SceneManager::LoadScene(L"EndingScene");
+
+				if (mRamonaDead == true)
+					SceneManager::LoadScene(L"MainScene");
+
+				else
+					SceneManager::LoadScene(L"EndingScene");
 			}
 
 			directionallightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
-			pointlightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
+			//pointlightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
 		}
 
 		if (Input::GetKeyDown(eKeyCode::ENTER))
 		{
-			mExitLight = false;
+			mExitLight = true;
 
-			// 필요하면,
-			//AudioSource* as = mEnter->GetComponent<AudioSource>();
-			//as->SetClip(Resources::Load<AudioClip>(L"SELECT_CHAR_ENTER", L"..\\Resources\\Sound\\SELECT_CHAR\\SELECT_CHAR_ENTER.mp3"));
-			//as->Play();
-			//as->SetVolume(10.0f);
+			Boss01Scene::mHeart = 1000;
+			Boss01Scene::mHp = 1000;
+			Boss01Scene::mSp = 1000;
+
+			PlayScene::mHeart = 1000;
+			PlayScene::mHp = 1000;
+			PlayScene::mSp = 1000;
+
+			if (mRamonaDead == true)
+			{
+				AudioSource* as = mBgm->GetComponent<AudioSource>();
+				as->Stop();
+
+				as = mExitSound->GetComponent<AudioSource>();
+				as->SetClip(Resources::Load<AudioClip>(L"BOSS01_LOSE", L"..\\Resources\\Sound\\BOSS01\\BOSS01_LOSE.mp3"));
+				as->Play();
+				//as->SetVolume(50.0f);
+			}
+			else
+			{
+				AudioSource* as = mBgm->GetComponent<AudioSource>();
+				as->Stop();
+
+				// 씬 넘어갈 때 틀 사운드
+				as = mExitSound->GetComponent<AudioSource>();
+				as->SetClip(Resources::Load<AudioClip>(L"BOSS01_WIN", L"..\\Resources\\Sound\\BOSS01\\BOSS01_WIN.mp3"));
+				as->Play();
+				//as->SetVolume(50.0f);
+			}
 		}
 
 		if (mBgmPhase == 0 && mBoss01->GetComponent<Boss01Script>()->GetPhase() == 2)
@@ -290,6 +326,8 @@ namespace ya
 
 			as->SetClip(Resources::Load<AudioClip>(L"BOSS01_BGM02", L"..\\Resources\\Sound\\BOSS01\\BOSS01_BGM02.mp3"));
 			as->Play();
+
+			mMainCamera->GetComponent<CameraScript>()->SetCameraSetting(eCameraSetting::ShakeHorizontal, 5.0f, 20.0f, 0.1f);
 
 			mBgmPhase = 1;
 		}
@@ -301,6 +339,8 @@ namespace ya
 			as->SetClip(Resources::Load<AudioClip>(L"BOSS01_BGM01", L"..\\Resources\\Sound\\BOSS01\\BOSS01_BGM01.mp3"));
 			as->Play();
 
+			mBoss01->GetComponent<Boss01Script>()->SetEffectFlashing(0.2f, 10.0f, Vector4(1.2f, 0.0f, 0.0f, 0.0f));// 덜 RED
+
 			mBgmPhase = 2;
 		}
 		if (mBgmPhase == 2 && mBoss01->GetComponent<Boss01Script>()->GetPhase() == 4)
@@ -310,6 +350,10 @@ namespace ya
 
 			as->SetClip(Resources::Load<AudioClip>(L"BOSS01_BGM03", L"..\\Resources\\Sound\\BOSS01\\BOSS01_BGM03.mp3"));
 			as->Play();
+
+			mMainCamera->GetComponent<CameraScript>()->SetCameraSetting(eCameraSetting::ShakeVertical, 5.0f, 20.0f, 0.1f);
+
+			mBoss01->GetComponent<Boss01Script>()->SetEffectFlashing(0.1f, 10.0f, Vector4(4.0f, 0.0f, 0.0f, 0.0f));// 더 RED
 
 			mBgmPhase = 3;
 		}
@@ -331,6 +375,27 @@ namespace ya
 	void Boss01Scene::OnEnter()
 	{
 		mEnterLight = true;
+
+		//Main Camera
+		mMainCamera = new GameObject();
+		AddGameObject(eLayerType::Player, mMainCamera);
+		mMainCamera->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
+		Camera* cameraComp = mMainCamera->AddComponent<Camera>();
+		cameraComp->TurnLayerMask(eLayerType::UI, false);
+		mMainCamera->AddComponent<CameraScript>();
+
+		mMainCamera->AddComponent<AudioListener>();
+
+		// UI Camera
+		{
+			GameObject* camera = new GameObject();
+			camera->SetName(L"UICamera");
+			AddGameObject(eLayerType::Player, camera);
+			camera->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
+			Camera* cameraComp = camera->AddComponent<Camera>();
+			cameraComp->TurnLayerMask(eLayerType::BG, false);// Player를 안보이게 설정
+			//camera->AddComponent<CameraScript>();
+		}
 
 		AudioSource* as = mBgm->GetComponent<AudioSource>();
 		as->SetClip(Resources::Load<AudioClip>(L"BOSS01_BGM01", L"..\\Resources\\Sound\\BOSS01\\BOSS01_BGM01.mp3"));

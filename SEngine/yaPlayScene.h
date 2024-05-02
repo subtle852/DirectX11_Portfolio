@@ -61,14 +61,31 @@ namespace ya
 		GameObject* mLuke02 = nullptr;
 		GameObject* mLuke03 = nullptr;
 
+		GameObject* mLuke04 = nullptr;
+		GameObject* mLuke05 = nullptr;
+		GameObject* mLuke06 = nullptr;
+
+		GameObject* mLuke07 = nullptr;
+		GameObject* mLuke08 = nullptr;
+		
+		GameObject* mLuke09 = nullptr;
+		GameObject* mLuke10 = nullptr;
+		GameObject* mLuke11 = nullptr;
+
+		GameObject* mMainCamera = nullptr;
+
 		//GameObject* mBoss01 = nullptr;
 
+		unsigned int mPhase = 0;
+
+		float mPhase05Time = 3.0f;
 
 		// static Vector3 mTargetPos;
 		// 일반적인 상황에서는 플레이어
 		// 특정 상황에서는 변경
 
 		GameObject* mBgm;
+		GameObject* mExitSound;
 
 		GameObject* mDirectionalLight = nullptr;
 		GameObject* mPointLight = nullptr;

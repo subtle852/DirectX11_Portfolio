@@ -13,6 +13,10 @@
 #include "yaTime.h"
 #include "yaLight.h"
 
+#include "yaAudioListener.h"
+#include "yaAudioClip.h"
+#include "yaAudioSource.h"
+
 namespace ya
 {
 	EndingScene::EndingScene()
@@ -54,10 +58,24 @@ namespace ya
 		camera->GetComponent<Transform>()->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
 		Camera* cameraComp = camera->AddComponent<Camera>();
 		camera->AddComponent<CameraScript>();
+
+		camera->AddComponent<AudioListener>();
+
+		{
+			mBgm = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 50.f)
+				, Vector3::One
+				, eLayerType::UI);
+			AudioSource* as = mBgm->AddComponent<AudioSource>();
+		}
 	}
 
 	void EndingScene::Update()
 	{
+		Transform* tr = mBG_ENDING->GetComponent<Transform>();
+		Vector3 pos = tr->GetPosition();
+		pos.y += 0.5f * Time::DeltaTime();
+		tr->SetPosition(pos);
+
 		Scene::Update();
 	}
 
@@ -73,11 +91,14 @@ namespace ya
 
 	void EndingScene::OnEnter()
 	{
-
+		AudioSource* as = mBgm->GetComponent<AudioSource>();
+		as->SetClip(Resources::Load<AudioClip>(L"ENDING", L"..\\Resources\\Sound\\ENDING\\ENDING.mp3"));
+		as->Play();
 	}
 
 	void EndingScene::OnExit()
 	{
-
+		AudioSource* as = mBgm->GetComponent<AudioSource>();
+		as->Stop();
 	}
 }

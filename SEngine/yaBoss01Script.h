@@ -232,6 +232,7 @@ namespace ya
 		void Combat();
 		void SetAttackedState();
 
+	public:
 		// Effect
 		void SetEffectFlickering(float tick, float duration);
 		void SetEffectFlashing(float tick, float duration, Vector4 color);

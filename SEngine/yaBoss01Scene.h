@@ -70,6 +70,13 @@ namespace ya
 
 		GameObject* mBgm;
 		unsigned int mBgmPhase = 0;
+		GameObject* mExitSound;
+
+		bool mPhase02Started = false;
+		bool mPhase04Started = false;
+
+
+		GameObject* mMainCamera;
 
 	public:
 		static int mHeart;

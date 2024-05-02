@@ -546,7 +546,8 @@ namespace ya
 		if (mIsAttacked1 == false && mIsAttacked2 == false && mIsAttacked3 == false && mIsAttacked4 == false 
 			&& mBodyCd->GetState() == eColliderState::NotColliding 
 			&& mIsDowned == false
-			&& mIsGetUp == false)
+			&& mIsGetUp == false
+			&& abs(mPlayerPos.x - mPos.x) <= 5.0f)
 		{
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 탐지거리 내 플레이어 O

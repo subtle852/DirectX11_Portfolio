@@ -19,5 +19,7 @@ namespace ya
 
 	private:
 		GameObject* mBG_ENDING = nullptr;
+
+		GameObject* mBgm;
 	};
 }

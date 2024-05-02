@@ -38,7 +38,7 @@ namespace ya
 	{
 		// 이펙트 확인 디버깅용
 		//SetEffectFlickering(0.25f, 5.0f);// 특정 상황에서 함수 호출 ex. 충돌
-		SetEffectFlashing(0.25f, 5.0f, Vector4(0.5f, 0.5f, 0.5f, 1.0f));// White
+		SetEffectFlashing(0.25f, 3.0f, Vector4(0.5f, 0.5f, 0.5f, 1.0f));// White
 		//SetEffectFlashing(0.25f, 5.0f, Vector4(1.2f, 0.0f, 0.0f, 1.0f));// Red
 
 		
