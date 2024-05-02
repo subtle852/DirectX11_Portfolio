@@ -400,6 +400,7 @@ namespace ya
 		AudioSource* as = mBgm->GetComponent<AudioSource>();
 		as->SetClip(Resources::Load<AudioClip>(L"BOSS01_BGM01", L"..\\Resources\\Sound\\BOSS01\\BOSS01_BGM01.mp3"));
 		as->Play();
+		as->SetLoop(true);
 		//as->SetVolume(30.0f);
 	}
 

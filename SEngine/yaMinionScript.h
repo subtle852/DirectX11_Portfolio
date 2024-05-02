@@ -58,6 +58,9 @@ namespace ya
 
 		void SetInitRadian(float radian) { currentRadian = radian; }
 
+		virtual void ChangeWalkDirectionNState(eDirection dir) override {}
+		virtual bool IsWait() override { return false; }
+
 	private:
 		// 이벤트 함수
 		void AppearComplete();
@@ -166,9 +169,9 @@ namespace ya
 		std::vector<bool> mPlayerAttackState;
 
 		// 어떤 공격 스킬을 사용중인지 담고 있는 bool vector
-		std::vector<bool> mAttackState;
+		//std::vector<bool> mAttackState;
 
 	public:
-		const std::vector<bool>& GetAttackState() const { return mAttackState; }
+		//const std::vector<bool>& GetAttackState() const { return mAttackState; }
 	};
 }

@@ -798,7 +798,7 @@ namespace ya
 				// 공격을 당하고 있을 때는 아래의 상태 변화가 있으면 안됨
 				// 추후 공격을 당하는 변수들 합쳐서 함수로 대체 예정
 				if (mIsDamageStun == false && mIsDamageKnockBack == false && mIsDamageKnockDown == false && mIsDamageDown == false
-					&& mBodyCd->GetState() == eColliderState::NotColliding
+					//&& mBodyCd->GetState() == eColliderState::NotColliding
 					&& mIsDowned == false
 					&& mIsGetup == false)
 				{
@@ -931,12 +931,12 @@ namespace ya
 							// 대기하는 경우
 							else// (mRandWaitOrRun == +1)
 							{
-								if (mPlayerPos.x + 0.15f < mPos.x && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
+								if (mPlayerPos.x + 0.05f < mPos.x && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
 								{
 									mDirection = eDirection::L;
 									ChangeState(eBoss01State::L_Idle);
 								}
-								else if (mPos.x < mPlayerPos.x - 0.15f && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
+								else if (mPos.x < mPlayerPos.x - 0.05f && (mCurState == eBoss01State::L_Idle || mCurState == eBoss01State::R_Idle || mCurState == eBoss01State::L_Run || mCurState == eBoss01State::R_Run))
 								{
 									mDirection = eDirection::R;
 									ChangeState(eBoss01State::R_Idle);
@@ -1141,7 +1141,7 @@ namespace ya
 				// 공격을 당하고 있을 때는 아래의 상태 변화가 있으면 안됨
 				// 추후 공격을 당하는 변수들 합쳐서 함수로 대체 예정
 				if (mIsDamageStun == false && mIsDamageKnockBack == false && mIsDamageKnockDown == false && mIsDamageDown == false
-					&& mBodyCd->GetState() == eColliderState::NotColliding
+					//&& mBodyCd->GetState() == eColliderState::NotColliding
 					&& mIsDowned == false
 					&& mIsGetup == false)
 				{
@@ -1170,13 +1170,13 @@ namespace ya
 							// 달려갈지 대기할지 랜덤 설정
 							if (mRandWaitOrRun == -100)
 							{
-								std::mt19937 mt(rd());
-								std::uniform_int_distribution<int> dist(0, 2);
-								mRandWaitOrRun = dist(mt);
+								//std::mt19937 mt(rd());
+								//std::uniform_int_distribution<int> dist(0, 1);
+								//mRandWaitOrRun = dist(mt);
 
 								// 디버깅용
 								//mRandWaitOrRun = 1;// Wait
-								//mRandWaitOrRun = 0;// Run
+								mRandWaitOrRun = 0;// Run
 							}
 						}
 
@@ -1942,10 +1942,16 @@ namespace ya
 			mIsDead = true;
 		}
 
-		if (mDirection == eDirection::L)
+		if (mPlayerPos.x < mPos.x)
+		{
 			ChangeState(eBoss01State::L_Downed);
+			mDirection = eDirection::L;
+		}
 		else
+		{
 			ChangeState(eBoss01State::R_Downed);
+			mDirection = eDirection::R;
+		}
 	}
 	void Boss01Script::DownedComplete()
 	{
@@ -1989,6 +1995,13 @@ namespace ya
 
 	void Boss01Script::AttackStart()
 	{
+		if(mCurState == eBoss01State::L_AttackPunch || mCurState == eBoss01State::R_AttackPunch)
+		{
+			AudioSource* as = mSwing01Sound->GetComponent<AudioSource>();
+			as->SetClip(Resources::Load<AudioClip>(L"swing03", L"..\\Resources\\Sound\\BATTLE\\swing03.mp3"));
+			as->Play();
+		}
+		else
 		{
 			AudioSource* as = mSwing01Sound->GetComponent<AudioSource>();
 			as->SetClip(Resources::Load<AudioClip>(L"swing01", L"..\\Resources\\Sound\\BATTLE\\swing01.mp3"));

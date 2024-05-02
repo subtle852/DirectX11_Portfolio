@@ -60,10 +60,10 @@ namespace ya
 		at->Create(L"R_Idle", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);//, Vector2::Zero, 0.05f);
 		at->Create(L"L_Idle", atlas, enums::eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
 
-		atlas
-			= Resources::Load<Texture>(L"Luke_Angry", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_ANGRY.png");
-		at->Create(L"R_Angry", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
-		at->Create(L"L_Angry", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
+		//atlas
+		//	= Resources::Load<Texture>(L"Luke_Angry", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_ANGRY.png");
+		//at->Create(L"R_Angry", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
+		//at->Create(L"L_Angry", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
 
 		atlas
 			= Resources::Load<Texture>(L"Luke_Walk", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_WALK.png");
@@ -135,15 +135,15 @@ namespace ya
 		at->Create(L"R_Dead", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4, Vector2::Zero, 1.0f);
 		at->Create(L"L_Dead", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4, Vector2::Zero, 1.0f);
 
-		atlas
-			= Resources::Load<Texture>(L"Luke_Flying", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_FLYING.png");
-		at->Create(L"R_Flying", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
-		at->Create(L"L_Flying", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
+		//atlas
+		//	= Resources::Load<Texture>(L"Luke_Flying", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_FLYING.png");
+		//at->Create(L"R_Flying", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
+		//at->Create(L"L_Flying", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
 
-		atlas
-			= Resources::Load<Texture>(L"Luke_Raiding", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_RAIDING.png");
-		at->Create(L"R_Raiding", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
-		at->Create(L"L_Raiding", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
+		//atlas
+		//	= Resources::Load<Texture>(L"Luke_Raiding", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_RAIDING.png");
+		//at->Create(L"R_Raiding", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
+		//at->Create(L"L_Raiding", atlas, eAnimationType::Back, Vector2(0.0f, 0.0f), Vector2(462.0f / 4.0f, 116.0f), 4);
 
 		#pragma endregion
 
@@ -285,12 +285,12 @@ namespace ya
 				R_idle();
 				break;
 
-			case eLukeState::L_Angry:
-				L_angry();
-				break;
-			case eLukeState::R_Angry:
-				R_angry();
-				break;
+			//case eLukeState::L_Angry:
+			//	L_angry();
+			//	break;
+			//case eLukeState::R_Angry:
+			//	R_angry();
+			//	break;
 
 			case eLukeState::L_Walk:
 				L_walk();
@@ -384,18 +384,18 @@ namespace ya
 				R_dead();
 				break;
 
-			case eLukeState::L_Flying:
-				L_flying();
-				break;
-			case eLukeState::R_Flying:
-				R_flying();
-				break;
-			case eLukeState::L_Raiding:
-				L_raiding();
-				break;
-			case eLukeState::R_Raiding:
-				R_raiding();
-				break;
+			//case eLukeState::L_Flying:
+			//	L_flying();
+			//	break;
+			//case eLukeState::R_Flying:
+			//	R_flying();
+			//	break;
+			//case eLukeState::L_Raiding:
+			//	L_raiding();
+			//	break;
+			//case eLukeState::R_Raiding:
+			//	R_raiding();
+			//	break;
 
 			default:
 				break;
@@ -410,6 +410,18 @@ namespace ya
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 속성 업데이트
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// 본인 위치 y값에 따른 z값 보간 수정
+		{
+			Transform* tr = this->GetOwner()->GetComponent<Transform>();
+			float y = tr->GetPosition().y;
+
+			float t = (y + 1.4f) / 1.8f; // -1.4부터 0.4까지의 범위
+			float z = ZValueLerp(40.0f, 45.0f, t);
+
+			// 현재 위치의 x와 y는 그대로 유지하고 z 값만 변경
+			tr->SetPosition(Vector3(tr->GetPosition().x, tr->GetPosition().y, z));
+		}
+		
 		// 본인 위치 업데이트
 		Transform* tr = this->GetOwner()->GetComponent<Transform>();
 		Vector3 pos = tr->GetPosition();
@@ -544,7 +556,7 @@ namespace ya
 		// 공격을 당하고 있을 때는 아래의 상태 변화가 있으면 안됨
 		// 추후 공격을 당하는 변수들 합쳐서 함수로 대체 예정
 		if (mIsAttacked1 == false && mIsAttacked2 == false && mIsAttacked3 == false && mIsAttacked4 == false 
-			&& mBodyCd->GetState() == eColliderState::NotColliding 
+			//&& mBodyCd->GetState() == eColliderState::NotColliding 
 			&& mIsDowned == false
 			&& mIsGetUp == false
 			&& abs(mPlayerPos.x - mPos.x) <= 5.0f)
@@ -617,6 +629,20 @@ namespace ya
 
 						Combat();
 					}
+
+					//if (mIsRun == true)
+					//{
+					//	if (mPlayerPos.x < mPos.x)
+					//	{
+					//		mDirection = eDirection::L;
+					//		ChangeState(eLukeState::L_Idle);
+					//	}
+					//	else
+					//	{
+					//		mDirection = eDirection::R;
+					//		ChangeState(eLukeState::R_Idle);
+					//	}
+					//}
 				}
 
 				/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -639,6 +665,7 @@ namespace ya
 
 						 // 몬스터와 플레이어 사이의 거리 계산
 						Vector3 direction = mPlayerPos - mPos;
+						direction.z = 0.0f;
 						direction.Normalize();
 
 						// 플레이어와 몬스터 사이의 거리가 너무 작으면 멈추기
@@ -680,12 +707,12 @@ namespace ya
 					// 대기하는 경우
 					else// (mRandWaitOrRun == +1)
 					{
-						if (mPlayerPos.x + 0.15f < mPos.x && (mCurState == eLukeState::L_Idle || mCurState == eLukeState::R_Idle || mCurState == eLukeState::L_Run || mCurState == eLukeState::R_Run))
+						if (mPlayerPos.x + 0.05f < mPos.x && (mCurState == eLukeState::L_Idle || mCurState == eLukeState::R_Idle || mCurState == eLukeState::L_Run || mCurState == eLukeState::R_Run))
 						{	
 							mDirection = eDirection::L;
 							ChangeState(eLukeState::L_Idle);
 						}
-						else if (mPos.x < mPlayerPos.x - 0.15f && (mCurState == eLukeState::L_Idle || mCurState == eLukeState::R_Idle || mCurState == eLukeState::L_Run || mCurState == eLukeState::R_Run))
+						else if (mPos.x < mPlayerPos.x - 0.05f && (mCurState == eLukeState::L_Idle || mCurState == eLukeState::R_Idle || mCurState == eLukeState::L_Run || mCurState == eLukeState::R_Run))
 						{
 							mDirection = eDirection::R;
 							ChangeState(eLukeState::R_Idle);
@@ -1178,10 +1205,16 @@ namespace ya
 			SetEffectFlickering(0.05f, mDeadTime);
 		}
 
-		if (mDirection == eDirection::L)
+		if (mPlayerPos.x < mPos.x)
+		{
 			ChangeState(eLukeState::L_Downed);
+			mDirection = eDirection::L;
+		}
 		else
+		{
 			ChangeState(eLukeState::R_Downed);
+			mDirection = eDirection::R;
+		}
 	}
 
 	void LukeScript::Attacked4Complete()
@@ -1286,16 +1319,16 @@ namespace ya
 		Animator* at = this->GetOwner()->GetComponent<Animator>();
 		at->PlayAnimation(L"R_Idle", true);
 	}
-	void LukeScript::L_angry()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Angry", true);
-	}
-	void LukeScript::R_angry()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Angry", true);
-	}
+	//void LukeScript::L_angry()
+	//{
+	//	Animator* at = this->GetOwner()->GetComponent<Animator>();
+	//	at->PlayAnimation(L"L_Angry", true);
+	//}
+	//void LukeScript::R_angry()
+	//{
+	//	Animator* at = this->GetOwner()->GetComponent<Animator>();
+	//	at->PlayAnimation(L"R_Angry", true);
+	//}
 	void LukeScript::L_walk()
 	{
 		Animator* at = this->GetOwner()->GetComponent<Animator>();
@@ -1436,26 +1469,26 @@ namespace ya
 		Animator* at = this->GetOwner()->GetComponent<Animator>();
 		at->PlayAnimation(L"R_Dead", true);
 	}
-	void LukeScript::L_flying()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Flying", true);
-	}
-	void LukeScript::R_flying()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Flying", true);
-	}
-	void LukeScript::L_raiding()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"L_Raiding", true);
-	}
-	void LukeScript::R_raiding()
-	{
-		Animator* at = this->GetOwner()->GetComponent<Animator>();
-		at->PlayAnimation(L"R_Raiding", true);
-	}
+	//void LukeScript::L_flying()
+	//{
+	//	Animator* at = this->GetOwner()->GetComponent<Animator>();
+	//	at->PlayAnimation(L"L_Flying", true);
+	//}
+	//void LukeScript::R_flying()
+	//{
+	//	Animator* at = this->GetOwner()->GetComponent<Animator>();
+	//	at->PlayAnimation(L"R_Flying", true);
+	//}
+	//void LukeScript::L_raiding()
+	//{
+	//	Animator* at = this->GetOwner()->GetComponent<Animator>();
+	//	at->PlayAnimation(L"L_Raiding", true);
+	//}
+	//void LukeScript::R_raiding()
+	//{
+	//	Animator* at = this->GetOwner()->GetComponent<Animator>();
+	//	at->PlayAnimation(L"R_Raiding", true);
+	//}
 
 	#pragma endregion
 

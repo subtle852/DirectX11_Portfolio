@@ -63,6 +63,21 @@
     <ClCompile Include="yaMinionScript.cpp">
       <Filter>Contents\Script\BOSS\STAGE01</Filter>
     </ClCompile>
+    <ClCompile Include="yaJesseScript.cpp">
+      <Filter>Contents\Script\ENEMY\STAGE01</Filter>
+    </ClCompile>
+    <ClCompile Include="yaLeeScript.cpp">
+      <Filter>Contents\Script\ENEMY\STAGE01</Filter>
+    </ClCompile>
+    <ClCompile Include="yaDogScript.cpp">
+      <Filter>Contents\Script\ENEMY\STAGE01</Filter>
+    </ClCompile>
+    <ClCompile Include="yaLinusScript.cpp">
+      <Filter>Contents\Script\ENEMY\STAGE01</Filter>
+    </ClCompile>
+    <ClCompile Include="yaHarleyScript.cpp">
+      <Filter>Contents\Script\ENEMY\STAGE01</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
@@ -130,6 +145,21 @@
     <ClInclude Include="yaMinionScript.h">
       <Filter>Contents\Script\BOSS\STAGE01</Filter>
     </ClInclude>
+    <ClInclude Include="yaJesseScript.h">
+      <Filter>Contents\Script\ENEMY\STAGE01</Filter>
+    </ClInclude>
+    <ClInclude Include="yaLeeScript.h">
+      <Filter>Contents\Script\ENEMY\STAGE01</Filter>
+    </ClInclude>
+    <ClInclude Include="yaDogScript.h">
+      <Filter>Contents\Script\ENEMY\STAGE01</Filter>
+    </ClInclude>
+    <ClInclude Include="yaLinusScript.h">
+      <Filter>Contents\Script\ENEMY\STAGE01</Filter>
+    </ClInclude>
+    <ClInclude Include="yaHarleyScript.h">
+      <Filter>Contents\Script\ENEMY\STAGE01</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Contents">
@@ -176,9 +206,6 @@
     </Filter>
     <Filter Include="Contents\Script\BOSS">
       <UniqueIdentifier>{6a7f8ee3-184f-4ab3-916d-997fe83d4e54}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Contents\Script\INTERACTIVE">
-      <UniqueIdentifier>{e74b9bad-2cd9-400a-a6be-1ad59940859b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Contents\Script\ENEMY">
       <UniqueIdentifier>{c173eac5-7ac9-497e-af74-1956793614e5}</UniqueIdentifier>

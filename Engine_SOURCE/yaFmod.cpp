@@ -68,13 +68,16 @@ namespace ya
 		FMOD_VECTOR fmodForward(forward->x, forward->y, forward->z);
 		FMOD_VECTOR fmodUp(up->x, up->y, up->z);
 
-		mCoreSystem->set3DListenerAttributes(0, &fmodPos, &fmodVel, &fmodForward, &fmodUp);
+		//mCoreSystem->set3DListenerAttributes(0, &fmodPos, &fmodVel, &fmodForward, &fmodUp);
 	}
 
 	void Fmod::Release()
 	{
-		//mCoreSystem->release();
-		//mCoreSystem = nullptr;
+		if (mCoreSystem == nullptr)
+		{
+			mCoreSystem->release();
+			mCoreSystem = nullptr;
+		}
 
 		mSystem->release();
 		mSystem = nullptr;

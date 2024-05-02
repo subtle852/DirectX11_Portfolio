@@ -10,8 +10,8 @@ namespace ya
 		{
 			L_Idle,
 			R_Idle,
-			L_Angry,
-			R_Angry,
+			//L_Angry,
+			//R_Angry,
 
 			L_Walk,
 			R_Walk,
@@ -48,10 +48,10 @@ namespace ya
 			L_Dead,
 			R_Dead,
 
-			L_Flying,
-			R_Flying,
-			L_Raiding,
-			R_Raiding,
+			//L_Flying,
+			//R_Flying,
+			//L_Raiding,
+			//R_Raiding,
 		};
 
 		enum class eLukeCombatState
@@ -84,7 +84,7 @@ namespace ya
 		void SetDirection(eDirection dir) { mDirection = dir; }
 		eLukeState GetState() { return mCurState; }
 		void ChangeState(eLukeState newState) { mCurState = newState; }
-		void ChangeWalkDirectionNState(eDirection dir)
+		virtual void ChangeWalkDirectionNState(eDirection dir) override
 		{
 			if (dir == eDirection::L)
 			{
@@ -153,8 +153,8 @@ namespace ya
 		void L_idle();
 		void R_idle();
 
-		void L_angry();
-		void R_angry();
+		//void L_angry();
+		//void R_angry();
 
 		void L_walk();
 		void R_walk();
@@ -192,10 +192,10 @@ namespace ya
 		void L_dead();
 		void R_dead();
 
-		void L_flying();
-		void R_flying();
-		void L_raiding();
-		void R_raiding();
+		//void L_flying();
+		//void R_flying();
+		//void L_raiding();
+		//void R_raiding();
 
 		// 동작 내부 함수
 		void Combat();
@@ -264,7 +264,7 @@ namespace ya
 
 		// State 변수
 		bool mIsIdle = false;
-		bool mIsAngry = false;
+		//bool mIsAngry = false;
 		bool mIsWalk = false;
 		bool mIsRun = false;
 		
@@ -315,9 +315,9 @@ namespace ya
 		std::vector<bool> mPlayerAttackState;
 
 		// 어떤 공격 스킬을 사용중인지 담고 있는 bool vector
-		std::vector<bool> mAttackState;
+		//std::vector<bool> mAttackState;
 
 	public:
-		const std::vector<bool>& GetAttackState() const { return mAttackState; }
+		//const std::vector<bool>& GetAttackState() const { return mAttackState; }
 	};
 }

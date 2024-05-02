@@ -27,6 +27,11 @@
 #include "yaRamonaScript.h"
 #include "yaLukeScript.h"
 #include "yaBoss01Script.h"
+#include "yaLeeScript.h"
+#include "yaJesseScript.h"
+#include "yaDogScript.h"
+#include "yaLinusScript.h"
+#include "yaHarleyScript.h"
 
 #include "yaBoss01Scene.h"
 
@@ -151,284 +156,7 @@ namespace ya
 		}
 
 		// 阁胶磐
-		{
-			mLuke01
-				= object::Instantiate<GameObject>(Vector3(2.0f, -1.2f, 40.f)
-					, Vector3::One * 3
-					, eLayerType::Enemy);
-			mLuke01->SetName(L"Luke01");
-
-			MeshRenderer* mr = mLuke01->AddComponent<MeshRenderer>();
-			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-			std::shared_ptr<Texture> atlas
-				= Resources::Load<Texture>(L"Basic_Luke_Idle01", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-			Animator* at = mLuke01->AddComponent<Animator>();
-			at->Create(L"Luke_temp01", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-			at->PlayAnimation(L"Luke_temp01", true);
-			
-			Rigidbody* rb = mLuke01->AddComponent<Rigidbody>();
-			rb->SetGround(true);
-			rb->SetMass(1.0f);
-
-			mLuke01->AddComponent<LukeScript>();
-		}
-		{
-			mLuke02
-				= object::Instantiate<GameObject>(Vector3(1.5f, 0.5f, 40.f)
-					, Vector3::One * 3
-					, eLayerType::Enemy);
-			mLuke02->SetName(L"Luke02");
-
-			MeshRenderer* mr = mLuke02->AddComponent<MeshRenderer>();
-			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-			std::shared_ptr<Texture> atlas
-				= Resources::Load<Texture>(L"Basic_Luke_Idle02", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-			Animator* at = mLuke02->AddComponent<Animator>();
-			at->Create(L"Luke_temp02", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-			at->PlayAnimation(L"Luke_temp02", true);
-
-			Rigidbody* rb = mLuke02->AddComponent<Rigidbody>();
-			rb->SetGround(true);
-			rb->SetMass(1.0f);
-
-			mLuke02->AddComponent<LukeScript>();
-		}
-		{
-			mLuke03
-				= object::Instantiate<GameObject>(Vector3(1.7f, -0.5f, 40.f)
-					, Vector3::One * 3
-					, eLayerType::Enemy);
-			mLuke03->SetName(L"Luke03");
-
-			MeshRenderer* mr = mLuke03->AddComponent<MeshRenderer>();
-			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-			std::shared_ptr<Texture> atlas
-				= Resources::Load<Texture>(L"Basic_Luke_Idle03", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-			Animator* at = mLuke03->AddComponent<Animator>();
-			at->Create(L"Luke_temp03", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-			at->PlayAnimation(L"Luke_temp03", true);
-
-			Rigidbody* rb = mLuke03->AddComponent<Rigidbody>();
-			rb->SetGround(true);
-			rb->SetMass(1.0f);
-
-			mLuke03->AddComponent<LukeScript>();
-		}
-		{
-			mLuke04
-				= object::Instantiate<GameObject>(Vector3(8.2f, 0.39f, 40.f)
-					, Vector3::One * 3
-					, eLayerType::Enemy);
-			mLuke04->SetName(L"Luke04");
-
-			MeshRenderer* mr = mLuke04->AddComponent<MeshRenderer>();
-			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-			std::shared_ptr<Texture> atlas
-				= Resources::Load<Texture>(L"Basic_Luke_Idle04", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-			Animator* at = mLuke04->AddComponent<Animator>();
-			at->Create(L"Luke_temp04", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-			at->PlayAnimation(L"Luke_temp04", true);
-
-			Rigidbody* rb = mLuke04->AddComponent<Rigidbody>();
-			rb->SetGround(true);
-			rb->SetMass(1.0f);
-
-			mLuke04->AddComponent<LukeScript>();
-		}
-		{
-			mLuke05
-				= object::Instantiate<GameObject>(Vector3(9.2f, -0.07f, 40.f)
-					, Vector3::One * 3
-					, eLayerType::Enemy);
-			mLuke05->SetName(L"Luke05");
-
-			MeshRenderer* mr = mLuke05->AddComponent<MeshRenderer>();
-			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-			std::shared_ptr<Texture> atlas
-				= Resources::Load<Texture>(L"Basic_Luke_Idle05", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-			Animator* at = mLuke05->AddComponent<Animator>();
-			at->Create(L"Luke_temp05", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-			at->PlayAnimation(L"Luke_temp05", true);
-
-			Rigidbody* rb = mLuke05->AddComponent<Rigidbody>();
-			rb->SetGround(true);
-			rb->SetMass(1.0f);
-
-			mLuke05->AddComponent<LukeScript>();
-		}
-		{
-			mLuke06
-				= object::Instantiate<GameObject>(Vector3(9.0f, -1.225f, 40.f)
-					, Vector3::One * 3
-					, eLayerType::Enemy);
-			mLuke06->SetName(L"Luke06");
-
-			MeshRenderer* mr = mLuke06->AddComponent<MeshRenderer>();
-			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-			std::shared_ptr<Texture> atlas
-				= Resources::Load<Texture>(L"Basic_Luke_Idle06", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-			Animator* at = mLuke06->AddComponent<Animator>();
-			at->Create(L"Luke_temp06", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-			at->PlayAnimation(L"Luke_temp06", true);
-
-			Rigidbody* rb = mLuke06->AddComponent<Rigidbody>();
-			rb->SetGround(true);
-			rb->SetMass(1.0f);
-
-			mLuke06->AddComponent<LukeScript>();
-		}
-		{
-			mLuke07
-				= object::Instantiate<GameObject>(Vector3(13.87f, -0.05f, 40.f)
-					, Vector3::One * 3
-					, eLayerType::Enemy);
-			mLuke07->SetName(L"Luke07");
-
-			MeshRenderer* mr = mLuke07->AddComponent<MeshRenderer>();
-			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-			std::shared_ptr<Texture> atlas
-				= Resources::Load<Texture>(L"Basic_Luke_Idle07", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-			Animator* at = mLuke07->AddComponent<Animator>();
-			at->Create(L"Luke_temp07", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-			at->PlayAnimation(L"Luke_temp07", true);
-
-			Rigidbody* rb = mLuke07->AddComponent<Rigidbody>();
-			rb->SetGround(true);
-			rb->SetMass(1.0f);
-
-			mLuke07->AddComponent<LukeScript>();
-		}
-		{
-			mLuke08
-				= object::Instantiate<GameObject>(Vector3(13.84f, -1.22f, 40.f)
-					, Vector3::One * 3
-					, eLayerType::Enemy);
-			mLuke08->SetName(L"Luke08");
-
-			MeshRenderer* mr = mLuke08->AddComponent<MeshRenderer>();
-			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-			std::shared_ptr<Texture> atlas
-				= Resources::Load<Texture>(L"Basic_Luke_Idle08", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-			Animator* at = mLuke08->AddComponent<Animator>();
-			at->Create(L"Luke_temp08", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-			at->PlayAnimation(L"Luke_temp08", true);
-
-			Rigidbody* rb = mLuke08->AddComponent<Rigidbody>();
-			rb->SetGround(true);
-			rb->SetMass(1.0f);
-
-			mLuke08->AddComponent<LukeScript>();
-		}
-		{
-			mLuke09
-				= object::Instantiate<GameObject>(Vector3(26.58f, -1.12f, 40.f)
-					, Vector3::One * 3
-					, eLayerType::Enemy);
-			mLuke09->SetName(L"Luke09");
-
-			MeshRenderer* mr = mLuke09->AddComponent<MeshRenderer>();
-			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-			std::shared_ptr<Texture> atlas
-				= Resources::Load<Texture>(L"Basic_Luke_Idle09", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-			Animator* at = mLuke09->AddComponent<Animator>();
-			at->Create(L"Luke_temp09", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-			at->PlayAnimation(L"Luke_temp09", true);
-
-			Rigidbody* rb = mLuke09->AddComponent<Rigidbody>();
-			rb->SetGround(true);
-			rb->SetMass(1.0f);
-
-			mLuke09->AddComponent<LukeScript>();
-		}
-		{
-			mLuke10
-				= object::Instantiate<GameObject>(Vector3(30.85f, -1.02f, 40.f)
-					, Vector3::One * 3
-					, eLayerType::Enemy);
-			mLuke10->SetName(L"Luke10");
-
-			MeshRenderer* mr = mLuke10->AddComponent<MeshRenderer>();
-			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-			std::shared_ptr<Texture> atlas
-				= Resources::Load<Texture>(L"Basic_Luke_Idle10", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-			Animator* at = mLuke10->AddComponent<Animator>();
-			at->Create(L"Luke_temp10", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-			at->PlayAnimation(L"Luke_temp10", true);
-
-			Rigidbody* rb = mLuke10->AddComponent<Rigidbody>();
-			rb->SetGround(true);
-			rb->SetMass(1.0f);
-
-			mLuke10->AddComponent<LukeScript>();
-		}
-		{
-			mLuke11
-				= object::Instantiate<GameObject>(Vector3(33.03f, -1.26f, 40.f)
-					, Vector3::One * 3
-					, eLayerType::Enemy);
-			mLuke11->SetName(L"Luke11");
-
-			MeshRenderer* mr = mLuke11->AddComponent<MeshRenderer>();
-			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-			std::shared_ptr<Texture> atlas
-				= Resources::Load<Texture>(L"Basic_Luke_Idle11", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
-			Animator* at = mLuke11->AddComponent<Animator>();
-			at->Create(L"Luke_temp11", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
-			at->PlayAnimation(L"Luke_temp11", true);
-
-			Rigidbody* rb = mLuke11->AddComponent<Rigidbody>();
-			rb->SetGround(true);
-			rb->SetMass(1.0f);
-
-			mLuke11->AddComponent<LukeScript>();
-		}
-
-
-		//{
-		//	mBoss01
-		//		= object::Instantiate<GameObject>(Vector3(2.0f, -1.2f, 40.f)
-		//			, Vector3::One * 3
-		//			, eLayerType::Enemy);
-		//	mBoss01->SetName(L"Boss01");
-
-		//	MeshRenderer* mr = mBoss01->AddComponent<MeshRenderer>();
-		//	mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
-		//	mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
-
-		//	std::shared_ptr<Texture> atlas
-		//		= Resources::Load<Texture>(L"BASIC_BOSS01_IDLE01", L"..\\Resources\\TEXTURE\\STAGE01\\BOSS\\BOSS01\\BASIC\\BOSS01_IDLE.png");
-		//	Animator* at = mBoss01->AddComponent<Animator>();
-		//	at->Create(L"Boss01_temp01", atlas, eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(864.0f / 6.0f, 144.0f), 6);
-		//	at->PlayAnimation(L"Boss01_temp01", true);
-
-		//	Rigidbody* rb = mBoss01->AddComponent<Rigidbody>();
-		//	rb->SetGround(true);
-		//	rb->SetMass(1.0f);
-
-		//	mBoss01->AddComponent<Boss01Script>();
-		//}
+		InitializeEnemy();
 
 		// Light
 		{
@@ -694,16 +422,11 @@ namespace ya
 
 			Light* directionallightComp = mDirectionalLight->GetComponent<Light>();
 
-			totalTimeExit += Time::DeltaTime();
-			float speed = std::log(totalTimeExit + 1) * mCurrentValue / std::log(duration + 1);
-			mCurrentValue -= speed * Time::DeltaTime();
-
-			if (mCurrentValue <= mMinValue)
+			totalTimeExit -= Time::DeltaTime();
+			if (totalTimeExit <= 0.0f)
 			{
-				mCurrentValue = mMinValue;
-
 				directionallightComp->SetColor(Vector4(mCurrentValue, mCurrentValue, mCurrentValue, mCurrentValue));
-				
+
 				mExitLight = false;
 
 				if (mRamonaDead == true)
@@ -777,7 +500,9 @@ namespace ya
 
 		AudioSource* as = mBgm->GetComponent<AudioSource>();
 		as->SetClip(Resources::Load<AudioClip>(L"STAGE01_BGM", L"..\\Resources\\Sound\\STAGE01\\STAGE01_BGM.mp3"));
+		as->SetLoop(true);
 		as->Play();
+		
 		//as->SetVolume(30.0f);
 	}
 
@@ -785,5 +510,333 @@ namespace ya
 	{
 		AudioSource* as = mBgm->GetComponent<AudioSource>();
 		as->Stop();
+	}
+	void PlayScene::InitializeEnemy()
+	{
+	//mLuke02->AddComponent<LukeScript>();
+	//mLuke02->AddComponent<JesseScript>();
+	//mLuke02->AddComponent<LeeScript>();
+	//mLuke02->AddComponent<DogScript>();
+	//mLuke02->AddComponent<LinusScript>();
+	//mLuke02->AddComponent<HarleyScript>();
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////		1备开		/////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		{
+			mEnemy01
+				= object::Instantiate<GameObject>(Vector3(2.0f, -1.2f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mEnemy01->SetName(L"mEnemy01");
+
+			MeshRenderer* mr = mEnemy01->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle01", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mEnemy01->AddComponent<Animator>();
+			at->Create(L"Luke_temp01", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp01", true);
+
+			Rigidbody* rb = mEnemy01->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mEnemy01->AddComponent<LukeScript>();
+		}
+		{
+			mEnemy02
+				= object::Instantiate<GameObject>(Vector3(1.5f, 0.5f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mEnemy02->SetName(L"mEnemy02");
+
+			MeshRenderer* mr = mEnemy02->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle02", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mEnemy02->AddComponent<Animator>();
+			at->Create(L"Luke_temp02", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp02", true);
+
+			Rigidbody* rb = mEnemy02->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mEnemy02->AddComponent<JesseScript>();
+		}
+		{
+			mEnemy03
+				= object::Instantiate<GameObject>(Vector3(1.7f, -0.5f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mEnemy03->SetName(L"mEnemy03");
+
+			MeshRenderer* mr = mEnemy03->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle03", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mEnemy03->AddComponent<Animator>();
+			at->Create(L"Luke_temp03", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp03", true);
+
+			Rigidbody* rb = mEnemy03->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mEnemy03->AddComponent<LukeScript>();
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////		2备开		/////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		{
+			mEnemy04
+				= object::Instantiate<GameObject>(Vector3(8.2f, 0.39f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mEnemy04->SetName(L"mEnemy04");
+
+			MeshRenderer* mr = mEnemy04->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle04", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mEnemy04->AddComponent<Animator>();
+			at->Create(L"Luke_temp04", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp04", true);
+
+			Rigidbody* rb = mEnemy04->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mEnemy04->AddComponent<LukeScript>();
+		}
+		{
+			mEnemy05
+				= object::Instantiate<GameObject>(Vector3(9.2f, -0.07f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mEnemy05->SetName(L"mEnemy05");
+
+			MeshRenderer* mr = mEnemy05->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle05", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mEnemy05->AddComponent<Animator>();
+			at->Create(L"Luke_temp05", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp05", true);
+
+			Rigidbody* rb = mEnemy05->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mEnemy05->AddComponent<LinusScript>();
+		}
+		{
+			mEnemy06
+				= object::Instantiate<GameObject>(Vector3(9.0f, -1.225f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mEnemy06->SetName(L"mEnemy06");
+
+			MeshRenderer* mr = mEnemy06->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle06", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mEnemy06->AddComponent<Animator>();
+			at->Create(L"Luke_temp06", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp06", true);
+
+			Rigidbody* rb = mEnemy06->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mEnemy06->AddComponent<JesseScript>();
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////		3备开		/////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		{
+			mEnemy07
+				= object::Instantiate<GameObject>(Vector3(13.87f, -0.05f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mEnemy07->SetName(L"mEnemy07");
+
+			MeshRenderer* mr = mEnemy07->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle07", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mEnemy07->AddComponent<Animator>();
+			at->Create(L"Luke_temp07", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp07", true);
+
+			Rigidbody* rb = mEnemy07->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mEnemy07->AddComponent<DogScript>();
+		}
+		{
+			mEnemy08
+				= object::Instantiate<GameObject>(Vector3(13.84f, -1.22f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mEnemy08->SetName(L"mEnemy08");
+
+			MeshRenderer* mr = mEnemy08->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle08", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mEnemy08->AddComponent<Animator>();
+			at->Create(L"Luke_temp08", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp08", true);
+
+			Rigidbody* rb = mEnemy08->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mEnemy08->AddComponent<HarleyScript>();
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////// 4备开 啊绰 烹肺	/////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		{
+			mEnemy09
+				= object::Instantiate<GameObject>(Vector3(19.0f, -1.12f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mEnemy09->SetName(L"mEnemy09");
+
+			MeshRenderer* mr = mEnemy09->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle09", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mEnemy09->AddComponent<Animator>();
+			at->Create(L"Luke_temp09", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp09", true);
+
+			Rigidbody* rb = mEnemy09->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mEnemy09->AddComponent<DogScript>();
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////		4备开		/////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		{
+			mEnemy10
+				= object::Instantiate<GameObject>(Vector3(27.85f, -1.02f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mEnemy10->SetName(L"mEnemy10");
+
+			MeshRenderer* mr = mEnemy10->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle10", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mEnemy10->AddComponent<Animator>();
+			at->Create(L"Luke_temp10", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp10", true);
+
+			Rigidbody* rb = mEnemy10->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mEnemy10->AddComponent<DogScript>();
+		}
+		{
+			mEnemy11
+				= object::Instantiate<GameObject>(Vector3(30.00f, -1.02f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mEnemy11->SetName(L"mEnemy11");
+
+			MeshRenderer* mr = mEnemy11->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle11", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mEnemy11->AddComponent<Animator>();
+			at->Create(L"Luke_temp11", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp11", true);
+
+			Rigidbody* rb = mEnemy11->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mEnemy11->AddComponent<LukeScript>();
+		}
+		{
+			mEnemy12
+				= object::Instantiate<GameObject>(Vector3(31.5f, -1.26f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mEnemy12->SetName(L"mEnemy12");
+
+			MeshRenderer* mr = mEnemy12->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle12", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mEnemy12->AddComponent<Animator>();
+			at->Create(L"Luke_temp12", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp12", true);
+
+			Rigidbody* rb = mEnemy12->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mEnemy12->AddComponent<DogScript>();
+		}
+		{
+			mEnemy13
+				= object::Instantiate<GameObject>(Vector3(33.03f, -1.26f, 40.f)
+					, Vector3::One * 3
+					, eLayerType::Enemy);
+			mEnemy13->SetName(L"mEnemy13");
+
+			MeshRenderer* mr = mEnemy13->AddComponent<MeshRenderer>();
+			mr->SetMesh(Resources::Find<Mesh>(L"RectMesh"));
+			mr->SetMaterial(Resources::Find<Material>(L"SpriteAnimationMaterial"));
+
+			std::shared_ptr<Texture> atlas
+				= Resources::Load<Texture>(L"Basic_Luke_Idle13", L"..\\Resources\\TEXTURE\\STAGE01\\ENEMY\\LUKE\\LUKE_IDLE.png");
+			Animator* at = mEnemy13->AddComponent<Animator>();
+			at->Create(L"Luke_temp13", atlas, enums::eAnimationType::Front, Vector2(0.0f, 0.0f), Vector2(923.0f / 8.0f, 116.0f), 8);
+			at->PlayAnimation(L"Luke_temp13", true);
+
+			Rigidbody* rb = mEnemy13->AddComponent<Rigidbody>();
+			rb->SetGround(true);
+			rb->SetMass(1.0f);
+
+			mEnemy13->AddComponent<JesseScript>();
+		}
 	}
 }

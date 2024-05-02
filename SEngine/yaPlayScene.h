@@ -46,6 +46,9 @@ namespace ya
 			if (mRamona != nullptr)
 				return mRamonaState;
 		}
+		
+	private:
+		void InitializeEnemy();
 
 	private:
 		GameObject* mBG_STAGE01_01 = nullptr;
@@ -57,20 +60,23 @@ namespace ya
 		static ePlayerState mRamonaState;
 		static bool mRamonaDead;
 
-		GameObject* mLuke01 = nullptr;
-		GameObject* mLuke02 = nullptr;
-		GameObject* mLuke03 = nullptr;
+		GameObject* mEnemy01 = nullptr;
+		GameObject* mEnemy02 = nullptr;
+		GameObject* mEnemy03 = nullptr;
 
-		GameObject* mLuke04 = nullptr;
-		GameObject* mLuke05 = nullptr;
-		GameObject* mLuke06 = nullptr;
+		GameObject* mEnemy04 = nullptr;
+		GameObject* mEnemy05 = nullptr;
+		GameObject* mEnemy06 = nullptr;
 
-		GameObject* mLuke07 = nullptr;
-		GameObject* mLuke08 = nullptr;
-		
-		GameObject* mLuke09 = nullptr;
-		GameObject* mLuke10 = nullptr;
-		GameObject* mLuke11 = nullptr;
+		GameObject* mEnemy07 = nullptr;
+		GameObject* mEnemy08 = nullptr;
+
+		GameObject* mEnemy09 = nullptr;
+
+		GameObject* mEnemy10 = nullptr;
+		GameObject* mEnemy11 = nullptr;
+		GameObject* mEnemy12 = nullptr;
+		GameObject* mEnemy13 = nullptr;
 
 		GameObject* mMainCamera = nullptr;
 
@@ -95,7 +101,7 @@ namespace ya
 		float mMinValue = 0.05f;// 최소값
 		float mCurrentValue = 0.0f;// 현재값
 		float totalTimeEnter = 0.0f;// Enter 누적 시간
-		float totalTimeExit = 0.0f;// Exit 누적 시간
+		float totalTimeExit = 3.0f;// Exit 누적 시간
 		float duration = 3.0f;// 전체 소요 시간 (초)
 
 	public:

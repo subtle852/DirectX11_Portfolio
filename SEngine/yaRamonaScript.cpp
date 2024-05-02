@@ -46,7 +46,7 @@ namespace ya
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 															// 그림자
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		mShadow = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 40.f)
+		mShadow = object::Instantiate<GameObject>(Vector3(0.0f, 0.0f, 48.f)
 			, Vector3::One * 3
 			, eLayerType::BG);
 		MeshRenderer* mr = mShadow->AddComponent<MeshRenderer>();
@@ -790,7 +790,7 @@ namespace ya
 			playerPos.y -= 0.5f;
 
 			Transform* shadowTr = mShadow->GetComponent<Transform>();
-			shadowTr->SetPosition(playerPos);
+			shadowTr->SetPosition(Vector3(playerPos.x, playerPos.y, shadowTr->GetPosition().z));
 		}
 		#pragma endregion
 
@@ -2222,23 +2222,12 @@ namespace ya
 
 			if (mBodyCd->GetState() == eColliderState::IsColliding)
 			{
-				if (dynamic_cast<LukeScript*>(other->GetOwner()->GetComponent<EnemyScript>()))
+				if (dynamic_cast<EnemyScript*>(other->GetOwner()->GetComponent<EnemyScript>()))
 				{
 					// 공격 당하는 스킬이 무엇인지에 대한 업데이트
-					std::copy(other->GetOwner()->GetComponent<LukeScript>()->GetAttackState().begin()
-						, other->GetOwner()->GetComponent<LukeScript>()->GetAttackState().end()
+					std::copy(other->GetOwner()->GetComponent<EnemyScript>()->GetAttackState().begin()
+						, other->GetOwner()->GetComponent<EnemyScript>()->GetAttackState().end()
 						, mEnemyAttackState.begin());
-				}
-				else if (dynamic_cast<Boss01Script*>(other->GetOwner()->GetComponent<EnemyScript>()))
-				{
-					// 공격 당하는 스킬이 무엇인지에 대한 업데이트
-					std::copy(other->GetOwner()->GetComponent<Boss01Script>()->GetAttackState().begin()
-						, other->GetOwner()->GetComponent<Boss01Script>()->GetAttackState().end()
-						, mEnemyAttackState.begin());
-				}
-				else
-				{
-
 				}
 
 				// 가드 상태 OR EVADE 상태
@@ -2706,16 +2695,22 @@ namespace ya
 		// mAttackState[3] = mIsUpper;
 		if (mEnemyAttackState[0])
 		{
-			if (mEnemyAttackState[9])// 보스와 전투 중
+			if (mEnemyAttackState[9])// 보스 (3번 소리 나는 경우)
 			{
 				AudioSource* as = mPunch03Sound->GetComponent<AudioSource>();
-				as->SetClip(Resources::Load<AudioClip>(L"punch03", L"..\\Resources\\Sound\\BATTLE\\punch03.mp3"));
+				as->SetClip(Resources::Load<AudioClip>(L"punch04", L"..\\Resources\\Sound\\BATTLE\\punch04.mp3"));
 				as->Play();
 			}
-			else// 일반몹과 전투 중
+			else if (mEnemyAttackState[8])// 2번 소리내야하는 일반몹
 			{
 				AudioSource* as = mPunch04Sound->GetComponent<AudioSource>();
-				as->SetClip(Resources::Load<AudioClip>(L"punch04", L"..\\Resources\\Sound\\BATTLE\\punch04.mp3"));
+				as->SetClip(Resources::Load<AudioClip>(L"punch03", L"..\\Resources\\Sound\\BATTLE\\punch04.mp3"));
+				as->Play();
+			}
+			else// 나머지 일반몹
+			{
+				AudioSource* as = mPunch04Sound->GetComponent<AudioSource>();
+				as->SetClip(Resources::Load<AudioClip>(L"punch03", L"..\\Resources\\Sound\\BATTLE\\punch03.mp3"));
 				as->Play();
 			}
 		}
